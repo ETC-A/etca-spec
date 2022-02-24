@@ -89,9 +89,9 @@ the low byte of the Program Counter. The high byte stays in this case the same.
 | `0001` | JLT  | <code>N ^ O</code>                        |                          |
 | `0010` | JEQ  | <code>Z</code>                            |                          |
 | `0011` | JLE  | <code>(N ^ O) &#124; Z</code>             |                          |
-| `0100` | JGT  | <code>~(O &#124; Z)</code>                |                          |
-| `0101` | JNE  | <code>(N ^ O) &#124; ~(O &#124; Z)</code> |                          |
-| `0110` | JGE  | <code>~(O &#124; Z) &#124; Z</code>       | <code>~O &#124; Z</code> |
+| `0100` | JGT  | <code>(~O &amp; ~Z)</code>                |                          |
+| `0101` | JNE  | <code>(N ^ O) &#124; (~O &amp; ~Z)</code> |                          |
+| `0110` | JGE  | <code>(~O &amp; ~Z) &#124; Z</code>       | <code>~O &#124; Z</code> |
 | `0111` | JMP  |                                           |                          |
 | `1000` | JULT | <code>~C &amp; ~Z</code>                  |                          |
 | `1001` | JUGT | <code>C &amp; ~Z</code>                   |                          |
