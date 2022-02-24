@@ -83,26 +83,21 @@ the low byte of the Program Counter. The high byte stays in this case the same.
 ### Conditions
 
 
-| `CCCC` | NAME                    | Flags                            | Comment |
-|--------|-------------------------|----------------------------------|---------|
-| `0000` | Overflow                | `O`                              |         |
-| `0001` | No Overflow             | `~O`                             |         |
-| `0010` | Negative                | `N`                              |         |
-| `0011` | Not Negative            | `~N`                             |         |
-| `0100` | Zero/Equal              | `Z`                              |         |
-| `0101` | Not zero/Not equal      | `~Z`                             |         |
-| `0110` | Carry/Below             | `C`                              |         |
-| `0111` | No carry/Above or equal | `~C`                             |         |
-| `1000` | below or equal          | <code> C &#124; Z</code>         |         |
-| `1001` | above                   | <code> ~(C &#124; Z) </code>     |         |
-| `1010` | less                    | `N != O`                         |         |
-| `1011` | greater or equal        | `N == O`                         |         |
-| `1100` | less or equal           | <code> Z &#124; (N ≠ O) </code>  |         |
-| `1101` | greater                 | <code> ~Z &amp; (N = O) </code>  |         |
-| `1110` |                         |                                  |   (1)   |
-| `1111` |                         |                                  |   (1)   |
-
-(1) A standard use of these condition codes is "parity" and "no parity." We don't seem convinced that a parity flag is
-    worth having, so these condition codes are floating. Perhaps one of them could be `always`?
-
-
+| `CCCC` | NAME | Flags                      | Comment  |
+|--------|------|----------------------------|----------|
+| `0000` | NOP  |                            |          |
+| `0001` | JLT  | `N ^ O`                    |          |
+| `0010` | JEQ  | `Z`                        |          |
+| `0011` | JLE  | `(N ^ O) | Z`              |          |
+| `0100` | JGT  | `~(O | Z)`                 |          |
+| `0101` | JNE  | `(N ^ O) | ~(O | Z)`       |          |
+| `0110` | JGE  | `~(O | Z) | Z`             | `~O | Z` |
+| `0111` | JMP  |                            |          |
+| `1000` | JULT | <code> C &#124; Z</code>   |          |
+| `1001` | JUGT | <code> C &#124; ~Z </code> |          |
+| `1010` | JULE | `C | ~Z`                   |          |
+| `1011` | JUGE | `C | Z`                    |          |
+| `1100` | JCAN | `C`                        |          |
+| `1101` | JCAS | `C`                        |          |
+| `1110` | JOVN | `O`                        |          |
+| `1111` | JOVS | `O`                        |          |
