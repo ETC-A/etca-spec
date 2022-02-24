@@ -47,7 +47,7 @@ Both computation formats share a lot of similarities. For both the first byte ha
 
 ### 2 Register Computation
 
-For the `00` format the second byte has the format `00 AAA BBB` where `AAA` and `BBB` are references to registers.
+The second byte has the format `AAA BBB 00` where `AAA` and `BBB` are references to registers. `AAA` is the destination register and left source register. `BBB` is the right source register. The only exception is the RSUB instruction where `AAA` and `BBB` are swapped for the purpose of being source registers.
 
 ### Immediate Computation
 
@@ -85,8 +85,7 @@ TODO: This is a baseline, very much still floating
 
 ## Jump Instructions
 
-Here the first byte has the format `10 0 M CCCC` where `M` is a mode selects between a relative and an absolute jump. `CCCC` is the condition to check. The second byte is a single 8bit immediate representing the jump target. This immediate is signed when the jump mode is relative (`M=0`). When the mode is absolute (`M=1`) it on execution replaces
-the low byte of the Program Counter. The high byte stays in this case the same.
+Here the first byte has the format `10 0 M CCCC` where `M` is a mode that selects between a relative and an absolute jump. `CCCC` is the condition to check. The second byte is a single 8bit immediate representing the jump target. This immediate is signed when the jump mode is relative (`M=0`). When the mode is absolute (`M=1`) it replaces the low byte of the Program Counter. The high byte is preserved by absolute jumps.
 
 ### Conditions
 
