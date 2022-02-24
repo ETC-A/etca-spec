@@ -20,14 +20,22 @@ The highest two bits of the first byte are a format marker:
 
 | First byte    | Second Byte  | Comment                                  |
 |:--------------|:-------------|:-----------------------------------------|
-| `00 01 CCCC`  | `00 AAA BBB` | 2 register computation                   |
-| `01 01 CCCC`  | `AAA IIIII`  | Immediate and 1 register computation     |
-| `10 0 0 CCCC` | `SSSSSSSS`   | (conditional) relative jump instruction  |
+| `00 01 CCCC`  | `RRR RRR 00` | 2 register computation                   |
+| `01 01 CCCC`  | `RRR IIIII`  | Immediate and 1 register computation     |
+| `10 0 0 CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction  |
 | `10 0 1 CCCC` | `IIIIIIII`   | (conditional) absolute jump instruction  |
 | `10 1 ?????`  | `?????????`  | reserved                                 |
-| `00 SS CCCC`  | `00 AAA BBB` | when `SS != 01`, reserved for extensions |
-| `01 SS CCCC`  | `AAA IIIII`  | when `SS != 01`, reserved for extensions |
+| `00 SS CCCC`  | `RRR RRR 00` | when `SS != 01`, reserved for extensions |
+| `01 SS CCCC`  | `RRR IIIII`  | when `SS != 01`, reserved for extensions |
 | `11 ??????`   | `?????????`  | reserved for extensions                  |
+
+| Symbol | Meaning      |
+|--------|--------------|
+|   C    | opcode bit   |
+|   R    | register id  |
+|   I    | immediate    |
+|   D    | displacement |
+|   S    | size (res.d) |
 
 
 ## Computation Instructions
@@ -70,9 +78,9 @@ TODO: This is a baseline, very much still floating
 | `1111` |         |                                |        |         |
 
 
-(1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
-(2) Very much in flux, not entirely convinced we want these.
-(3) Placed here for now to ease decoding; 3=2 & 1 => do not store result.
+1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
+2) Very much in flux, not entirely convinced we want these.
+3) Placed here for now to ease decoding; 3=2 & 1 => do not store result.
 
 
 ## Jump Instructions
@@ -102,7 +110,7 @@ the low byte of the Program Counter. The high byte stays in this case the same.
 | `1110` |                         |                                  |   (1)   |
 | `1111` |                         |                                  |   (1)   |
 
-(1) A standard use of these condition codes is "parity" and "no parity." We don't seem convinced that a parity flag is
+1) A standard use of these condition codes is "parity" and "no parity." We don't seem convinced that a parity flag is
     worth having, so these condition codes are floating. Perhaps one of them could be `always`?
 
 
