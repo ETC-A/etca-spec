@@ -43,8 +43,8 @@ For the `00` format the second byte has the format `00 AAA BBB` where `AAA` and 
 
 ### Immediate Computation
 
-For the `01` format the second byte has the format `RRR IIIII`, where the 5bit immediate is sign extended and acts as
-operand `B`.
+For the `01` format the second byte has the format `RRR IIIII`, where the 5bit immediate acts as
+operand `B`. The immediate is sign extended for for all operations except bitwise logic operations.
 
 ### Opcodes
 
