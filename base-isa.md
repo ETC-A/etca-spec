@@ -14,7 +14,7 @@ The highest two bits of the first byte are a format marker:
 - `00` this is a computation operation between two registers
 - `01` this is a computation operation between a register and an immediate
 - `10` this is a (conditional) jump instruction
-- `11` this is a "wide" instruction and reserved for extensions
+- `11` this is a variable length instruction and reserved for extensions
 
 # Overview
 
