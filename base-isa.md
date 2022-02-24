@@ -83,21 +83,21 @@ the low byte of the Program Counter. The high byte stays in this case the same.
 ### Conditions
 
 
-| `CCCC` | NAME | Flags                                   | Comment                 |
-|--------|------|-----------------------------------------|-------------------------|
-| `0000` | NOP  |                                         |                         |
-| `0001` | JLT  | <code>N ^ O</code>                      |                         |
-| `0010` | JEQ  | <code>Z</code>                          |                         |
-| `0011` | JLE  | <code>(N ^ O) &#124 Z</code>            |                         |
-| `0100` | JGT  | <code>~(O &#124 Z)</code>               |                         |
-| `0101` | JNE  | <code>(N ^ O) &#124 ~(O &#124 Z)</code> |                         |
-| `0110` | JGE  | <code>~(O &#124 Z) &#124 Z</code>       | <code>~O &#124 Z</code> |
-| `0111` | JMP  |                                         |                         |
-| `1000` | JULT | <code>~C &amp; ~Z</code>                |                         |
-| `1001` | JUGT | <code>C &amp; ~Z</code>                 |                         |
-| `1010` | JULE | <code>~C &#124 Z</code>                 |                         |
-| `1011` | JUGE | <code>C &#124 Z</code>                  |                         |
-| `1100` | JCAN | <code>~C</code>                         |                         |
-| `1101` | JCAS | <code>C</code>                          |                         |
-| `1110` | JOVN | <code>~O</code>                         |                         |
-| `1111` | JOVS | <code>O</code>                          |                         |
+| `CCCC` | NAME | Flags                                     | Comment                  |
+|--------|------|-------------------------------------------|--------------------------|
+| `0000` | NOP  |                                           |                          |
+| `0001` | JLT  | <code>N ^ O</code>                        |                          |
+| `0010` | JEQ  | <code>Z</code>                            |                          |
+| `0011` | JLE  | <code>(N ^ O) &#124; Z</code>             |                          |
+| `0100` | JGT  | <code>~(O &#124; Z)</code>                |                          |
+| `0101` | JNE  | <code>(N ^ O) &#124; ~(O &#124; Z)</code> |                          |
+| `0110` | JGE  | <code>~(O &#124; Z) &#124; Z</code>       | <code>~O &#124; Z</code> |
+| `0111` | JMP  |                                           |                          |
+| `1000` | JULT | <code>~C &amp; ~Z</code>                  |                          |
+| `1001` | JUGT | <code>C &amp; ~Z</code>                   |                          |
+| `1010` | JULE | <code>~C &#124; Z</code>                  |                          |
+| `1011` | JUGE | <code>C &#124; Z</code>                   |                          |
+| `1100` | JCAN | <code>~C</code>                           |                          |
+| `1101` | JCAS | <code>C</code>                            |                          |
+| `1110` | JOVN | <code>~O</code>                           |                          |
+| `1111` | JOVS | <code>O</code>                            |                          |
