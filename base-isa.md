@@ -106,10 +106,6 @@ Here the first byte has the format `10 0 M CCCC` where `M` is a mode that select
 | `1011` | greater or equal        | `N == O`                         |         |
 | `1100` | less or equal           | <code> Z &#124; (N ≠ O) </code>  |         |
 | `1101` | greater                 | <code> ~Z &amp; (N = O) </code>  |         |
-| `1110` |                         |                                  |   (1)   |
-| `1111` |                         |                                  |   (1)   |
-
-1) A standard use of these condition codes is "parity" and "no parity." We don't seem convinced that a parity flag is
-    worth having, so these condition codes are floating. Perhaps one of them could be `always`?
-
+| `1110` | always                  |                                  |         |
+| `1111` | never                   |                                  |         |
 
