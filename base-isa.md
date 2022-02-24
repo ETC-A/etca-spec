@@ -16,6 +16,20 @@ The highest two bits of the first byte are a format marker:
 - `10` this is a (conditional) jump instruction
 - `11` this is a "wide" instruction and reserved for extensions
 
+# Overview
+
+| First byte    | Second Byte  | Comment                                  |
+|:--------------|:-------------|:-----------------------------------------|
+| `00 01 CCCC`  | `00 AAA BBB` | 2 register computation                   |
+| `01 01 CCCC`  | `AAA IIIII`  | Immediate and 1 register computation     |
+| `10 0 0 CCCC` | `SSSSSSSS`   | (conditional) relative jump instruction  |
+| `10 0 1 CCCC` | `IIIIIIII`   | (conditional) absolute jump instruction  |
+| `10 1 ?????`  | `?????????`  | reserved                                 |
+| `00 SS CCCC`  | `00 AAA BBB` | when `SS != 01`, reserved for extensions |
+| `01 SS CCCC`  | `AAA IIIII`  | when `SS != 01`, reserved for extensions |
+| `11 ??????`   | `?????????`  | reserved for extensions                  |
+
+
 ## Computation Instructions
 
 Both computation formats share a lot of similarities. For both the first byte has the structure `0x SS CCCC`.
@@ -90,18 +104,5 @@ the low byte of the Program Counter. The high byte stays in this case the same.
 
 (1) A standard use of these condition codes is "parity" and "no parity." We don't seem convinced that a parity flag is
     worth having, so these condition codes are floating. Perhaps one of them could be `always`?
-
-# Overview
-
-| First byte    | Second Byte  | Comment                                  |
-|:--------------|:-------------|:-----------------------------------------|
-| `00 01 CCCC`  | `00 AAA BBB` | 2 register computation                   |
-| `01 01 CCCC`  | `AAA IIIII`  | Immediate and 1 register computation     |
-| `10 0 0 CCCC` | `SSSSSSSS`   | (conditional) relative jump instruction  |
-| `10 0 1 CCCC` | `IIIIIIII`   | (conditional) absolute jump instruction  |
-| `10 1 ?????`  | `?????????`  | reserved                                 |
-| `00 SS CCCC`  | `00 AAA BBB` | when `SS != 01`, reserved for extensions |
-| `01 SS CCCC`  | `AAA IIIII`  | when `SS != 01`, reserved for extensions |
-| `11 ??????`   | `?????????`  | reserved for extensions                  |
 
 
