@@ -83,9 +83,9 @@ TODO: This is a baseline, very much still floating
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
 2) Placed here for now to ease decoding; `1 & 2 & ~3` => do not store result.
 3) Designed to allow for building a larger immediate value. To reach the full 16 bit one extra `NOT` instruction may be required.
-4) Primary indent is that these are used with immediate. Exact assignment of ports is still floating. At least the level IO and the CPU status/extension control should be present.
+4) Primary intent is that these are used with immediate. Exact assignment of ports is still floating. At least the level IO and the CPU status/extension control should be present.
 5) While logical left and right shift are not defined, they can be emulated with the existing instructions.
-6) The C and O flags are in an undefined state after execution of these instructions
+6) The C and O flags are in an undefined state after execution of these instructions. Implementations may do whatever is easiest. An extension may mandate a particular behavior, with good enough reason, but may *not* mandate that the value of these flags after the operation depends on their value before the operation.
 
 #### Input and Output Instructions
 
