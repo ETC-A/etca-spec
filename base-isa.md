@@ -53,7 +53,7 @@ The second byte has the format `AAA BBB 00` where `AAA` and `BBB` are references
 
 ### Immediate Computation
 
-For the `01` format the second byte has the format `RRR IIIII`, where the 5bit immediate acts as
+The second byte has the format `RRR IIIII`, where the 5bit immediate acts as
 operand `B`. The immediate is sign extended for the first 12 operations.
 
 ### Opcodes
@@ -69,7 +69,7 @@ TODO: This is a baseline, very much still floating
 | `0100` | `XOR`      | `A ← A ^ B`                        | `ZN`   | (6)     |
 | `0101` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   | (6)     |
 | `0110` | `AND`      | `A ← A & B`                        | `ZN`   | (6)     |
-| `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2)(6)  |
+| `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2) (6) |
 | `1000` | `STORE`    | `MEM[A] ← B`                       | None   |         |
 | `1001` | `LOAD`     | `A ← MEM[B]`                       | None   |         |
 | `1010` | `MOV`      | `A ← B`                            | None   |         |
