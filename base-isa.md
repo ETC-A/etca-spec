@@ -66,10 +66,10 @@ TODO: This is a baseline, very much still floating
 | `0001` | `SUB`      | `A ← A - B`                        | `ZNCO` |         |
 | `0010` | `RSUB`     | `A ← B - A`                        | `ZNCO` | (1)     |
 | `0011` | `CMP`      | `_ ← A - B`                        | `ZNCO` | (2)     |
-| `0100` | `XOR`      | `A ← A ^ B`                        | `ZN`   |         |
-| `0101` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   |         |
-| `0110` | `AND`      | `A ← A & B`                        | `ZN`   |         |
-| `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2)     |
+| `0100` | `XOR`      | `A ← A ^ B`                        | `ZN`   | (6)     |
+| `0101` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   | (6)     |
+| `0110` | `AND`      | `A ← A & B`                        | `ZN`   | (6)     |
+| `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2)(6)  |
 | `1000` | `STORE`    | `MEM[A] ← B`                       | None   |         |
 | `1001` | `LOAD`     | `A ← MEM[B]`                       | None   |         |
 | `1010` | `MOV`      | `A ← B`                            | None   |         |
@@ -85,6 +85,7 @@ TODO: This is a baseline, very much still floating
 3) Designed to allow for building a larger immediate value. To reach the full 16 bit one extra `NOT` instruction may be required.
 4) Primary indent is that these are used with immediate. Exact assignment of ports is still floating. At least the level IO and the CPU status/extension control should be present.
 5) While logical left and right shift are not defined, they can be emulated with the existing instructions.
+6) The C and O flags are in an undefined state after execution of these instructions
 
 #### Input and Output Instructions
 
