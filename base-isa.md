@@ -74,10 +74,10 @@ TODO: This is a baseline, very much still floating
 | `1001` | `LOAD`     | `A ← MEM[B]`                       | None   |         |
 | `1010` | `MOV`      | `A ← B`                            | None   |         |
 | `1011` |            |                                    |        |         |
-| `1100` | `OUTPUT`   | `PORT[B] ← A`                      | None   | (4)     |
-| `1101` | `INPUT`    | `A ← PORT[B]`                      | None   | (4)     |
-| `1110` | `SHIFT_OR` | <code>A ← (A << 5) &#124; B</code> | None   | (3)     |
-| `1111` | `ASHR`     | `A ← A >> B`                       | None   | (5)     |
+| `1100` | `OUT`      | `PORT[B] ← A`                      | None   | (4)     |
+| `1101` | `IN`       | `A ← PORT[B]`                      | None   | (4)     |
+| `1110` | `SLO`      | <code>A ← (A << 5) &#124; B</code> | None   | (3)     |
+| `1111` | `SAR`      | `A ← A >> B`                       | None   | (5)     |
 
 
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
