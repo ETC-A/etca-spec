@@ -24,8 +24,9 @@ The highest two bits of the first byte are a format marker:
 | `01 01 CCCC`  | `RRR IIIII`  | Immediate and 1 register computation     |
 | `10 0 0 CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction  |
 | `10 0 1 CCCC` | `IIIIIIII`   | (conditional) absolute jump instruction  |
-| `10 1 ?????`  | `?????????`  | floating                                 |
+| `10 1 ?????`  | `?????????`  | reserved for extension                   |
 | `00 SS CCCC`  | `RRR RRR 00` | when `SS != 01`, reserved for extensions |
+| `00 01 CCCC`  | `RRR RRR ??` | when `?? != 00`, floating                |
 | `01 SS CCCC`  | `RRR IIIII`  | when `SS != 01`, reserved for extensions |
 | `11 ??????`   | `?????????`  | reserved for extensions                  |
 
@@ -58,30 +59,30 @@ operand `B`. The immediate is sign extended for for all operations except bitwis
 
 TODO: This is a baseline, very much still floating
 
-| `CCCC` | NAME    | Operation                      | Flags  | Comment |
-|--------|---------|--------------------------------|--------|---------|
-| `0000` | `ADD`   | `A ← A + B`                    | `ZNCO` |         |
-| `0001` | `SUB`   | `A ← A - B`                    | `ZNCO` |         |
-| `0010` | `CMP`   | `_ ← A - B`                    | `ZNCO` |         |
-| `0011` | `RSUB`  | `A ← B - A`                    | `ZNCO` |  (1,2)  |
-| `0100` | `AND`   | `A ← A & B`                    | `ZN`   |         |
-| `0101` | `OR`    | <code>A ← A &#124; B</code>    | `ZN`   |         |
-| `0110` | `XOR`   | `A ← A ^ B`                    | `ZN`   |         |
-| `0111` | `NOR`   | <code>A ← ~(A &#124; B)</code> | `ZN`   |   (2)   |
-| `1000` | `MOV`   | `A ← B`                        |  None  |         |
-| `1001` |         |                                |        |         |
-| `1010` | `STORE` | `MEM[A] ← B`                   |  None  |         |
-| `1011` | `LOAD`  | `A ← MEM[B]`                   |  None  |         |
-| `1100` |         |                                |        |         |
-| `1101` |         |                                |        |         |
-| `1110` | `TEST`  | `_ ← A & B`                    | `ZN`   |   (3)   |
-| `1111` |         |                                |        |         |
+| `CCCC` | NAME       | Operation                          | Flags  | Comment |
+|--------|------------|------------------------------------|--------|---------|
+| `0000` | `ADD`      | `A ← A + B`                        | `ZNCO` |         |
+| `0001` | `SUB`      | `A ← A - B`                        | `ZNCO` |         |
+| `0010` | `RSUB`     | `A ← B - A`                        | `ZNCO` | (1)     |
+| `0011` | `CMP`      | `_ ← A - B`                        | `ZNCO` | (2)     |
+| `0100` | `AND`      | `A ← A & B`                        | `ZN`   |         |
+| `0101` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   |         |
+| `0110` | `XOR`      | `A ← A ^ B`                        | `ZN`   |         |
+| `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2)     |
+| `1000` | `MOV`      | `A ← B`                            | None   |         |
+| `1001` | `SHIFT_OR` | <code>A ← (A << 5) &#124; B</code> | None   | (3)     |
+| `1010` | `STORE`    | `MEM[A] ← B`                       | None   |         |
+| `1011` | `LOAD`     | `A ← MEM[B]`                       | None   |         |
+| `1100` | `INPUT`    | `A ← PORT[B]`                      | None   | (4)     |
+| `1101` | `OUTPUT`   | `PORT[B] ← A`                      | None   | (4)     |
+| `1110` |            |                                    |        |         |
+| `1111` |            |                                    |        |         |
 
 
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
-2) Very much in flux, not entirely convinced we want these.
-3) Placed here for now to ease decoding; 3=2 & 1 => do not store result.
-
+2) Placed here for now to ease decoding; `1 & 2 & ~3` => do not store result.
+3) Designed to allow for building a larger immediate value. To reach the full 16 bit one extra `NOT` instruction may be required.
+4) Primary indent is that these are used with immediate. Exact assignment of ports is still floating. At least the level IO and the CPU status/extension control should be present.
 
 ## Jump Instructions
 
