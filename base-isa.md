@@ -21,13 +21,14 @@ The highest two bits of the first byte are a format marker:
 | First byte    | Second Byte  | Comment                                  |
 |:--------------|:-------------|:-----------------------------------------|
 | `00 01 CCCC`  | `RRR RRR 00` | 2 register computation                   |
+| `00 SS CCCC`  | `RRR RRR 00` | when `SS != 01`, reserved for extensions |
+| `00 01 CCCC`  | `RRR RRR ??` | when `?? != 00`, reserved for extensions |
+| `00 01 110?`  | `RRR RRR 00` | Reserved for extensions                  |
 | `01 01 CCCC`  | `RRR IIIII`  | Immediate and 1 register computation     |
+| `01 SS CCCC`  | `RRR IIIII`  | when `SS != 01`, reserved for extensions |
 | `10 0 0 CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction  |
 | `10 0 1 CCCC` | `IIIIIIII`   | (conditional) absolute jump instruction  |
 | `10 1 ?????`  | `?????????`  | reserved for extension                   |
-| `00 SS CCCC`  | `RRR RRR 00` | when `SS != 01`, reserved for extensions |
-| `00 01 CCCC`  | `RRR RRR ??` | when `?? != 00`, floating                |
-| `01 SS CCCC`  | `RRR IIIII`  | when `SS != 01`, reserved for extensions |
 | `11 ??????`   | `?????????`  | reserved for extensions                  |
 
 | Symbol | Meaning      |
@@ -73,16 +74,29 @@ TODO: This is a baseline, very much still floating
 | `1001` | `LOAD`     | `A ← MEM[B]`                       | None   |         |
 | `1010` | `MOV`      | `A ← B`                            | None   |         |
 | `1011` |            |                                    |        |         |
-| `1100` | `INPUT`    | `A ← PORT[B]`                      | None   | (4)     |
-| `1101` | `OUTPUT`   | `PORT[B] ← A`                      | None   | (4)     |
+| `1100` | `OUTPUT`   | `PORT[B] ← A`                      | None   | (4)     |
+| `1101` | `INPUT`    | `A ← PORT[B]`                      | None   | (4)     |
 | `1110` | `SHIFT_OR` | <code>A ← (A << 5) &#124; B</code> | None   | (3)     |
-| `1111` |            |                                    |        |         |
+| `1111` | `ASHR`     | `A ← A >> B`                       | None   | (5)     |
 
 
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
 2) Placed here for now to ease decoding; `1 & 2 & ~3` => do not store result.
 3) Designed to allow for building a larger immediate value. To reach the full 16 bit one extra `NOT` instruction may be required.
 4) Primary indent is that these are used with immediate. Exact assignment of ports is still floating. At least the level IO and the CPU status/extension control should be present.
+5) While logical left and right shift are not defined, they can be emulated with the existing instructions.
+
+#### Input and Output Instructions
+
+If the LSB of the port number is 0, then the port number refers to a control register. If the LSB of the port number is 1, then the port number refers to an IO device. Undefined control registers are reserved and reading from or writing to them is undefined behavior. No IO devices are specified and how they are used is implementation specific.
+
+| `CRN`  | NAME       | Description                                                                                                              | Comment |
+|--------|------------|--------------------------------------------------------------------------------------------------------------------------|---------|
+| `0000` | `CPUID`    | Reading from this control register puts the available CPU extensions in the destination register. Writing to it is a NOP | (1)     |
+| `0001` | `EXTEN`    | This control register specifies which available extensions are enabled or disabled.                                      | (2)     |
+
+1) CPUID uses a bitfield to specify the available extensions. A value of 0 means no extensions are available.
+2) This uses a bitfield in the same format as CPUID. Attempting to enable a non-available extension should leave the bit cleared. Attempting to disable a non-disableable extension should leave the bit set.
 
 ## Jump Instructions
 
@@ -110,3 +124,6 @@ Here the first byte has the format `10 0 M CCCC` where `M` is a mode that select
 | `1110` | always                  |                                  |         |
 | `1111` | never                   |                                  |         |
 
+### Execution of Reserved Instructions
+
+When executing a reserved instruction, the CPU should halt.
