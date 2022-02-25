@@ -53,7 +53,7 @@ The second byte has the format `AAA BBB 00` where `AAA` and `BBB` are references
 ### Immediate Computation
 
 For the `01` format the second byte has the format `RRR IIIII`, where the 5bit immediate acts as
-operand `B`. The immediate is sign extended for for all operations except bitwise logic operations.
+operand `B`. The immediate is sign extended for the first 12 operations.
 
 ### Opcodes
 
@@ -65,17 +65,17 @@ TODO: This is a baseline, very much still floating
 | `0001` | `SUB`      | `A ← A - B`                        | `ZNCO` |         |
 | `0010` | `RSUB`     | `A ← B - A`                        | `ZNCO` | (1)     |
 | `0011` | `CMP`      | `_ ← A - B`                        | `ZNCO` | (2)     |
-| `0100` | `AND`      | `A ← A & B`                        | `ZN`   |         |
+| `0100` | `XOR`      | `A ← A ^ B`                        | `ZN`   |         |
 | `0101` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   |         |
-| `0110` | `XOR`      | `A ← A ^ B`                        | `ZN`   |         |
+| `0110` | `AND`      | `A ← A & B`                        | `ZN`   |         |
 | `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2)     |
-| `1000` | `MOV`      | `A ← B`                            | None   |         |
-| `1001` | `SHIFT_OR` | <code>A ← (A << 5) &#124; B</code> | None   | (3)     |
-| `1010` | `STORE`    | `MEM[A] ← B`                       | None   |         |
-| `1011` | `LOAD`     | `A ← MEM[B]`                       | None   |         |
+| `1000` | `STORE`    | `MEM[A] ← B`                       | None   |         |
+| `1001` | `LOAD`     | `A ← MEM[B]`                       | None   |         |
+| `1010` | `MOV`      | `A ← B`                            | None   |         |
+| `1011` |            |                                    |        |         |
 | `1100` | `INPUT`    | `A ← PORT[B]`                      | None   | (4)     |
 | `1101` | `OUTPUT`   | `PORT[B] ← A`                      | None   | (4)     |
-| `1110` |            |                                    |        |         |
+| `1110` | `SHIFT_OR` | <code>A ← (A << 5) &#124; B</code> | None   | (3)     |
 | `1111` |            |                                    |        |         |
 
 
