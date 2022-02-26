@@ -70,14 +70,14 @@ TODO: This is a baseline, very much still floating
 | `0101` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   | (5)     |
 | `0110` | `AND`      | `A ← A & B`                        | `ZN`   | (5)     |
 | `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2) (5) |
-| `1000` | `STORE`    | `MEM[A] ← B`                       | None   |         |
-| `1001` | `LOAD`     | `A ← MEM[B]`                       | None   |         |
-| `1010` | `MOV`      | `A ← B`                            | None   |         |
-| `1011` |            |                                    |        |         |
-| `1100` | `OUT`      | `PORT[B] ← A`                      | None   | (4)     |
-| `1101` | `IN`       | `A ← PORT[B]`                      | None   | (4)     |
-| `1110` | `SLO`      | <code>A ← (A << 5) &#124; B</code> | None   | (3)     |
-| `1111` |            |                                    |        |         |
+| `1000` | `MOV`      | `A ← B`                            | None   |         |
+| `1001` |            |                                    |        |         |
+| `1010` | `LOAD`     | `A ← MEM[B]`                       | None   |         |
+| `1011` | `STORE`    | `MEM[A] ← B`                       | None   |         |
+| `1100` | `SLO`      | <code>A ← (A << 5) &#124; B</code> | None   | (3)     |
+| `1101` |            |                                    |        |         |
+| `1110` | `IN`       | `A ← PORT[B]`                      | None   | (4)     |
+| `1111` | `OUT`      | `PORT[B] ← A`                      | None   | (4)     |
 
 
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
