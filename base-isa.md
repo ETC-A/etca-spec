@@ -2,7 +2,7 @@
 
 - 16bit word size
 - 8 16bit registers
-- 4 flags set upon (some) ALU operations: Zero (`Z`), Negative (`N`), Carry (`C`), Overflow (`O`)
+- 4 flags set upon (some) ALU operations: Zero (`Z`), Negative (`N`), Carry (`C`), Overflow (`V`)
 
 # Base Instructions
 
@@ -62,14 +62,14 @@ TODO: This is a baseline, very much still floating
 
 | `CCCC` | NAME       | Operation                          | Flags  | Comment |
 |--------|------------|------------------------------------|--------|---------|
-| `0000` | `ADD`      | `A ← A + B`                        | `ZNCO` |         |
-| `0001` | `SUB`      | `A ← A - B`                        | `ZNCO` |         |
-| `0010` | `RSUB`     | `A ← B - A`                        | `ZNCO` | (1)     |
-| `0011` | `CMP`      | `_ ← A - B`                        | `ZNCO` | (2)     |
-| `0100` | `XOR`      | `A ← A ^ B`                        | `ZN`   | (6)     |
-| `0101` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   | (6)     |
-| `0110` | `AND`      | `A ← A & B`                        | `ZN`   | (6)     |
-| `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2) (6) |
+| `0000` | `ADD`      | `A ← A + B`                        | `ZNCV` |         |
+| `0001` | `SUB`      | `A ← A - B`                        | `ZNCV` |         |
+| `0010` | `RSUB`     | `A ← B - A`                        | `ZNCV` | (1)     |
+| `0011` | `CMP`      | `_ ← A - B`                        | `ZNCV` | (2)     |
+| `0100` | `XOR`      | `A ← A ^ B`                        | `ZN`   | (5)     |
+| `0101` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   | (5)     |
+| `0110` | `AND`      | `A ← A & B`                        | `ZN`   | (5)     |
+| `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2) (5) |
 | `1000` | `STORE`    | `MEM[A] ← B`                       | None   |         |
 | `1001` | `LOAD`     | `A ← MEM[B]`                       | None   |         |
 | `1010` | `MOV`      | `A ← B`                            | None   |         |
@@ -77,15 +77,14 @@ TODO: This is a baseline, very much still floating
 | `1100` | `OUT`      | `PORT[B] ← A`                      | None   | (4)     |
 | `1101` | `IN`       | `A ← PORT[B]`                      | None   | (4)     |
 | `1110` | `SLO`      | <code>A ← (A << 5) &#124; B</code> | None   | (3)     |
-| `1111` | `SAR`      | `A ← A >> B`                       | None   | (5)     |
+| `1111` |            |                                    |        |         |
 
 
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
 2) Placed here for now to ease decoding; `1 & 2 & ~3` => do not store result.
 3) Designed to allow for building a larger immediate value. To reach the full 16 bit one extra `NOT` instruction may be required.
 4) Primary intent is that these are used with immediate. Exact assignment of ports is still floating. At least the level IO and the CPU status/extension control should be present.
-5) While logical left and right shift are not defined, they can be emulated with the existing instructions.
-6) The C and O flags are in an undefined state after execution of these instructions. Implementations may do whatever is easiest. An extension may mandate a particular behavior, with good enough reason, but may *not* mandate that the value of these flags after the operation depends on their value before the operation.
+5) The C and O flags are in an undefined state after execution of these instructions. Implementations may do whatever is easiest. An extension may mandate a particular behavior, with good enough reason, but may *not* mandate that the value of these flags after the operation depends on their value before the operation.
 
 #### Input and Output Instructions
 
@@ -108,8 +107,8 @@ Here the first byte has the format `10 0 M CCCC` where `M` is a mode that select
 
 | `CCCC` | NAME                    | Flags                            | Comment |
 |--------|-------------------------|----------------------------------|---------|
-| `0000` | Overflow                | `O`                              |         |
-| `0001` | No Overflow             | `~O`                             |         |
+| `0000` | Overflow                | `V`                              |         |
+| `0001` | No Overflow             | `~V`                             |         |
 | `0010` | Negative                | `N`                              |         |
 | `0011` | Not Negative            | `~N`                             |         |
 | `0100` | Zero/Equal              | `Z`                              |         |
@@ -118,10 +117,10 @@ Here the first byte has the format `10 0 M CCCC` where `M` is a mode that select
 | `0111` | No carry/Above or equal | `~C`                             |         |
 | `1000` | below or equal          | <code> C &#124; Z</code>         |         |
 | `1001` | above                   | <code> ~(C &#124; Z) </code>     |         |
-| `1010` | less                    | `N != O`                         |         |
-| `1011` | greater or equal        | `N == O`                         |         |
-| `1100` | less or equal           | <code> Z &#124; (N ≠ O) </code>  |         |
-| `1101` | greater                 | <code> ~Z &amp; (N = O) </code>  |         |
+| `1010` | less                    | `N != V`                         |         |
+| `1011` | greater or equal        | `N == V`                         |         |
+| `1100` | less or equal           | <code> Z &#124; (N ≠ V) </code>  |         |
+| `1101` | greater                 | <code> ~Z &amp; (N = V) </code>  |         |
 | `1110` | always                  |                                  |         |
 | `1111` | never                   |                                  |         |
 
