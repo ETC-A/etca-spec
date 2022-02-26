@@ -26,8 +26,7 @@ The highest two bits of the first byte are a format marker:
 | `00 01 110?`  | `RRR RRR 00` | Reserved for extensions                  |
 | `01 01 CCCC`  | `RRR IIIII`  | Immediate and 1 register computation     |
 | `01 SS CCCC`  | `RRR IIIII`  | when `SS != 01`, reserved for extensions |
-| `10 0 0 CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction  |
-| `10 0 1 CCCC` | `IIIIIIII`   | (conditional) absolute jump instruction  |
+| `10 0 D CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction  |
 | `10 1 ?????`  | `?????????`  | reserved for extension                   |
 | `11 ??????`   | `?????????`  | reserved for extensions                  |
 
@@ -100,7 +99,7 @@ If the LSB of the port number is 0, then the port number refers to a control reg
 
 ## Jump Instructions
 
-Here the first byte has the format `10 0 M CCCC` where `M` is a mode that selects between a relative and an absolute jump. `CCCC` is the condition to check. The second byte is a single 8bit immediate representing the jump target. This immediate is signed when the jump mode is relative (`M=0`). When the mode is absolute (`M=1`) it replaces the low byte of the Program Counter. The high byte is preserved by absolute jumps.
+Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte of the displacement. `CCCC` is the condition to check. The second byte is a single 8bit immediate representing the low byte of the displacement. This combined 9 bit displacemnt (sign extended to 16 bits) is added to the address of the current instruction and stored in the program counter.
 
 ### Conditions
 
