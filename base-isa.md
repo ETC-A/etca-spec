@@ -21,9 +21,9 @@ The highest two bits of the first byte are a format marker:
 | First byte    | Second Byte  | Comment                                  |
 |:--------------|:-------------|:-----------------------------------------|
 | `00 01 CCCC`  | `RRR RRR 00` | 2 register computation                   |
-| `00 SS CCCC`  | `RRR RRR 00` | when `SS != 01`, reserved for extensions |
+| `00 SS CCCC`  | `RRR RRR ??` | when `SS != 01`, reserved for extensions |
 | `00 01 CCCC`  | `RRR RRR ??` | when `?? != 00`, reserved for extensions |
-| `00 01 110?`  | `RRR RRR 00` | Reserved for extensions                  |
+| `00 01 110?`  | `RRR RRR ??` | Reserved for extensions                  |
 | `01 01 CCCC`  | `RRR IIIII`  | Immediate and 1 register computation     |
 | `01 SS CCCC`  | `RRR IIIII`  | when `SS != 01`, reserved for extensions |
 | `10 0 D CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction  |
@@ -37,6 +37,7 @@ The highest two bits of the first byte are a format marker:
 |   I    | immediate    |
 |   D    | displacement |
 |   S    | size (res.d) |
+|   ?    | reserved for unkown purpose |
 
 
 ## Computation Instructions
@@ -83,7 +84,7 @@ TODO: This is a baseline, very much still floating
 2) Placed here for now to ease decoding; `xx11` => do not store result.
 3) Designed to allow for building a larger immediate value. To reach the full 16 bit one extra `NOT` instruction may be required.
 4) Primary intent is that these are used with immediate. Exact assignment of ports is still floating. At least the level IO and the CPU status/extension control should be present.
-5) The C and O flags are in an undefined state after execution of these instructions. Implementations may do whatever is easiest. An extension may mandate a particular behavior, with good enough reason, but may *not* mandate that the value of these flags after the operation depends on their value before the operation.
+5) The C and O flags are in an undefined state after execution of these instructions. Implementations may do whatever is easiest. An extension may mandate a particular behavior, with good enough reason, but must *not* mandate that the value of these flags after the operation depends on their value before the operation.
 
 #### Input and Output Instructions
 
@@ -97,9 +98,18 @@ If the LSB of the port number is 0, then the port number refers to a control reg
 1) CPUID uses a bitfield to specify the available extensions. A value of 0 means no extensions are available.
 2) This uses a bitfield in the same format as CPUID. Attempting to enable a non-available extension should leave the bit cleared. Attempting to disable a non-disableable extension should leave the bit set.
 
+## Flag Semantics
+
+Flags conceptually maintain these values. A future, more rigorous specification of this standard will include a detailed description of affected flags for every instruction individually.
+
+1) The `Z` flag indicates that the result was zero.
+2) The `N` flag indicates that the result, interpreted as a 2's complement number, was negative.
+3) The `C` flag describes whether an additive instruction caused a carry, or a subtractive computation caused a borrow. The concept of "borrow" is exactly the same as in long-hand decimal subtraction the way you might do it on paper. The flag is set if the subtraction would borrow out of the next most significant bit. A borrow happens precisely when the corresponding addition does _not_ carry. In other words, in order to subtract, you (a) complement the B input, (b) set the carry in, (c) set C to the inverse of the carryout.
+4) The `V` flag indicates that the operation caused overflow. This means that storing the result in the destination register caused a loss of precision.
+
 ## Jump Instructions
 
-Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte of the displacement. `CCCC` is the condition to check. The second byte is a single 8bit immediate representing the low byte of the displacement. This combined 9 bit displacemnt (sign extended to 16 bits) is added to the address of the current instruction and stored in the program counter.
+Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte of the displacement. `CCCC` is the condition to check. The second byte is a single 8bit immediate representing the low byte of the displacement. This combined 9 bit displacemnt (sign extended to 16 bits) is added to the base address of the current instruction and stored in the program counter.
 
 ### Conditions
 
@@ -116,8 +126,8 @@ Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte o
 | `0111` | No carry/Above or equal | `~C`                             |         |
 | `1000` | below or equal          | <code> C &#124; Z</code>         |         |
 | `1001` | above                   | <code> ~(C &#124; Z) </code>     |         |
-| `1010` | less                    | `N != V`                         |         |
-| `1011` | greater or equal        | `N == V`                         |         |
+| `1010` | less                    | `N = V`                          |         |
+| `1011` | greater or equal        | `N ≠ V`                          |         |
 | `1100` | less or equal           | <code> Z &#124; (N ≠ V) </code>  |         |
 | `1101` | greater                 | <code> ~Z &amp; (N = V) </code>  |         |
 | `1110` | always                  |                                  |         |
@@ -125,4 +135,4 @@ Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte o
 
 ### Execution of Reserved Instructions
 
-When executing a reserved instruction, the CPU should halt.
+When executing a reserved instruction, the CPU must halt normal execution of the program. This can mean Halt and Catch Fire, halt and wait to be interrupted, trigger an interrupt, or other such behaviors. A future extension is expected to tighten this restriction to "the CPU must trigger a specified interrupt."
