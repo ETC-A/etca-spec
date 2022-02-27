@@ -36,9 +36,9 @@ Such jumps are usually a short distance compared to absolute jumps or calls. Wit
 This instruction is "shift-left 5 bits, then OR." Since the base ISA only has 5-bit immediate formats, it is very difficult to build larger constant values with typical operations.
 The `slo` operation can be used to build any 16-bit immediate in at most 4 instructions, and most in 3. The first one or two instructions are from the following lines:
 ```
-[addi r,1]; [slo r,imm[13:10]] if bit 16 is to be set but bit 15 is not
-[addi r,imm[14:10]] if bits 16 and 15 are both to be set
-[slo  r,imm[14:10]] if bit 16 is not to be set
+[addi r,1]; [slo r,imm[13:10]] if bit 15 is to be set but bit 14 is not
+[addi r,imm[14:10]] if bits 15 and 14 are both to be set (this addi will cause sign extension)
+[slo  r,imm[14:10]] if bit 15 is not to be set
 ```
 This puts the top 6 bits in `r[5:0]`. The remainder of the construction is `slo r,imm[9:5]; slo r,imm[4:0]`.
 
