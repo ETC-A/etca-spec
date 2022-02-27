@@ -57,7 +57,7 @@
 {
     cpuid => 0`5
     exten => 1`5
-    cr{c: u5} => c
+    cr{c: u4} => c
 }
 
 
@@ -71,8 +71,8 @@
     mov {target: register}, [{pointer: s5}] => asm {load {target}, pointer}
     mov [{pointer: s5}], {source: register} => asm {store {pointer}, {source}}
 
-    inp {target: register}, {port: u5} => asm {port_read {target}, port @ 0b1}
-    out {source: register}, {port: u5} => asm {port_write {source}, port @ 0b1}
+    inp {target: register}, {port: u4} => asm {port_read {target}, port @ 0b1}
+    out {source: register}, {port: u4} => asm {port_write {source}, port @ 0b1}
 
     mov {target: register}, {control: control_register} => asm {port_read {target}, control @ 0b0}
     mov {control: control_register}, {source: register} => asm {port_write {source}, control @ 0b0}

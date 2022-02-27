@@ -23,8 +23,8 @@ The highest two bits of the first byte are a format marker:
 | `00 01 CCCC`  | `RRR RRR 00` | 2 register computation                   |
 | `00 SS CCCC`  | `RRR RRR ??` | when `SS != 01`, reserved for extensions |
 | `00 01 CCCC`  | `RRR RRR ??` | when `?? != 00`, reserved for extensions |
-| `00 01 111?`  | `RRR RRR ??` | Reserved for extensions                  |
-| `01 01 CCCC`  | `RRR IIIII`  | Immediate and 1 register computation     |
+| `00 01 11??`  | `RRR RRR ??` | reserved for extensions                  |
+| `01 01 CCCC`  | `RRR IIIII`  | immediate and 1 register computation     |
 | `01 SS CCCC`  | `RRR IIIII`  | when `SS != 01`, reserved for extensions |
 | `10 0 D CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction  |
 | `10 1 ?????`  | `?????????`  | reserved for extension                   |
@@ -60,24 +60,24 @@ operand `B`. The immediate is sign extended for the first 12 operations.
 
 TODO: This is a baseline, very much still floating
 
-| `CCCC` | NAME       | Operation                          | Flags  | Comment |
-|--------|------------|------------------------------------|--------|---------|
-| `0000` | `ADD`      | `A ← A + B`                        | `ZNCV` |         |
-| `0001` | `SUB`      | `A ← A - B`                        | `ZNCV` |         |
-| `0010` | `RSUB`     | `A ← B - A`                        | `ZNCV` | (1)     |
-| `0011` | `CMP`      | `_ ← A - B`                        | `ZNCV` | (2)     |
-| `0100` | `XOR`      | `A ← A ^ B`                        | `ZN`   | (5)     |
-| `0101` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   | (5)     |
-| `0110` | `AND`      | `A ← A & B`                        | `ZN`   | (5)     |
-| `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2) (5) |
-| `1000` | `MOV`      | `A ← B`                            | None   |         |
-| `1001` |            |                                    |        |         |
-| `1010` | `LOAD`     | `A ← MEM[B]`                       | None   |         |
-| `1011` | `STORE`    | `MEM[A] ← B`                       | None   | (2)     |
-| `1100` | `SLO`      | <code>A ← (A << 5) &#124; B</code> | None   | (3)     |
-| `1101` |            |                                    |        |         |
-| `1110` | `IN`       | `A ← PORT[B]`                      | None   | (4)     |
-| `1111` | `OUT`      | `PORT[B] ← A`                      | None   | (2) (4) |
+| `CCCC` | NAME       | Operation                          | Flags  | Comment     |
+|--------|------------|------------------------------------|--------|-------------|
+| `0000` | `ADD`      | `A ← A + B`                        | `ZNCV` |             |
+| `0001` | `SUB`      | `A ← A - B`                        | `ZNCV` |             |
+| `0010` | `RSUB`     | `A ← B - A`                        | `ZNCV` | (1)         |
+| `0011` | `CMP`      | `_ ← A - B`                        | `ZNCV` | (2)         |
+| `0100` | `XOR`      | `A ← A ^ B`                        | `ZN`   | (5)         |
+| `0101` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   | (5)         |
+| `0110` | `AND`      | `A ← A & B`                        | `ZN`   | (5)         |
+| `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2) (5)     |
+| `1000` | `MOV`      | `A ← B`                            | None   |             |
+| `1001` |            |                                    |        |             |
+| `1010` | `LOAD`     | `A ← MEM[B]`                       | None   |             |
+| `1011` | `STORE`    | `MEM[A] ← B`                       | None   | (2)         |
+| `1100` | `SLO`      | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
+| `1101` |            |                                    |        |             |
+| `1110` | `IN`       | `A ← PORT[B]`                      | None   | (4) (6)     |
+| `1111` | `OUT`      | `PORT[B] ← A`                      | None   | (2) (4) (6) |
 
 
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
@@ -85,6 +85,7 @@ TODO: This is a baseline, very much still floating
 3) Designed to allow for building a larger immediate value. To reach the full 16 bit one extra `NOT` instruction may be required.
 4) Primary intent is that these are used with immediate. Exact assignment of ports is still floating. At least the level IO and the CPU status/extension control should be present.
 5) The C and O flags are in an undefined state after execution of these instructions. Implementations may do whatever is easiest. An extension may mandate a particular behavior, with good enough reason, but must *not* mandate that the value of these flags after the operation depends on their value before the operation.
+6) These instructions do not have a 2 register mode. The corresponding bit patterns (`00 SS 11??`) for the first byte are reserved. This can easily be detected by using similar to 2)
 
 #### Input and Output Instructions
 
