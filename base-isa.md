@@ -30,14 +30,14 @@ The highest two bits of the first byte are a format marker:
 | `10 1 ?????`  | `?????????`  | reserved for extension                   |
 | `11 ??????`   | `?????????`  | reserved for extensions                  |
 
-| Symbol | Meaning      |
-|--------|--------------|
-|   C    | opcode bit   |
-|   R    | register id  |
-|   I    | immediate    |
-|   D    | displacement |
-|   S    | size (res.d) |
-|   ?    | reserved for unkown purpose |
+| Symbol | Meaning                      |
+|--------|------------------------------|
+| C      | opcode bit                   |
+| R      | register id                  |
+| I      | immediate                    |
+| D      | displacement                 |
+| S      | size (res.d)                 |
+| ?      | reserved for unknown purpose |
 
 
 ## Computation Instructions
@@ -109,7 +109,7 @@ Flags conceptually maintain these values. A future, more rigorous specification 
 
 ## Jump Instructions
 
-Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte of the displacement. `CCCC` is the condition to check. The second byte is a single 8bit immediate representing the low byte of the displacement. This combined 9 bit displacemnt (sign extended to 16 bits) is added to the base address of the current instruction and stored in the program counter.
+Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte of the displacement. `CCCC` is the condition to check. The second byte is a single 8bit immediate representing the low byte of the displacement. This combined 9 bit displacement (sign extended to 16 bits) is added to the base address of the current instruction and stored in the program counter.
 
 ### Conditions
 
