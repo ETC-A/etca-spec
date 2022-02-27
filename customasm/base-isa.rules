@@ -1,13 +1,6 @@
 #subruledef register
 {
-    r0 => 0o0
-    r1 => 0o1
-    r2 => 0o2
-    r3 => 0o3
-    r4 => 0o4
-    r5 => 0o5
-    r6 => 0o6
-    r7 => 0o7
+    r{reg: u3} => reg
 }
 #subruledef computation
 {
@@ -28,8 +21,8 @@
 
     slo => 0xC
 
-    in => 0xE ; not happy with the name, even as a base opcode that is supposed to be aliased
-    out => 0xF
+    port_read => 0xE
+    port_write => 0xF
 
 }
 
@@ -60,6 +53,13 @@
     jump => 0xF
 }
 
+#subruledef control_register
+{
+    cpuid => 0`5
+    exten => 1`5
+    cr{c: u5} => c
+}
+
 
 #ruledef
 {
@@ -70,6 +70,12 @@
     mov [{pointer: register}], {source: register} => asm {store {pointer}, {source}}
     mov {target: register}, [{pointer: s5}] => asm {load {target}, pointer}
     mov [{pointer: s5}], {source: register} => asm {store {pointer}, {source}}
+
+    inp {target: register}, {port: u5} => asm {port_read {target}, port @ 0b1}
+    out {source: register}, {port: u5} => asm {port_write {source}, port @ 0b1}
+
+    mov {target: register}, {control: control_register} => asm {port_read {target}, control @ 0b0}
+    mov {control: control_register}, {source: register} => asm {port_write {source}, control @ 0b0}
 }
 
 #ruledef
@@ -81,4 +87,6 @@
             assert(reladdr < 256)
             0b10 @ 0b0 @ reladdr[8:8] @ opcode @ reladdr[7:0]
         }
+
+    nop => asm {jump_never $}
 }
