@@ -117,14 +117,14 @@ Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte o
 
 | `CCCC` | NAME                    | Flags                            | Comment |
 |--------|-------------------------|----------------------------------|---------|
-| `0000` | Overflow                | `V`                              |         |
-| `0001` | No Overflow             | `~V`                             |         |
+| `0000` | Zero/Equal              | `Z`                              |         |
+| `0001` | Not zero/Not equal      | `~Z`                             |         |
 | `0010` | Negative                | `N`                              |         |
 | `0011` | Not Negative            | `~N`                             |         |
-| `0100` | Zero/Equal              | `Z`                              |         |
-| `0101` | Not zero/Not equal      | `~Z`                             |         |
-| `0110` | Carry/Below             | `C`                              |         |
-| `0111` | No carry/Above or equal | `~C`                             |         |
+| `0100` | Carry/Below             | `C`                              |         |
+| `0101` | No carry/Above or equal | `~C`                             |         |
+| `0110` | Overflow                | `V`                              |         |
+| `0111` | No Overflow             | `~V`                             |         |
 | `1000` | below or equal          | <code> C &#124; Z</code>         |         |
 | `1001` | above                   | <code> ~(C &#124; Z) </code>     |         |
 | `1010` | less                    | `N ≠ V`                          |         |
