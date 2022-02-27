@@ -10,3 +10,12 @@
 - Operations that modify flags _must_ modify them as if the operation was for 8 bit values.
 - Memory stores in this mode _must_ only affect the 8 bit section that is being written to.
 - The corresponding bit for this extension in the CPUID and EXTEN control registers is bit 0
+
+# Added Instructions
+
+| First byte    | Name | Comment                                                 |
+|:--------------|:-----|:--------------------------------------------------------|
+| `110 00 000`  | nop  | single byte no-op                                       |
+| `110 00 ???`  |      | when `??? != 000`, reserved for extensions              |
+| `110 01 RRR`  | zexh | zero extend register `RRR` from 8 bits to register size |
+| `110 1? ???`  |      | reserved for extensions                                 |
