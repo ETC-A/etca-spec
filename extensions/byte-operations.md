@@ -1,6 +1,6 @@
 # General design
 
-## Extension State: Under Development
+**Extension State: Under Development**
 
 - The SS bits in the calculation opcode can now be set to 00.
 - When the SS bits are set to 00, the calculation is performed as if the operation was for 8 bit values.
