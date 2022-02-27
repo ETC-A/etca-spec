@@ -55,15 +55,19 @@
 
 #subruledef control_register
 {
-    cpuid => 0`5
-    exten => 1`5
+    cpuid => 0`4
+    exten => 1`4
     cr{c: u4} => c
 }
 
 
 #ruledef
 {
-    {opcode: computation} {target: register}, {value: register} => 0b00 @ 0b01 @ opcode @ target @ value @ 0b00
+    {opcode: computation} {target: register}, {value: register} =>
+        {
+            assert(opcode < 0b1100),
+            0b00 @ 0b01 @ opcode @ target @ value @ 0b00
+        }
     {opcode: computation} {target: register}, {value: s5} => 0b01 @ 0b01 @ opcode @ target @ value
 
     mov {target: register}, [{pointer: register}] => asm {load {target}, pointer}

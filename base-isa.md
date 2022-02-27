@@ -127,8 +127,8 @@ Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte o
 | `0111` | No carry/Above or equal | `~C`                             |         |
 | `1000` | below or equal          | <code> C &#124; Z</code>         |         |
 | `1001` | above                   | <code> ~(C &#124; Z) </code>     |         |
-| `1010` | less                    | `N = V`                          |         |
-| `1011` | greater or equal        | `N ≠ V`                          |         |
+| `1010` | less                    | `N ≠ V`                          |         |
+| `1011` | greater or equal        | `N = V`                          |         |
 | `1100` | less or equal           | <code> Z &#124; (N ≠ V) </code>  |         |
 | `1101` | greater                 | <code> ~Z &amp; (N = V) </code>  |         |
 | `1110` | always                  |                                  |         |
