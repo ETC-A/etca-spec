@@ -2,6 +2,10 @@
 
 **Extension State: Under Development**
 
+**Enabled by default: yes**
+
+**Always enabled: yes**
+
 - The SS bits in the calculation opcode can now be set to 00.
 - When the SS bits are set to 00, the calculation is performed as if the operation was for 8 bit values.
 - Operations that write to a register _must_ sign extend the value to the register's width before writing it to the register.
