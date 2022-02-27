@@ -1,0 +1,84 @@
+#subruledef register
+{
+    r0 => 0o0
+    r1 => 0o1
+    r2 => 0o2
+    r3 => 0o3
+    r4 => 0o4
+    r5 => 0o5
+    r6 => 0o6
+    r7 => 0o7
+}
+#subruledef computation
+{
+    add => 0x0
+    sub => 0x1
+    rsub => 0x2
+    comp => 0x2
+
+    xor => 0x4
+    or => 0x5
+    and => 0x6
+    test => 0x7
+
+    mov => 0x8
+
+    load => 0xA
+    store => 0xB
+
+    slo => 0xC
+
+    in => 0xE ; not happy with the name, even as a base opcode that is supposed to be aliased
+    out => 0xF
+
+}
+
+#subruledef jump_name
+{
+    jo => 0x0
+    jno => 0x1
+
+    js => 0x2
+    jns => 0x3
+
+    je => 0x4
+    jne => 0x5
+
+    jb => 0x6
+    jae => 0x7
+
+    jbe => 0x8
+    ja => 0x9
+
+    jl => 0xA
+    jge => 0xB
+
+    jle => 0xC
+    jg => 0xD
+
+    jump_never => 0xE
+    jump => 0xF
+}
+
+
+#ruledef
+{
+    {opcode: computation} {target: register}, {value: register} => 0b00 @ 0b01 @ opcode @ target @ value @ 0b00
+    {opcode: computation} {target: register}, {value: s5} => 0b01 @ 0b01 @ opcode @ target @ value
+
+    mov {target: register}, [{pointer: register}] => asm {load {target}, pointer}
+    mov [{pointer: register}], {source: register} => asm {store {pointer}, {source}}
+    mov {target: register}, [{pointer: s5}] => asm {load {target}, pointer}
+    mov [{pointer: s5}], {source: register} => asm {store {pointer}, {source}}
+}
+
+#ruledef
+{
+    {opcode: jump_name} {addr} =>
+        {
+            reladdr = addr - $
+            assert(-256 <= reladdr)
+            assert(reladdr < 256)
+            0b10 @ 0b0 @ reladdr[8:8] @ opcode @ reladdr[7:0]
+        }
+}
