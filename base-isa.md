@@ -23,7 +23,7 @@ The highest two bits of the first byte are a format marker:
 | `00 01 CCCC`  | `RRR RRR 00` | 2 register computation                   |
 | `00 SS CCCC`  | `RRR RRR ??` | when `SS != 01`, reserved for extensions |
 | `00 01 CCCC`  | `RRR RRR ??` | when `?? != 00`, reserved for extensions |
-| `00 01 110?`  | `RRR RRR ??` | Reserved for extensions                  |
+| `00 01 111?`  | `RRR RRR ??` | Reserved for extensions                  |
 | `01 01 CCCC`  | `RRR IIIII`  | Immediate and 1 register computation     |
 | `01 SS CCCC`  | `RRR IIIII`  | when `SS != 01`, reserved for extensions |
 | `10 0 D CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction  |
