@@ -19,5 +19,3 @@
 | `110 00 ???`  |      | when `??? != 000`, reserved for extensions              |
 | `110 01 RRR`  | zexh | zero extend register `RRR` from 8 bits to register size |
 | `110 1? ???`  |      | reserved for extensions                                 |
-
- **Note:** Hardware which does not support variable width instructions can fill the second byte with a no-op byte.
