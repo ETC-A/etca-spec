@@ -36,13 +36,10 @@ Such jumps are usually a short distance compared to absolute jumps or calls. Wit
 This instruction is "shift-left 5 bits, then OR." Since the base ISA only has 5-bit immediate formats, it is very difficult to build larger constant values with typical operations.
 The `slo` operation can be used to build any 16-bit immediate in at most 4 instructions, and most in 3. The first one or two instructions are from the following lines:
 ```
-[addi r,1]; [slo r,imm[13:10]] if bit 15 is to be set but bit 14 is not
-[addi r,imm[14:10]] if bits 15 and 14 are both to be set (this addi will cause sign extension)
-[slo  r,imm[14:10]] if bit 15 is not to be set
+[movi r,imm[14:10]]                      if bit 15 is the same as bit 14 (this will cause sign extension)
+[movi r,imm[15]]; [slo r,imm[13:10]]     if bit 15 is different than bit 15
 ```
 This puts the top 6 bits in `r[5:0]`. The remainder of the construction is `slo r,imm[9:5]; slo r,imm[4:0]`.
-
-`slo` can also be used with two register operands. We do not anticipate this being common, but it simplifies decoding [approchable].
 
 ### C and O flags: undefined after logic
 

@@ -130,3 +130,20 @@
     nop => asm {jump_never $}
     hlt => asm{jmp $}
 }
+
+#ruledef
+{
+    mov {target: register}, {value: s16} =>
+        {
+            (value[15:15] == value[14:14]) ?
+                0b01 @ 0b01 @ 0x8 @ target @ value[14:10] @ asm {
+                    slo {target}, value[9:5]
+                    slo {target}, value[4:0]
+                }
+              : 0b01 @ 0b01 @ 0x8 @ target @ 0b0000 @ value[15:15] @ asm {
+                    slo {target}, value[14:10]
+                    slo {target}, value[9:5]
+                    slo {target}, value[4:0]
+              }
+        }
+}
