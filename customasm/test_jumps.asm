@@ -1,7 +1,10 @@
 #include "customasm/base-isa.rules"
 
 #ruledef {
-    halt => asm {out r0, 1}
+    halt => asm {
+        out r0, 1
+        jmp $
+    }
 }
 jump test_zero_flag_on
 
