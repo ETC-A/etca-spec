@@ -14,8 +14,10 @@
 
 # Added Instructions
 
-The following calculation opcode is now defined. This instruction follows the same semantics as MOV except that the value written to the destination register is zero extended to the register's full width. `MOVSX` is also now an alias for the pre-existing `MOV` instruction.
+The following calculation opcode is now defined. This instruction follows the same semantics as MOV except that the value written to the destination register is zero extended to the register's full width. `MOVS` is also now an alias for the pre-existing `MOV` instruction.
 
 | `CCCC` | NAME       | Operation                          | Flags  | Comment     |
 |--------|------------|------------------------------------|--------|-------------|
-| `1000` | `MOVZX`    | `A ← B`                            | None   |             |
+| `1000` | `MOVZ`     | `A ← B`                            | None   |             |
+
+As an example, `movz r0, -1` with the SS bits set to 00 will store the value 255 in rx0.
