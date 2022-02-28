@@ -66,8 +66,8 @@ TODO: This is a baseline, very much still floating
 | `0001` | `SUB`      | `A ← A - B`                        | `ZNCV` |             |
 | `0010` | `RSUB`     | `A ← B - A`                        | `ZNCV` | (1)         |
 | `0011` | `CMP`      | `_ ← A - B`                        | `ZNCV` | (2)         |
-| `0100` | `XOR`      | `A ← A ^ B`                        | `ZN`   | (5)         |
-| `0101` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   | (5)         |
+| `0100` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   | (5)         |
+| `0101` | `XOR`      | `A ← A ^ B`                        | `ZN`   | (5)         |
 | `0110` | `AND`      | `A ← A & B`                        | `ZN`   | (5)         |
 | `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2) (5)     |
 | `1000` | `MOV`      | `A ← B`                            | None   |             |
