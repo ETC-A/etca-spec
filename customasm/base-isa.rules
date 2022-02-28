@@ -32,6 +32,7 @@
     jump_equal => 0x0
     jz => 0x0
     je => 0x0
+    jeq => 0x0
 
     jump_not_zero => 0x1
     jump_not_equal => 0x1
@@ -68,6 +69,7 @@
 
     jump_less => 0xA
     jl => 0xA
+    jlt => 0xA
 
     jump_greater_or_equal => 0xB
     jge => 0xB
@@ -77,10 +79,13 @@
 
     jump_greater => 0xD
     jg => 0xD
+    jgt => 0xD
 
     jump_never => 0xE
+    nop => 0xE
 
     jump => 0xF
+    jmp => 0xF
 }
 
 #subruledef control_register
