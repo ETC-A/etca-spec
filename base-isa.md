@@ -70,8 +70,8 @@ TODO: This is a baseline, very much still floating
 | `0101` | `XOR`      | `A ← A ^ B`                        | `ZN`   | (5)         |
 | `0110` | `AND`      | `A ← A & B`                        | `ZN`   | (5)         |
 | `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2) (5)     |
-| `1000` | `MOV`      | `A ← B`                            | None   |             |
-| `1001` |            |                                    |        |             |
+| `1000` |            |                                    |        |             |
+| `1001` | `MOV`      | `A ← B`                            | None   |             |
 | `1010` | `LOAD`     | `A ← MEM[B]`                       | None   |             |
 | `1011` | `STORE`    | `MEM[A] ← B`                       | None   | (2)         |
 | `1100` | `SLO`      | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
