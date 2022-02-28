@@ -3,7 +3,7 @@
 #ruledef {
     halt => asm {
         out r0, 1
-        jmp $
+        hlt
     }
 }
 jump test_zero_flag_on
