@@ -14,9 +14,8 @@
 
 # Added Instructions
 
-| First byte    | Name | Comment                                                 |
-|:--------------|:-----|:--------------------------------------------------------|
-| `110 00 000`  | nop  | single byte no-op                                       |
-| `110 00 ???`  |      | when `??? != 000`, reserved for extensions              |
-| `110 01 RRR`  | zexh | zero extend register `RRR` from 8 bits to register size |
-| `110 1? ???`  |      | reserved for extensions                                 |
+The following calculation opcode is now defined. This instruction follows the same semantics as MOV except that the value written to the destination register is zero extended to the register's full width. `MOVSX` is also now an alias for the pre-existing `MOV` instruction.
+
+| `CCCC` | NAME       | Operation                          | Flags  | Comment     |
+|--------|------------|------------------------------------|--------|-------------|
+| `1000` | `MOVZX`    | `A ← B`                            | None   |             |
