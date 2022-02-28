@@ -98,7 +98,7 @@
             assert(opcode < 0b1100),
             0b00 @ 0b01 @ opcode @ target @ value @ 0b00
         }
-    {opcode: computation} {target: register}, {value: s5} => 0b01 @ 0b01 @ opcode @ target @ value
+    {opcode: computation} {target: register}, {value: i5} => 0b01 @ 0b01 @ opcode @ target @ value
 
     mov {target: register}, [{pointer: register}] => asm {load {target}, pointer}
     mov [{pointer: register}], {source: register} => asm {store {pointer}, {source}}
