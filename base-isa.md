@@ -3,6 +3,7 @@
 - 16bit word size
 - 8 16bit registers
 - 4 flags set upon (some) ALU operations: Zero (`Z`), Negative (`N`), Carry (`C`), Overflow (`V`)
+- CPU Execution starts at address 0x8000
 
 # Base Instructions
 
