@@ -28,28 +28,58 @@
 
 #subruledef jump_name
 {
-    jo => 0x0
-    jno => 0x1
+    jump_zero => 0x0
+    jump_equal => 0x0
+    jz => 0x0
+    je => 0x0
 
-    js => 0x2
-    jns => 0x3
+    jump_not_zero => 0x1
+    jump_not_equal => 0x1
+    jnz => 0x1
+    jne => 0x1
 
-    je => 0x4
-    jne => 0x5
+    jump_negative => 0x2
+    jn => 0x2
 
-    jb => 0x6
-    jae => 0x7
+    jump_not_negative => 0x3
+    jnn => 0x3
 
+    jump_carry => 0x4
+    jump_below => 0x4
+    jc => 0x4
+    jb => 0x4
+
+    jump_not_carry => 0x5
+    jump_above_or_equal => 0x5
+    jnc => 0x5
+    jae => 0x5
+
+    jump_overflow => 0x6
+    jo => 0x6
+
+    jump_not_overflow => 0x7
+    jno => 0x7
+
+    jump_below_or_equal => 0x8
     jbe => 0x8
+
+    jump_above => 0x9
     ja => 0x9
 
+    jump_less => 0xA
     jl => 0xA
+
+    jump_greater_or_equal => 0xB
     jge => 0xB
 
+    jump_less_or_equal => 0xC
     jle => 0xC
+
+    jump_greater => 0xD
     jg => 0xD
 
     jump_never => 0xE
+
     jump => 0xF
 }
 
