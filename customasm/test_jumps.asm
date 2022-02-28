@@ -127,23 +127,15 @@ test_not_equal:
     comp  r0, 1
 
     jump_equal             fail
-    jump_below_or_equal    fail
-    jump_above_or_equal    fail
-    jump_less_or_equal     fail
-    jump_greater_or_equal  fail
 
     jump_not_equal         .success_1
     error_halt
   .success_1:
     jump_below             .success_2
+    jump_above             .success_2
     error_halt
   .success_2:
-    jump_above             .success_3
-    error_halt
-  .success_3:
-    jump_less              .success_4
-    error_halt
-  .success_4:
+    jump_less              test_ucomp_1
     jump_greater           test_ucomp_1
     error_halt
 
