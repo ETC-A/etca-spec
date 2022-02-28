@@ -81,11 +81,11 @@
     jg => 0xD
     jgt => 0xD
 
-    jump_never => 0xE
-    nop => 0xE
+    jump => 0xE
+    jmp => 0xE
 
-    jump => 0xF
-    jmp => 0xF
+    jump_never => 0xF
+    nop => 0xF
 }
 
 #subruledef control_register
@@ -128,4 +128,5 @@
         }
 
     nop => asm {jump_never $}
+    hlt => asm{jmp $}
 }
