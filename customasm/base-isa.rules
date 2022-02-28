@@ -150,3 +150,9 @@
               }
         }
 }
+
+#bankdef program {
+    #addr 0x8000
+    #size 0x8000
+    #outp 0
+}
