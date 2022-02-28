@@ -61,24 +61,24 @@ operand `B`. The immediate is sign extended for the first 12 operations.
 
 TODO: This is a baseline, very much still floating
 
-| `CCCC` | NAME       | Operation                          | Flags  | Comment     |
-|--------|------------|------------------------------------|--------|-------------|
-| `0000` | `ADD`      | `A ← A + B`                        | `ZNCV` |             |
-| `0001` | `SUB`      | `A ← A - B`                        | `ZNCV` |             |
-| `0010` | `RSUB`     | `A ← B - A`                        | `ZNCV` | (1)         |
-| `0011` | `CMP`      | `_ ← A - B`                        | `ZNCV` | (2)         |
-| `0100` | `OR`       | <code>A ← A &#124; B</code>        | `ZN`   | (5)         |
-| `0101` | `XOR`      | `A ← A ^ B`                        | `ZN`   | (5)         |
-| `0110` | `AND`      | `A ← A & B`                        | `ZN`   | (5)         |
-| `0111` | `TEST`     | `_ ← A & B`                        | `ZN`   | (2) (5)     |
-| `1000` |            |                                    |        |             |
-| `1001` | `MOV`      | `A ← B`                            | None   |             |
-| `1010` | `LOAD`     | `A ← MEM[B]`                       | None   |             |
-| `1011` | `STORE`    | `MEM[A] ← B`                       | None   | (2)         |
-| `1100` | `SLO`      | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
-| `1101` |            |                                    |        |             |
-| `1110` | `IN`       | `A ← PORT[B]`                      | None   | (4) (6)     |
-| `1111` | `OUT`      | `PORT[B] ← A`                      | None   | (2) (4) (6) |
+| `CCCC` | NAME                    | Operation                          | Flags  | Comment     |
+|--------|-------------------------|------------------------------------|--------|-------------|
+| `0000` | `ADD`                   | `A ← A + B`                        | `ZNCV` |             |
+| `0001` | `SUB`                   | `A ← A - B`                        | `ZNCV` |             |
+| `0010` | `RSUB`                  | `A ← B - A`                        | `ZNCV` | (1)         |
+| `0011` | `CMP`                   | `_ ← A - B`                        | `ZNCV` | (2)         |
+| `0100` | `OR`                    | <code>A ← A &#124; B</code>        | `ZN`   | (5)         |
+| `0101` | `XOR`                   | `A ← A ^ B`                        | `ZN`   | (5)         |
+| `0110` | `AND`                   | `A ← A & B`                        | `ZN`   | (5)         |
+| `0111` | `TEST`                  | `_ ← A & B`                        | `ZN`   | (2) (5)     |
+| `1000` | reserved for extension  |                                    |        |             |
+| `1001` | `MOV`                   | `A ← B`                            | None   |             |
+| `1010` | `LOAD`                  | `A ← MEM[B]`                       | None   |             |
+| `1011` | `STORE`                 | `MEM[A] ← B`                       | None   | (2)         |
+| `1100` | `SLO`                   | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
+| `1101` |                         |                                    |        |             |
+| `1110` | `IN`                    | `A ← PORT[B]`                      | None   | (4) (6)     |
+| `1111` | `OUT`                   | `PORT[B] ← A`                      | None   | (2) (4) (6) |
 
 
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
