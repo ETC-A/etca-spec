@@ -169,11 +169,14 @@ test_ucomp_2:
     jump_below_or_equal test_ucomp_3
     halt
 
+fail2:
+    halt
+
 test_ucomp_3:
     mov r0, -10
     comp r0, 5
-    jump_below fail
-    jump_below_or_equal fail
+    jump_below fail2
+    jump_below_or_equal fail2
     jump_above .success
     halt
   .success:
@@ -183,8 +186,8 @@ test_ucomp_3:
 test_ucomp_4:
     mov r0, 5
     comp r0, -10
-    jump_above fail
-    jump_above_or_equal fail
+    jump_above fail2
+    jump_above_or_equal fail2
     jump_below .success
     halt
   .success:
@@ -195,15 +198,12 @@ test_ucomp_4:
 test_scomp_1:
     mov r0, 10
     comp r0, 5
-    jump_less fail
-    jump_less_or_equal fail
+    jump_less fail2
+    jump_less_or_equal fail2
     jump_greater .success
     halt
   .success:
     jump_greater_or_equal test_scomp_2
-    halt
-
-fail2:
     halt
 
 test_scomp_2:
