@@ -3,6 +3,7 @@
 **Extension State: Under Development**  
 **Enabled by default: yes**  
 **Always enabled: yes**  
+**Requires: Base**  
 
 - The SS bits in the calculation opcode can now be set to 00.
 - When the SS bits are set to 00, the calculation is performed as if the operation was for 8 bit values.
