@@ -37,7 +37,7 @@ This instruction is "shift-left 5 bits, then OR." Since the base ISA only has 5-
 The `slo` operation can be used to build any 16-bit immediate in at most 4 instructions, and most in 3. The first one or two instructions are from the following lines:
 ```
 [movi r,imm[14:10]]                      if bit 15 is the same as bit 14 (this will cause sign extension)
-[movi r,imm[15]]; [slo r,imm[13:10]]     if bit 15 is different than bit 15
+[movi r,imm[15]]; [slo r,imm[14:10]]     if bit 15 is different than bit 15
 ```
 This puts the top 6 bits in `r[5:0]`. The remainder of the construction is `slo r,imm[9:5]; slo r,imm[4:0]`.
 
