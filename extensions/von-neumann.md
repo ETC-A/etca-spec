@@ -1,9 +1,9 @@
 # General design
 
-#### Extension State: Under Development
-#### Enabled by default: yes
-#### Always enabled: yes
-#### Requires: Base
+**Extension State: Under Development**  
+**Enabled by Default: Yes**  
+**Always Enabled: Yes**  
+**Requires: Base**  
 
 * Instruction and data memories must share an address space.
 * All addresses mapped to RAM must be coherently readable and writeable. They must also be executable, but not necessarily coherently.
@@ -17,7 +17,3 @@ machine has an instruction cache (even if it does not have a data cache), that c
 implementation must include at least one official caching extension that offers an instruction which acts as a cache coherence barrier.
 
 maybe we just specify it as a single bit that says "addresses are shared, implementations need not keep a coherent instruction cache but all addresses mapped to RAM must be coherently readable and writeable, and must also be executable (but not necessarily coherently). A future extension describing NX bits may relax this restriction but (as that requires paging) must not be enabled by default."
-
-# Added Instructions
-
-None.
