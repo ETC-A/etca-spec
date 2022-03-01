@@ -1,8 +1,8 @@
 # General design
 
 **Extension State: Under Development**  
-**Enabled by default: yes**  
-**Always enabled: yes**  
+**Enabled by Default: Yes**  
+**Always Enabled: Yes**  
 **Requires: Base**  
 
 - The SS bits in the calculation opcode can now be set to 00.
