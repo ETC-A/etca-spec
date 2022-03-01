@@ -40,6 +40,10 @@ The highest two bits of the first byte are a format marker:
 | S      | size (res.d)                 |
 | ?      | reserved for unknown purpose |
 
+### Execution of Reserved Instructions
+
+When executing a reserved instruction, the CPU must halt normal execution of the program. This can mean Halt and Catch Fire, halt and wait to be interrupted, trigger an interrupt, or other such behaviors. A future extension is expected to tighten this restriction to "the CPU must trigger a specified interrupt."
+
 
 ## Computation Instructions
 
@@ -134,7 +138,3 @@ Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte o
 | `1101` | greater                 | <code> ~Z &amp; (N = V) </code>  |         |
 | `1110` | always                  |                                  |         |
 | `1111` | never                   |                                  |         |
-
-### Execution of Reserved Instructions
-
-When executing a reserved instruction, the CPU must halt normal execution of the program. This can mean Halt and Catch Fire, halt and wait to be interrupted, trigger an interrupt, or other such behaviors. A future extension is expected to tighten this restriction to "the CPU must trigger a specified interrupt."
