@@ -37,7 +37,7 @@ This instruction is "shift-left 5 bits, then OR." Since the base ISA only has 5-
 The `slo` operation can be used to build any 16-bit immediate in at most 4 instructions, and most in 3. The first one or two instructions are from the following lines:
 ```
 [movi r,imm[14:10]]                      if bit 15 is the same as bit 14 (this will cause sign extension)
-[movi r,imm[15]]; [slo r,imm[14:10]]     if bit 15 is different than bit 15
+[movi r,imm[15]]; [slo r,imm[14:10]]     if bit 15 is different than bit 14
 ```
 This puts the top 6 bits in `r[5:0]`. The remainder of the construction is `slo r,imm[9:5]; slo r,imm[4:0]`.
 
@@ -51,3 +51,40 @@ There is another very important reason for not keeping the old values. Very adva
 a different order than they appear in the program binary, as long as the behavior of the program is unchanged. If flags could keep their own values even through instructions
 that modify the flags, then the dependency chain of instructions referring to the flags (called "data hazards") becomes very complicated and hard to track, preventing
 out-of-order execution on some cases where it should be possible.
+
+### Opcode Placement
+
+Opcodes are still moving around as people build and experiment with the ISA. We try to place opcodes so that decoding is as simple as possible. We are aware of at least 2 
+functional decoders as of 2/28/2022 which do not match _any_ complete opcodes. Opcodes are to be arranged so that particular control signals can be detected from particular bits
+with very little circuitry. For example, the pattern `01xxxxxx` can be recognized to enable a control line that switches the B operand from a register to an immediate.
+The pattern `0xxxxxCC` with `CC ≠ 11` enables storing the result in a register.
+
+Such patterns may be broken by future extensions, but the base ISA is to be as approachable as possible.
+
+### Undefined Behavior if Jumping to RAM
+
+Any useful "practical" general-purpose processor must support executing programs out of RAM. An OS needs to be able to copy a program from main memory to RAM, mark
+it as executable, and then execute it.
+
+However, getting this right is difficult for newcomers. The possibility of an instruction reading from its own address means that memory contention is already
+possible in the base ISA. For many people coming from the Turing Complete game, such memory conention is a completely new challenge. As such, the base ISA only specifies
+undefined behavior in these cases. The intent is that such machines will treat their whole address space as available RAM while reading instructions from separate memory.
+This is also a useful anti-specification for a future in embedded devices. Embedded devices are frequently tiny and can be more easily built if the program is known,
+stored in a ROM, and divided from data memory. By not requiring executable RAM, we ensure that programs can be compatible across a wider range of spec-compliant
+bare metal devices.
+
+Of course, an extension will indicate that the processor supports executable RAM.
+
+### `movs` and `movz`
+
+This section is mostly to record the contents of a discord discussion, which began with [this message](https://discord.com/channels/828292123936948244/946806826756882552/947890406631280670). 
+The discussion concerned potential `movs` and `movz` instructions, and their semantics. Endershadow noticed that `mov` already functions as `movs` regardless of
+the size bits (if extensions that use the sign bits are available) because it sign-extends its `src` argument to the _full_ width of the `dst` register.
+By placing `movz` nearby to `movs`, we could simplify decoding and make the most reasonable use of a reserved instruction slot.
+
+The question is what `movz` should do when it has a negative immediate argument. Are immediates to be sign extended, as is the default behavior for instructions
+with opcodes under `1100`? Or should it be zero-extended, as that is name of the instruction?
+
+We settled on a behavior that exactly matches the behavior of a pair of instructions that could emulate `movz` if it weren't present. A previous iteration of the
+Bytes extension offered a `zext` instruction, which would zero-extend its `dst` operand into the full width of its register. We settled on specifying that `movz r0,r1/i`
+behave identically to `movs r0,r1/i; zext r0`. As a result, the 2-byte encoding of `movz` cannot encode `movz %rhN, 31`, as the 5-bit immediate `31` sign-extends to `255`.
