@@ -1,6 +1,6 @@
 # Purpose
 
-ETC.A is a community-owned public/open source/what have you Instruction Set Architecture. It is developed by community of the Turing Complete game. We have a few goals:
+ETC.A is a community-owned public/open source/what have you Instruction Set Architecture. It is developed by the community of the Turing Complete game. We have a few goals:
 1) [bare-metal] Being designed for the purpose of having a well-standardized architecture for use in community programming challenges.
 2) [approachable] In the most restricted form, be simple enough that newcomers can get involved easily.
 3) [extensible] Flexible enough to be extensible (The name, ETC.A, stands for "extensible turing complete architecture"). Code assembled for a hardware with some set of extensions should run on _any_ hardware with a superset of those extensions.
