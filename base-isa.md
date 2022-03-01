@@ -138,3 +138,7 @@ Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte o
 | `1101` | greater                 | <code> ~Z &amp; (N = V) </code>  |         |
 | `1110` | always                  |                                  |         |
 | `1111` | never                   |                                  |         |
+
+## Separation of Program ROM and RAM
+
+Aside from program rom starting at address 0x8000, there are very few specifics for how the memory address space are layed out. For ease of implementation, this spec only requires that the CPU can execute memory from address 0x8000 through 0xFFFF and that read-write memory is accessible from address 0x0000 through 0x7FFF. Attempting to use load and store on an address in the range 0x8000-0xFFFF is undefined behavior. Similarly, attempting to execute memory in the range 0x0000-0x7FFF is also undefined behavior. A future extension will require that all addresses are capable of being executable and that all addresses are capable of being accessed with load and store instructions.
