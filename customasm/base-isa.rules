@@ -1,6 +1,7 @@
 #subruledef register
 {
     r{reg: u3} => reg
+    %r{reg: u3} => reg
 }
 #subruledef computation
 {
@@ -106,7 +107,17 @@
             assert(opcode < 0b1100),
             0b00 @ 0b01 @ opcode @ target @ value @ 0b00
         }
-    {opcode: computation} {target: register}, {value: i5} => 0b01 @ 0b01 @ opcode @ target @ value
+    {opcode: computation} {target: register}, {value: s5} =>
+        {
+            assert(opcode < 0b1100)
+            0b01 @ 0b01 @ opcode @ target @ value
+        }
+
+    {opcode: computation} {target: register}, {value: u5} =>
+        {
+            assert(opcode >= 0b1100)
+            0b01 @ 0b01 @ opcode @ target @ value
+        }
 
     mov {target: register}, [{pointer: register}] => asm {load {target}, pointer}
     mov [{pointer: register}], {source: register} => asm {store {pointer}, {source}}
@@ -136,7 +147,7 @@
 
 #ruledef
 {
-    mov {target: register}, {value: s16} =>
+    mov {target: register}, {value: i16} =>
         {
             (value[15:15] == value[14:14]) ?
                 0b01 @ 0b01 @ 0x8 @ target @ value[14:10] @ asm {
@@ -149,6 +160,12 @@
                     slo {target}, value[4:0]
               }
         }
+    mov {target: register}, {value: s10} =>
+        {
+            0b01 @ 0b01 @ 0x8 @ target @ value[9:5]  @ asm {
+                slo {target}, value[4:0]
+            }
+        }
 }
 
 #bankdef program {
@@ -156,3 +173,5 @@
     #size 0x8000
     #outp 0
 }
+
+#bank program   ; By default we should output to this bank

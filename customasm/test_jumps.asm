@@ -131,11 +131,11 @@ test_not_equal:
     jump_not_equal         .success_1
     error_halt
   .success_1:
-    jump_below             .success_2
+    jump_below             .success_2    ; Exactly one of these two should trigger
     jump_above             .success_2
     error_halt
   .success_2:
-    jump_less              test_ucomp_1
+    jump_less              test_ucomp_1  ; Exactly one of these two should trigger
     jump_greater           test_ucomp_1
     error_halt
 
