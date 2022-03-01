@@ -54,16 +54,16 @@ The following opcodes are now defined.
 
 ### Register mode
 
-| `CCCC` | NAME    | Operation                                 | Flags  | Comment     |
-|--------|---------|-------------------------------------------|--------|-------------|
-| `1100` | `POP`   | <code>A ← mem[SP + 2]; SP ← SP + 2</code> | None   | (3) (6)     |
-| `1101` | `PUSH`  | <code>mem[SP] ← B; SP ← SP - 2</code>     |        | reserved    |
+| `CCCC` | NAME    | Operation                                 | Flags  |
+|--------|---------|-------------------------------------------|--------|
+| `1100` | `POP`   | <code>A ← mem[SP + 2]; SP ← SP + 2</code> | None   |
+| `1101` | `PUSH`  | <code>mem[SP] ← B; SP ← SP - 2</code>     | None   |
 
 ### Immediate mode
 
-| `CCCC` | NAME    | Operation                                 | Flags  | Comment     |
-|--------|---------|-------------------------------------------|--------|-------------|
-| `1101` | `PUSH`  | <code>mem[SP] ← B; SP ← SP - 2</code>     |        | reserved    |
+| `CCCC` | NAME    | Operation                                 | Flags  |
+|--------|---------|-------------------------------------------|--------|
+| `1101` | `PUSH`  | <code>mem[SP] ← B; SP ← SP - 2</code>     | None   |
 
 ## Added Jump Instructions
 
