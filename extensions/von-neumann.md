@@ -1,9 +1,9 @@
 # General design
 
-Extension State: Under Development
-Enabled by default: yes
-Always enabled: no (?)
-Requires: Base
+#### Extension State: Under Development
+#### Enabled by default: yes
+#### Always enabled: no (?)
+#### Requires: Base
 
 * Instruction memory and data memory must share an address space.
 * If an address is both readable and executable, reading from that address must return the value of the instruction there.
