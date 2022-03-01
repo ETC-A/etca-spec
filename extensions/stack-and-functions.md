@@ -35,9 +35,9 @@ The following opcodes are now defined.
 
 | First byte    | Second Byte  | Comment                                       |
 |:--------------|:-------------|:----------------------------------------------|
-| `00 SS 1100`  | `RRR ??? 00` | pop from stack                                |
-| `00 SS 1101`  | `??? RRR 00` | push register to stack                        |
-| `01 SS 1101`  | `??? IIIII`  | push immediate to stack                       |
+| `00 01 1100`  | `RRR ??? 00` | pop from stack                                |
+| `00 01 1101`  | `??? RRR 00` | push register to stack                        |
+| `01 01 1101`  | `??? IIIII`  | push immediate to stack                       |
 | `10 1 0 CCCC` | `RRR 00000`  | (conditional) absolute register jump          |
 | `10 1 0 CCCC` | `RRR 10000`  | (conditional) absolute register function call |
 | `10 1 1 IIII` | `IIIIIIII`   | absolute unconditional function call          |
@@ -54,16 +54,18 @@ The following opcodes are now defined.
 
 ### Register mode
 
-| `CCCC` | NAME    | Operation                                 | Flags  |
-|--------|---------|-------------------------------------------|--------|
-| `1100` | `POP`   | <code>A ← mem[SP + 2]; SP ← SP + 2</code> | None   |
-| `1101` | `PUSH`  | <code>mem[SP] ← B; SP ← SP - 2</code>     | None   |
+| `CCCC` | NAME    | Operation                                 | Flags  | Comment |
+|--------|---------|-------------------------------------------|--------|---------|
+| `1100` | `POP`   | <code>A ← mem[SP + 2]; SP ← SP + 2</code> | None   | (1)     |
+| `1101` | `PUSH`  | <code>mem[SP] ← B; SP ← SP - 2</code>     | None   | (1)     |
 
 ### Immediate mode
 
-| `CCCC` | NAME    | Operation                                 | Flags  |
-|--------|---------|-------------------------------------------|--------|
-| `1101` | `PUSH`  | <code>mem[SP] ← B; SP ← SP - 2</code>     | None   |
+| `CCCC` | NAME    | Operation                                 | Flags  | Comment |
+|--------|---------|-------------------------------------------|--------|---------|
+| `1101` | `PUSH`  | <code>mem[SP] ← B; SP ← SP - 2</code>     | None   | (1)     |
+
+1) If the SS bits (as defined in the base specification) are 00, then instead of + or - 2, you'll do + or - 1. Similarly, if they're set to 10 or 11 it will be 4 or 8 respectively. This is only relevant if the 8 bit, 32 bit, or 64 bit operation extensions are enabled
 
 ## Added Jump Instructions
 
