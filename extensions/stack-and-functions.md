@@ -35,11 +35,11 @@ The following opcodes are now defined.
 
 | First byte    | Second Byte  | Comment                                       |
 |:--------------|:-------------|:----------------------------------------------|
-| `00 SS 1100`  | `RRR ?????`  | pop from stack                                |
-| `00 SS 1101`  | `??? RRR ??` | push register to stack                        |
+| `00 SS 1100`  | `RRR ??? 00` | pop from stack                                |
+| `00 SS 1101`  | `??? RRR 00` | push register to stack                        |
 | `01 SS 1101`  | `??? IIIII`  | push immediate to stack                       |
-| `10 1 0 CCCC` | `RRR 0????`  | (conditional) absolute register jump          |
-| `10 1 0 CCCC` | `RRR 1????`  | (conditional) absolute register function call |
+| `10 1 0 CCCC` | `RRR 00000`  | (conditional) absolute register jump          |
+| `10 1 0 CCCC` | `RRR 10000`  | (conditional) absolute register function call |
 | `10 1 1 IIII` | `IIIIIIII`   | absolute unconditional function call          |
 
 | Symbol | Meaning                      |
