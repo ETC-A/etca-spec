@@ -88,3 +88,16 @@ with opcodes under `1100`? Or should it be zero-extended, as that is name of the
 We settled on a behavior that exactly matches the behavior of a pair of instructions that could emulate `movz` if it weren't present. A previous iteration of the
 Bytes extension offered a `zext` instruction, which would zero-extend its `dst` operand into the full width of its register. We settled on specifying that `movz r0,r1/i`
 behave identically to `movs r0,r1/i; zext r0`. As a result, the 2-byte encoding of `movz` cannot encode `movz %rhN, 31`, as the 5-bit immediate `31` sign-extends to `255`.
+
+### Placement of Extensions
+
+The selection of which extensions are put into the first 4 bits of `CPUID` is done with the thought that these are commonly (but not always) used and implemented extensions, that if not present are for many programs complete deal-breakers, i.e. they can't work if those are missing. They are assigned to the first 4 bits because those are easy to check for/enable when only base-isa is available, using code similar to this
+
+```asm
+          mov  %r0, cpudid
+          test %r0, 0xF     ; are the core extensions available?
+          jeq  can_work
+          hcf               ; halt and catch fire
+can_work: ... ; rest of the program (including interupt setup)
+```
+These four extensions together make up `ETC.a.F` or the "core extensions".

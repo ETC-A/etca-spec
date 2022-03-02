@@ -4,6 +4,7 @@
 **Enabled by Default: Yes**  
 **Always Enabled: Yes**  
 **Requires: Base**  
+**CPUID Bit: 3**
 
 * Instruction and data memories must share an address space.
 * All addresses mapped to RAM must be coherently readable and writeable. They must also be executable, but not necessarily coherently.

@@ -88,14 +88,14 @@ call fun_addr
 pop ln
 ```
 
-## Function Header
+## Function Prologue
 
 ```
 push bp
 bp = sp
 ```
 
-## Function Tail
+## Function Epilogue
 
 ```
 sp = bp
