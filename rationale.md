@@ -95,8 +95,9 @@ The selection of which extensions are put into the first 4 bits of `CPUID` is do
 
 ```asm
           mov  %r0, cpudid
+          and  %r0, 0xF
           cmp  %r0, 0xF     ; are the core extensions available?
-          jae  can_work
+          jeq  can_work
           hlt               ; halt and catch fire
 can_work: ... ; rest of the program (including interupt setup)
 ```
