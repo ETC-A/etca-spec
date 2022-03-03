@@ -83,7 +83,15 @@ initialization. The number of registers would depend on `cpuid`.
 ```
 
 Now we describe the execution cycle. Because future extensions will make
-instructions variable-width, 
+instructions variable-width, we can't really bump the program counter
+when we fetch. Even worse, relative jump instructions need to know the
+value of the program counter at the base of the instruction.
+
+As a solution, we leave the program counter unchanged while executing the
+FDE cycle of each instruction. Each instruction knows how many bytes long it
+was (cached in the instruction by the decoder). At the end, we insert a
+`#pc [ Instruction ]` step which updates the program counter for the next
+instruction.
 
 Particularly complex instructions can decode their `#exec` into
 micro-ops much as a real processor would. This enables us to specify
@@ -95,19 +103,26 @@ in the future will likely look like this:
          ...</k>
 ```
 
+Note that the above code block does not have a `k` markdown selector, and so
+it is ignored by the K compiler.
+
+The idea is going to be to overfetch, fetching
+(hopefully) enough bytes to contain the whole instruction,
+and then trim it back later.
+If we discover that we need _more_ bytes, the decoder
+can grab more.
+
+instructions will store their size so that they know
+how far to push the instruction pointer (assuming no jump).
+But a SizedInstruction and a raw Instruction are separate,
+because #exec decoding as described above introduces
+synthetic instructions with no meaningful size.
+
 ```k
-    syntax KItem ::= "#next"
-                   // The idea is going to be to overfetch, fetching
-                   // (hopefully) enough bytes to contain the whole instruction,
-                   // and then trim it back later.
-                   // If we discover that we need _more_ bytes, the decoder
-                   // can grab more.
-                   | "#fetch" "[" Int "]" // instruction pointer
-                   | "#decode" "[" Int ":" Bytes "]"
-                   | "#exec" "[" Int ":" Instruction "]"
-                   // instructions will store their size so that they know
-                   // how far to push the instruction pointer (assuming no jump).
-                   | "#pc" "[" Int ":" Instruction "]"
+    syntax KItem ::= "#fetch"
+                   | "#decode" "[" Bytes "]"
+                   | "#exec" "[" Instruction "]"
+                   | "#pc" "[" SizedInstruction "]"
 ```
 
 Specification of the Instruction sort will come soon.
@@ -118,7 +133,7 @@ Specification of the Instruction sort will come soon.
 
 The remainder of the file is left-overs from the proof-of-concept definition,
 which I am leaving here because I suspect parts of the decoding logic will be
-useful as I rewrite the definition.
+useful as I rewrite the definition. The code blocks are ignored by the K compiler.
 
 ```
   syntax KItem ::= "#cycle"
