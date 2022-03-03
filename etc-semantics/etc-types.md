@@ -120,6 +120,15 @@ ALU outputs, for example).
     rule magnitude ( I ) => 0 -Int I requires I <Int 0
 ```
 
+We also have numeric values in the `cpuid` and `exten` control registers.
+We want to be able to check these on a bit-by-bit basis.
+
+```k
+    syntax Bool ::= bit ( Int , Int ) [function, functional]
+
+    rule bit(N, I) => bitRangeInt(I, N, 1) ==Int 1 [concrete]
+```
+
 ### Memory
 
 Everything happens in memory. The first thing that the interpreter does is load
@@ -179,13 +188,12 @@ Arrays are just Lists now. It's best to use List directly.
 
     syntax Int ::= Registers "[" RegisterID "]" [function]
     rule Registers(RS) [ N::RegisterID ] => {RS [ {N}:>Int ]}:>Int
-/*
+
     syntax Registers ::= Registers "[" RegisterID "<-" Int "]" [function]
-    rule RS [ N <- VAL ] => RS [ N <- VAL ]
-*/
+    rule Registers(RS) [ N <- VAL ] => Registers(RS) [ N <- VAL ]
 
     syntax Registers ::= makeRegisters ( Int ) [macro]
-    rule makeRegisters( N ) => makeList(N, 0)
+    rule makeRegisters( N ) => Registers(makeList(N, 0))
 ```
 ```k
 endmodule
