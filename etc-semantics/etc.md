@@ -1,142 +1,126 @@
-We start by aggregating the K modules we want to have for data representations.
-```k
-module ETC-TYPES
-  imports INT
-  imports BOOL
-  imports COLLECTIONS
-```
-
-For now, we're going to use Strings to match mnemonics when we decode.
+# ETC.A Simulator
 
 ```k
-  imports STRING
-```
+requires "etc-types.md"
 
-We want to operate on binary programs, as that is the most cononical form.
-We store the program in a Bytes array.
-```k
-  imports BYTES
-```
-
-There are several points where we want to be able to talk about small ints of
-specific fixed widths. K wants us to specify which widths we want in advance.
-For now, we need 2bit ints for various format/size/mode bit fields, 3 bit ints
-for registers, 4 bits for opcodes, and 5 bit ints for immediates.
-
-This is temporarily out-of-use as the builtin MInt type is rarely used
-and I appear to have found some bugs with it :P
-
-```k
-//  syntax MInt{2}
-//  syntax MInt{3}
-//  syntax MInt{4}
-//  syntax MInt{5}
-```
-
-It's useful to be able to talk about individual bytes in a fixed-precision way.
-
-```k
-//  syntax MInt{8}
-//  syntax Byte = MInt{8}
-  syntax Byte = Int
-  syntax Int ::= chopByte( Int ) [function, functional, concrete]
-  rule chopByte(I) => bitRangeInt(I,0,8)
-```
-
-The word size on a base ETC.A machine is 16 bits.
-```k
-//  syntax MInt{16}
-//  syntax Word = MInt{16}
-  syntax Word = Int
-  syntax Int ::= chopWord( Int ) [function, functional, concrete]
-  rule chopWord(I) => bitRangeInt(I,0,16)
-```
-
-The program is a byte-addressable Bytes array. This does not quite match the spec
-that the code and RAM must share an address space. This is OK for this prototype.
-```k
-//  syntax Byte ::= Bytes "[" Word "]" [function]
-//------------------------------------------------
-//  rule P:Bytes [ PC:Word ] => Int2MInt(P[MInt2Unsigned(PC)])
-```
-
-For now we just want a prototype, so we store memory as a literal map from addresses to bytes.
-```k
-  syntax Memory = Map
-  syntax Memory ::= Memory "[" Word ":=" Word "]" [function, functional]
-//--------------------------------------------------------------------
-  rule M [ ADDR := VALUE ] => M [ ADDR <- VALUE ]
-endmodule
-```
-
-This module describes the behavior of ETC.A machine code.
-We operate on the program binary, assembler(s) may be provided in separate
-modules in the future.
-
-```k
 module ETC
   imports ETC-TYPES
 ```
 
-The configuration consists of a few components representing the machine state. The program
-is in a Bytes array. The registers are stored in a map. The program counter is maintained,
-as are the flags. We don't try to use an efficient representation, for now.
+## Configuration
+
+The configuration contains all the machine-state information about the hypothetical
+ETC.A machine. This includes supported and enabled extensions (configurable),
+registers, memory, the program counter, flags, and the I/O streams for K.
 
 ```k
-  configuration
-    <etc>
-      <k> $PGM:EtcSimulation </k>
-      <program> .Bytes </program>
-      <registers>
-        0 |-> 0 //p16:Word
-        1 |-> 0 //p16:Word
-        2 |-> 0 //p16:Word
-        3 |-> 0 //p16:Word
-        4 |-> 0 //p16:Word
-        5 |-> 0 //p16:Word
-        6 |-> 0 //p16:Word
-        7 |-> 0 //p16:Word
-      </registers>
-      <program-counter> 0/*p16:Word*/ </program-counter>
-      <carry>    false:Bool </carry>
-      <zero>     false:Bool </zero>
-      <negative> false:Bool </negative>
-      <overflow> false:Bool </overflow>
-    </etc>
+    configuration
+      <etc>
+        <k> $PGM:EtcSimulation </k>
+        <pc> 32768 /* 0x8000 */:Int </pc>
+        <registers>
+          makeRegisters(8):Registers
+        /*
+          <register multiplicity="*" type="Map">
+            <reg-id> 0:Int </reg-id>
+            <value>  0:Int </value>
+          </register>
+        */
+        </registers>
+        <memory> .Memory </memory>
+        <flags>
+          <carry>    false:Bool </carry>
+          <zero>     false:Bool </zero>
+          <negative> false:Bool </negative>
+          <overflow> false:Bool </overflow>
+        </flags>
+        <cpuid> 0:Int </cpuid>
+        <exten> 0:Int </exten>
+        <evil-mode> false:Bool </evil-mode>
+
+        <in color="magenta" stream="stdin"> .List </in>
+        <out color="Orchid" stream="stdout"> .List </out>
+      </etc>
 ```
 
-When we decode instructions, we need a structure to represent what we're looking at.
+The "program" for a simulation loads a program, and starts the simulation.
 
 ```k
-//syntax RegisterID = MInt{3}
-  syntax RegisterID = Int
-  syntax Operand ::= "Register"  RegisterID
-                   | "Immediate" Int //MInt{5}
+    syntax EtcSimulation ::= ".EtcSimulation"
+                           | EtcCommand EtcSimulation
 
-  syntax Format = Int //MInt{2}
-  syntax Instruction
-    ::= String "{" Format "," RegisterID "," Operand "}"
-      | "Reserved"
+    rule <k> .EtcSimulation => . ... </k>
+    rule <k> ETC ETS:EtcSimulation => ETC ~> ETS ... </k>
+  //-----------------------------------------------------
+
+    syntax EtcCommand ::= "load" String
+                        | "start"
+
+    rule <k> load P => . ... </k>
+         <memory> M => M[32768 /* 0x8000 */ := String2Bytes(P)] </memory>
+    rule <k> start => /*#makeRegisters(7) ~>*/ #next ... </k>
+  //---------------------------------------------------------------------
 ```
 
-And finally we need some stuff to drive execution with rewrite rules.
+Another idea for the configuration is to use a multiplicity="\*" cell for
+registers, which would probably want something like this for
+initialization. The number of registers would depend on `cpuid`.
 
-```k
-  syntax EtcSimulation ::= ".EtcSimulation"
-                         | EtcCommand EtcSimulation
-//-------------------------------------------------
-  rule <k> .EtcSimulation => . ... </k>
-  rule <k> ETC ETS:EtcSimulation => ETC ~> ETS ... </k>
-  
-  syntax EtcCommand ::= "load" String | "start"
-//--------------------------------------------
-  rule <k> load P => . ... </k>
-       <program> _ => String2Bytes(P) </program>
-  rule <k> start => #cycle ... </k>
+```
+/*
+    syntax KItem ::= #makeRegisters ( Int )
+    
+    rule <k> #makeRegisters(N => (N -Int 1)) ...</k>
+         (.Bag =>
+         <register>
+           <reg-id> N </reg-id>
+           <value>  0 </value>
+         </register>)
+      requires N >=Int 0
+    rule <k> #makeRegisters(N) => . ...</k>
+      requires N <Int 0
+*/
 ```
 
-Now we describe a simple execution cycle. Fetch, decode, execute.
+Now we describe the execution cycle. Because future extensions will make
+instructions variable-width, 
+
+Particularly complex instructions can decode their `#exec` into
+micro-ops much as a real processor would. This enables us to specify
+one operation as a combination of others. For example, one such rule
+in the future will likely look like this:
+```
+    rule <k> #exec [ movz(DST,SRC) ]
+          => #exec [ movs(DST,SRC) ] ~> #exec [ zext(DST) ]
+         ...</k>
+```
+
 ```k
+    syntax KItem ::= "#next"
+                   // The idea is going to be to overfetch, fetching
+                   // (hopefully) enough bytes to contain the whole instruction,
+                   // and then trim it back later.
+                   // If we discover that we need _more_ bytes, the decoder
+                   // can grab more.
+                   | "#fetch" "[" Int "]" // instruction pointer
+                   | "#decode" "[" Int ":" Bytes "]"
+                   | "#exec" "[" Int ":" Instruction "]"
+                   // instructions will store their size so that they know
+                   // how far to push the instruction pointer (assuming no jump).
+                   | "#pc" "[" Int ":" Instruction "]"
+```
+
+Specification of the Instruction sort will come soon.
+
+```k
+    syntax Instruction ::= "undef"
+```
+
+The remainder of the file is left-overs from the proof-of-concept definition,
+which I am leaving here because I suspect parts of the decoding logic will be
+useful as I rewrite the definition.
+
+```
   syntax KItem ::= "#cycle"
                  | "#fetch" | "#decode" Byte Byte | "#exec" Instruction
                  | "#halt" String
@@ -237,7 +221,7 @@ so the semantics are actually wrong here in a couple places (for now). Flags are
 is the biggest incorrect behavior. However CMP and TEST do correctly not write their results.
 
 
-```k
+```
   syntax Operand ::= Int //subsort
 
   rule <k> #exec Reserved => #halt "reserved instruction" ...</k>
@@ -255,7 +239,7 @@ is the biggest incorrect behavior. However CMP and TEST do correctly not write t
 ```
 
 We need a couple functions to check the values of the dest/flags after operations:
-```k
+```
   syntax Int ::= writeResult(Int, Int, String) [function]
 //--------------------------------------------
   rule writeResult( OLD, _NEW, OP ) => OLD
@@ -274,7 +258,7 @@ We need a couple functions to check the values of the dest/flags after operation
 
 And finally, we need to actually perform the operation.
 
-```k
+```
   syntax Int ::= eval( String, Int, Int ) [function]
 //--------------------------------------------------
   rule eval("add",   X, Y) => X +Int Y
@@ -292,5 +276,8 @@ And finally, we need to actually perform the operation.
 //rule eval("inp",   X, Y) => not implemented
   rule eval("slo",   X, Y) => (X <<Int 5) |Int Y
   rule eval("sar",   X, Y) => signExtendBitRangeInt(X, 0, 16) >>Int Y
+```
+
+```k
 endmodule
 ```
