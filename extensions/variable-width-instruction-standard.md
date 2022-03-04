@@ -4,7 +4,9 @@ This aims to define how variable width instructions affect the behavior the beha
 
 ## Variable Width Instructions
 
-Variable Width Instructions (VWI) are a sequence of one or more bytes which count as a single instruction. The instruction pointer _must_ never point at the middle of a VWI in an ovservable way.
+Variable Width Instructions (VWI) are a sequence of one or more bytes which count as a single instruction. For all observable purposes, the instruction pointer must always point to the start of the current instruction.
+
+Note that this does not preclude pipelining, so long as any references to the instruction pointer in the specification of an instruction correctly refer to the base address of that instruction being executed.
 
 If the first byte of an instruction is `11xx xxxx`, it is a VWI
 
