@@ -8,8 +8,8 @@
 |     3     | [Von Neumann](./von-neumann)               |     None     | Under Development |
 |     4     | [Byte Operations](./byte-operations)       |     None     | Under Development |
 |     5     | [Expanded Registers](./expanded-registers) |     VWI      | Under Development |
-|     6     | 32 Bit Operations                          |     None     | Planned           |
-|     7     | 64 Bit Operations                          |     None     | Planned           |
+|     6     | 32 Bit Operations + Registers              |     None     | Planned           |
+|     7     | 64 Bit Operations + Registers              |     None     | Planned           |
 |     8     | Privileged Mode                            |      2       | Planned           |
 |     9     | Cache Instructions                         |     VWI      | Planned           |
 |     10    | Virtual Memory + Paging                    |      8       | Planned           |
