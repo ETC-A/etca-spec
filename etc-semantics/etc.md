@@ -2,6 +2,7 @@
 
 ```k
 requires "etc-types.md"
+requires "memory.md"
 
 module ETC
   imports ETC-TYPES
@@ -16,7 +17,7 @@ registers, memory, the program counter, flags, and the I/O streams for K.
 ```k
     configuration
       <etc>
-        <k> $PGM:EtcSimulation </k>
+        <k> load $PGM:Bytes ~> #fetch </k>
         <pc> 32768 /* 0x8000 */:Int </pc>
         <registers>
           makeRegisters(8):Registers
@@ -34,10 +35,13 @@ registers, memory, the program counter, flags, and the I/O streams for K.
           <negative> false:Bool </negative>
           <overflow> false:Bool </overflow>
         </flags>
-        <cpuid> 0:Int </cpuid>
-        <exten> 0:Int </exten>
-        <evil-mode> false:Bool </evil-mode>
-
+        <machine-details>
+          <cpuid> 0:Int </cpuid>
+          <exten> 0:Int </exten>
+          <reg-width> word:ByteSize </reg-width>
+          <reg-count> 8:Int </reg-count>
+          <evil-mode> false:Bool </evil-mode>
+        </machine-details>
         <in color="magenta" stream="stdin"> .List </in>
         <out color="Orchid" stream="stdout"> .List </out>
       </etc>
@@ -53,12 +57,10 @@ The "program" for a simulation loads a program, and starts the simulation.
     rule <k> ETC ETS:EtcSimulation => ETC ~> ETS ... </k>
   //-----------------------------------------------------
 
-    syntax EtcCommand ::= "load" String
-                        | "start"
+    syntax EtcCommand ::= "load" Bytes
 
     rule <k> load P => . ... </k>
-         <memory> M => M[32768 /* 0x8000 */ := String2Bytes(P)] </memory>
-    rule <k> start => /*#makeRegisters(7) ~>*/ #next ... </k>
+         <memory> MEM => MEM[32768 /* 0x8000 */ := P] </memory>
   //---------------------------------------------------------------------
 ```
 
@@ -120,16 +122,156 @@ synthetic instructions with no meaningful size.
 
 ```k
     syntax KItem ::= "#fetch"
-                   | "#decode" "[" Bytes "]"
-                   | "#exec" "[" Instruction "]"
-                   | "#pc" "[" SizedInstruction "]"
+                   | "#decode"    "[" Bytes "]"
+                   | "#exec"      "[" Instruction "]"
+                   | "#retire"    "[" Instruction "," Int "]" // operation result, if relevant
+                   | "#pc"        "[" SizedInstruction "]"
 ```
 
 Specification of the Instruction sort will come soon.
 
 ```k
-    syntax Instruction ::= "undef"
+    syntax Operand ::= RegOperand(RegisterID)
+                     | ImmOperand(Int)
+                     | "NoOperand"
+    syntax OperandSize = ByteSize
+
+    syntax Instruction ::= OneOperandOpcode OperandSize Operand
+                         | TwoOperandOpcode OperandSize Operand Operand
+    syntax SizedInstruction ::= "|" Instruction "|" "=" Int | Instruction
 ```
+
+Opcode names are the opcode codenames in the ISA spec, _not_ the mnemonics
+from the assembly. We don't want to try and reconstruct the input assembly,
+because we don't care that much. Decoding is not disassembling for us!
+
+```k
+    syntax OneOperandOpcode
+        ::= "je" | "jne" // (not) equal          : Z
+          | "js" | "jns" // (not) sign           : N
+          | "jb" | "jae" // below / above-equal  : C
+          | "jv" | "jnv" // (not) overflow       : V
+          | "jbe" | "ja" // below-equal / above  : C | Z
+          | "jl" | "jge" // less / greater-equal : N != V
+          | "jle" | "jg" // less-equal / greater : Z | (N != V)
+          | "jmp"        // jump always          : 1
+          | "jmp_never"  // ...                  : 0
+
+    syntax TwoOperandOpcode
+        ::= "add"
+          | "sub"
+          | "rsub"
+          | "cmp"
+          | "or"
+          | "xor"
+          | "and"
+          | "test"
+          //
+          | "mov"
+          | "load"
+          | "store"
+          | "slo"
+          //
+          | "in"
+          | "out"
+
+    syntax FlagClass
+        ::= "ArithmeticFlags"
+          | "LogicalFlags"
+          | "NoFlags"
+          | opcode2FlagClass ( TwoOperandOpcode ) [function, functional]
+          | opcode2FlagClass ( OneOperandOpcode ) [function, functional]
+
+    rule opcode2FlagClass(add)  => ArithmeticFlags
+    rule opcode2FlagClass(sub)  => ArithmeticFlags
+    rule opcode2FlagClass(rsub) => ArithmeticFlags
+    rule opcode2FlagClass(cmp)  => ArithmeticFlags
+    rule opcode2FlagClass(or)   => LogicalFlags
+    rule opcode2FlagClass(xor)  => LogicalFlags
+    rule opcode2FlagClass(and)  => LogicalFlags
+    rule opcode2FlagClass(test) => LogicalFlags
+    
+    rule opcode2FlagClass( _:TwoOperandOpcode ) => NoFlags [owise]
+    
+    rule opcode2FlagClass( _:OneOperandOpcode ) => NoFlags
+```
+
+## Execution Cycle
+
+### Fetch
+
+The first step in the execution cycle is to fetch bytes for the next instruction.
+At the moment, all instructions are 2 bytes, but in the future we will want to
+overfetch bytes so that the decoder doesn't have to grab extras.
+
+Fetching does not modify the program counter. We keep the program counter
+unchanged to ease the `#pc` step of jump instructions, which (in base) are
+always PC-relative.
+
+```k
+    rule <k> #fetch => #decode [ #range(MEM, PC, word) ] ...</k>
+         <memory> MEM </memory>
+         <pc> PC </pc>
+```
+
+### Decode
+
+Up next. Probably quite a bit to do here.
+
+### Execute
+
+* Evaluate the result (of a computation)
+* Decide to take a branch, replacing with `jmp` or `jmp_never`
+
+### Retire
+
+* Write the result into the destination register and set flags
+
+### PC
+
+* Update the program counter.
+
+## EDSL for Reg/Mem Reads/Writes
+
+When performing an operation, we need to access registers and memory
+for both reading and writing. Here we implement a tiny EDSL with standard
+semantic syntax for these things.
+
+```k
+    syntax Int ::= "Mem" "[" Int ":" ByteSize "]" [function]
+                 | "Reg" "[" RegisterID "]"  [function]
+
+    rule [[ Mem [ ADDR : WIDTH ]
+         => Bytes2Int(#range(MEM, ADDR, WIDTH), LE, Unsigned) ]]
+         <memory> MEM </memory>
+         <reg-width> RSIZE </reg-width>
+      requires #rangeByteSize(RSIZE, ADDR)
+
+    rule [[ Reg [ RID ] => RS[RID] ]]
+         <registers> RS </registers>
+         <reg-count> RCOUNT </reg-count>
+      requires #range(0 <= RID < RCOUNT)
+```
+
+That lets us read memory and registers with a K function. We should also be able to
+_write_ the memory and registers with the same syntax. These cannot be functions.
+
+```k
+    syntax KItem ::= "Mem" "[" Int ":" ByteSize "]" "=" Int
+                   | "Reg" "[" RegisterID "]" "=" Int
+
+    rule <k> Mem[ADDR : WIDTH] = R ...</k>
+         <memory> MEM => MEM [ ADDR := Int2Bytes(ByteSize2NumBytes(WIDTH), R, LE) ] </memory>
+         <reg-width> RSIZE </reg-width>
+      requires #rangeByteSize(RSIZE, ADDR)
+    
+    rule <k> Reg[RID] = R ...</k>
+         <registers> RS => RS [ RID <- R ] </registers>
+         <reg-count> RCOUNT </reg-count>
+      requires #range(0 <= RID < RCOUNT)
+```
+
+# Leftovers From Old Implementation
 
 The remainder of the file is left-overs from the proof-of-concept definition,
 which I am leaving here because I suspect parts of the decoding logic will be
