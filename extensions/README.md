@@ -2,7 +2,7 @@
 
 | CPUID bit | Extension                                  | Dependencies | State             |
 |:---------:|--------------------------------------------|:------------:|-------------------|
-|     0     | Variable Width Instructions (VWI)          |     None     | Planned           |
+|     0     | Expanded Immediates                        |     VWI      | Planned           |
 |     1     | [Stack & Functions](./stack-and-functions) |     None     | Under Development |
 |     2     | Interrupts                                 |      1       | Planned           |
 |     3     | [Von Neumann](./von-neumann)               |     None     | Under Development |
