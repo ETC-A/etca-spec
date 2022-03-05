@@ -127,8 +127,7 @@ being executed when possible, so we hold onto it.
     syntax KItem ::= "#fetch"
                    | "#decode"    "[" Bytes "]"
                    | "#exec"      "[" SizedInstruction "]"
-                   | "#retire"    "[" SizedInstruction "," Int "]" // operation result, if relevant
-//                   | "#pc"        "[" SizedInstruction "]"
+                   | "#retire"    "[" SizedInstruction "," InstructionResult "]"
                    | "#halt" String
 
     rule <k> #halt _MSG ~> (_ => .) ...</k>
@@ -412,9 +411,13 @@ to the instruction semantics. If a Signedness isn't given, it defaults to
 `Signed`.
 
 ```k
+    syntax InstructionResult
+      ::= "WithOpSigns" "(" Bool "," Bool "," Int ")" // OPL, OPR, RES
+        | Int
+        | evalInstruction ( Instruction ) [function]
+
     syntax Int ::= evalOperand ( Operand )              [function]
                  | evalOperand ( Signedness , Operand ) [function]
-                 | evalInstruction ( Instruction )      [function]
 
     // considering the current processor flags, decide whether or not
     // to take a branch. If it's taken, replace the opcode with `jmp`.
@@ -453,17 +456,17 @@ For example, jumps never need to do math in the `#exec` stage
 #### Computations
 
 ```k
-    rule evalInstruction(add _OSIZE OPL OPR) =>
-         evalOperand(OPL) +Int evalOperand(OPR)
+    rule evalInstruction(add OSIZE OPL OPR) =>
+         evalAdd(OSIZE, evalOperand(OPL), evalOperand(OPR))
 
     rule evalInstruction(sub OSIZE OPL OPR) =>
-         evalOperand(OPL) +Int negUInt(OSIZE, evalOperand(OPR))
+         evalSub(OSIZE, evalOperand(OPL), evalOperand(OPR))
 
     rule evalInstruction(rsub OSIZE OPL OPR) =>
-         evalOperand(OPR) +Int negUInt(OSIZE, evalOperand(OPL))
+         evalSub(OSIZE, evalOperand(OPR), evalOperand(OPL))
 
     rule evalInstruction(cmp OSIZE OPL OPR) =>
-         evalOperand(OPL) +Int negUInt(OSIZE, evalOperand(OPR))
+         evalSub(OSIZE, evalOperand(OPL), evalOperand(OPR))
 
     rule evalInstruction(or _OSIZE OPL OPR) =>
          evalOperand(OPL) |Int evalOperand(OPR)
@@ -494,6 +497,21 @@ For example, jumps never need to do math in the `#exec` stage
 
     // Not implemented yet
     //rule evalInstruction((in #Or out) _OSIZE _OPL _OPR)
+  //-------------------------------------------------------------------------
+
+    syntax InstructionResult
+        ::= evalAdd ( OperandSize , Int , Int ) [function, functional]
+          | evalSub ( OperandSize , Int , Int ) [function, functional]
+
+    rule evalAdd(SIZE, L, R)
+         => WithOpSigns(isNegative(SIZE, L), isNegative(SIZE, R), L +Int R)
+
+    rule evalSub(SIZE, L, R)
+         => WithOpSigns(
+                isNegative(SIZE, L),
+                isNegative(SIZE, ~Int R),
+                L +Int negUInt(SIZE, R)
+            )
 ```
 
 #### Jumps
@@ -549,21 +567,25 @@ For example, jumps never need to do math in the `#exec` stage
 
 ```k
     syntax KItem ::= "#retireWB"    "[" Instruction      "," Int "]"
-                   | "#retireFlags" "[" Instruction      "," Int "]"
+                   | "#retireFlags" "[" Instruction      "," InstructionResult "]"
                    | "#retirePC"    "[" SizedInstruction "," Int "]"
 
+    syntax Int ::= extractResFromInstrRes ( InstructionResult ) [function, functional]
+    rule extractResFromInstrRes(                  RES:Int) => RES
+    rule extractResFromInstrRes(WithOpSigns(_, _, RES)   ) => RES
+
     rule <k> #retire [ I SIZE , RES ] =>
-                #retireWB    [ I      , RES ]
-             ~> #retireFlags [ I      , RES ]
-             ~> #retirePC    [ I SIZE , RES ]
+                #retireWB    [ I      , extractResFromInstrRes(RES) ]
+             ~> #retireFlags [ I      ,                        RES  ]
+             ~> #retirePC    [ I SIZE , extractResFromInstrRes(RES) ]
              ~> #fetch
          ...</k>
   //---------------------------------------------------------------
 
-    rule <k> #retireWB [ store OSIZE OPL _OPR , RES ] =>
+    rule <k> #retireWB [ store OSIZE OPL _OPR , RES:Int ] =>
              Mem[evalOperand(OPL) : OSIZE ] = RES ...</k>
 
-    rule <k> #retireWB [ OP OSIZE RegOperand(RID) _OPR , RES ] =>
+    rule <k> #retireWB [ OP OSIZE RegOperand(RID) _OPR , RES:Int ] =>
              Reg[RID] = chopTo(OSIZE, RES)
          ...</k>
       requires storesResult(OP)
@@ -571,7 +593,7 @@ For example, jumps never need to do math in the `#exec` stage
     rule <k> #retireWB [ _ , _ ] => . ...</k> [owise]
   //---------------------------------------------------------------
 
-    rule <k> #retireFlags [ OP OSIZE _OPL _OPR , RES ] => . ...</k>
+    rule <k> #retireFlags [ OP OSIZE _OPL _OPR , RES:Int ] => . ...</k>
          <flags>
             <zero>     _ => chopTo(OSIZE, RES)  ==Int 0 </zero>
             <negative> _ => sextFrom(OSIZE, RES) <Int 0 </negative>
@@ -580,18 +602,26 @@ For example, jumps never need to do math in the `#exec` stage
          </flags>
       requires LogicalFlags :=K opcode2FlagClass(OP)
 
-    rule <k> #retireFlags [ OP OSIZE _OPL _OPR , RES ] => . ...</k>
+    rule <k> #retireFlags [ OP OSIZE _OPL _OPR , WithOpSigns(LS, RS, RES) ] => . ...</k>
          <flags>
             <zero>     _ => chopTo    (OSIZE, RES) ==Int 0 </zero>
             <negative> _ => sextFrom  (OSIZE, RES)  <Int 0 </negative>
-            <carry>    _ =>
-                    flipCarry(OP) xorBool carried(OSIZE, RES) </carry>
-            <overflow> _ => overflowed(OSIZE, RES)         </overflow>
+            <carry> 
+                _ => flipCarry(OP) xorBool carried(OSIZE, RES)
+            </carry>
+            <overflow>
+                _ => overflowed(OSIZE, LS, RS, RES)
+            </overflow>
          </flags>
       requires ArithmeticFlags :=K opcode2FlagClass(OP)
 
     rule <k> #retireFlags [ I , _ ] => . ...</k>
       requires NoFlags :=K opcode2FlagClass(instructionOpcode(I))
+
+    rule <k> #retireFlags [ _ , _ ]
+          => #halt "Wrong result type for opcode. Needs debugging!"
+          ...</k>
+          [owise]
   //---------------------------------------------------------------
 
     rule <k> #retirePC [ jmp _OP _SIZE , SIGNEDDISP ] => . ...</k>

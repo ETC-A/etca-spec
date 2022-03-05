@@ -163,13 +163,14 @@ arithmetic when stored at a given `ByteSize`. In unsigned arithmetic, such
 loss of precision is a carry, and in signed, it is an overflow!
 
 ```k
-    syntax Bool ::= carried    ( ByteSize , Int ) [function, functional]
-                  | overflowed ( ByteSize , Int ) [function, functional]
+    syntax Bool ::= carried    ( ByteSize , Int )               [function, functional]
+                  | overflowed ( ByteSize , Bool , Bool , Int ) [function, functional]
 
     rule carried(SIZE, V) =>
          zextFrom(SIZE, V) =/=Int zextFrom(ByteSize2NumBits(SIZE) +Int 1, V)
 
-    rule overflowed(SIZE, V) => notBool #rangeSInt(ByteSize2NumBits(SIZE), V)
+    rule overflowed(SIZE, LSign, RSign, RES) =>
+         (LSign ==Bool RSign) andBool (LSign =/=Bool isNegative(SIZE, RES))
 ```
 
 We also have numeric values in the `cpuid` and `exten` control registers.
