@@ -135,8 +135,8 @@ signednesses.
 
     rule zextFrom ( Width , I ) =>           bitRangeInt(I, 0, Width) [concrete]
     rule sextFrom ( Width , I ) => signExtendBitRangeInt(I, 0, Width) [concrete]
-    rule zextFrom ( SIZE  , I ) => zextFrom(ByteSize2NumBits(SIZE), I)
-    rule sextFrom ( SIZE  , I ) => sextFrom(ByteSize2NumBits(SIZE), I)
+    rule zextFrom ( SIZE  , I ) => zextFrom(ByteSize2NumBits(SIZE), I) [concrete]
+    rule sextFrom ( SIZE  , I ) => sextFrom(ByteSize2NumBits(SIZE), I) [concrete]
 ```
 
 We also want a couple simple functions to check the sign or magnitude of a
@@ -155,6 +155,21 @@ so that they can identify the sign bit.
 
     rule magnitude ( I ) =>        I requires I >=Int 0
     rule magnitude ( I ) => 0 -Int I requires I <Int 0
+```
+
+For the purpose of checking flags, we want functions to check if a result of
+arbitrary precision causes a loss of precision in either unsigned or signed
+arithmetic when stored at a given `ByteSize`. In unsigned arithmetic, such
+loss of precision is a carry, and in signed, it is an overflow!
+
+```k
+    syntax Bool ::= carried    ( ByteSize , Int ) [function, functional]
+                  | overflowed ( ByteSize , Int ) [function, functional]
+
+    rule carried(SIZE, V) =>
+         zextFrom(SIZE, V) =/=Int zextFrom(ByteSize2NumBits(SIZE) +Int 1, V)
+
+    rule overflowed(SIZE, V) => notBool #rangeSInt(ByteSize2NumBits(SIZE), V)
 ```
 
 We also have numeric values in the `cpuid` and `exten` control registers.
@@ -227,7 +242,7 @@ functions.
       requires START <Int 0 [concrete]
   //----------------------------------------------------------------------------------------------------
 
-    syntax Bytes ::= #range ( Memory , Int , Int ) [function, functional]
+    syntax Bytes ::= #range ( Memory , Int , Int )      [function, functional]
                    | #range ( Memory , Int , ByteSize ) [function, functional]
 
     rule #range(MEM, START, WIDTH:ByteSize) => #range(MEM, START, ByteSize2NumBytes(WIDTH))
@@ -237,9 +252,9 @@ functions.
 
     rule #range(MEM, START, WIDTH)
          => substrBytes(
-                padRightBytes({MEM[START >>Int 8] orDefault .Bytes}:>Bytes, 0, pow8),
+                padRightBytes({MEM[START >>Int 8] orDefault .Bytes}:>Bytes, pow8, 0),
                 chopTo(half, START),
-                WIDTH
+                chopTo(half, START) +Int WIDTH
             )
       requires START >=Int 0
        andBool WIDTH >=Int 0
@@ -247,7 +262,7 @@ functions.
 
     rule #range(MEM, START, WIDTH)
          => substrBytes(
-                padRightBytes({MEM[START >>Int 8] orDefault .Bytes}:>Bytes, 0, pow8),
+                padRightBytes({MEM[START >>Int 8] orDefault .Bytes}:>Bytes, pow8, 0),
                 chopTo(half, START),
                 pow8
             )
