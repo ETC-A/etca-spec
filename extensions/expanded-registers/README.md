@@ -3,7 +3,7 @@
 **Extension State: Under Development**  
 **Enabled by Default: Yes**  
 **Always Enabled: Yes**  
-**Requires: Base**  
+**Requires: Base, VWI**  
 **CPUID Bit: 5**
 
 # Overview
@@ -17,7 +17,7 @@ This extension adds an instruction prefix byte which expands the number of avail
 | `r10`    | `a4`  | Caller Saved |
 | `r11`    | `a5`  | Caller Saved |
 | `r12`    | `a6`  | Caller Saved |
-| `r13`    | `a7`  | Caller Saved |
+| `r13`    | `v1`  | Caller Saved |
 | `r14`    | `t0`  | Caller Saved |
 | `r15`    | `t1`  | Caller Saved |
 | `r16`    | `t2`  | Caller Saved |
