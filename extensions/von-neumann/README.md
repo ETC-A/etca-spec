@@ -2,7 +2,6 @@
 
 **Extension State: Under Development**  
 **Enabled by Default: Yes**  
-**Always Enabled: Yes**  
 **Requires: Base**  
 **CPUID Bit: 3**
 

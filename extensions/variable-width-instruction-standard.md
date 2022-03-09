@@ -1,6 +1,6 @@
 # Variable Width Instruction Standard
 
-This aims to define how variable width instructions affect the behavior the behavior of the CPU.
+This aims to define how variable width instructions affect the behavior of the CPU.
 
 ## Variable Width Instructions
 
