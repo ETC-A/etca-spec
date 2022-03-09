@@ -3,6 +3,7 @@
 ```k
 module ETC
   imports ETC-TYPES
+  imports private EXTENSION-SYNTAX
 ```
 
 ## Configuration
@@ -14,7 +15,11 @@ registers, memory, the program counter, flags, and the I/O streams for K.
 ```k
     configuration
       <etc>
-        <k parser="PGM, BYTES-SYNTAX"> load $PGM:Bytes ~> #fetch </k>
+        <k parser="PGM, BYTES-SYNTAX"> 
+             load $PGM:Bytes
+          ~> #enableDefaultExtensions
+          ~> #fetch
+        </k>
         <pc> 32768 /* 0x8000 */:Int </pc>
         <registers>
           makeRegisters(8):Registers
@@ -27,7 +32,7 @@ registers, memory, the program counter, flags, and the I/O streams for K.
           <overflow> false:Bool </overflow>
         </flags>
         <machine-details>
-          <cpuid> 0:Int </cpuid>
+          <cpuid> 7:Int </cpuid>
           <exten> 0:Int </exten>
           <reg-width> word:ByteSize </reg-width>
           <reg-count> 8:Int </reg-count>
@@ -286,14 +291,16 @@ _write_ the memory and registers with the same syntax. These cannot be functions
          <reg-width> SIZE </reg-width>
     
     rule <k> Reg [ (RID:Int) : SIZE ] = R => . ...</k>
-         <registers> RS => RS [ RID <- sextFrom(SIZE, R) ] </registers>
+         <registers> RS => RS [ RID <- /*chopTo(RWIDTH,*/ sextFrom(SIZE, R)/*)*/ ] </registers>
          <reg-count> RCOUNT </reg-count>
+         // <reg-width> RWIDTH </reg-width>
       requires #range(0 <= RID < RCOUNT)
 
     // CPUID is immutable
     rule <k> Reg [ CRcpuid : _SIZE ] = _R => . ...</k>
-    // EXTEN is immutable, for now.
-    rule <k> Reg [ CRexten : _SIZE ] = _R => . ...</k>
+    // Writes to EXTEN call out to the `EXTENSION` module, which uses
+    // all of the extension hooks to get this right.
+    rule <k> Reg [ CRexten : _SIZE ] = R => #writeExten(R) ...</k>
 ```
 
 ## Operands

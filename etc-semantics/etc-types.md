@@ -406,8 +406,10 @@ on the extension being enabled, which trigger interrupts.
 ```k
 module ETC-EXCEPTIONS
 
-    syntax KItem
+    syntax Exception
         ::= "#EUnknownInstr"
+          | "#EIncoherentEXTEN"
+          | "#EUndefinedBehavior"
 
 endmodule
 ```
