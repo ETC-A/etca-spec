@@ -1,8 +1,6 @@
 # ETC.A Simulator
 
 ```k
-requires "etc-types.md"
-
 module ETC
   imports ETC-TYPES
 ```
@@ -16,16 +14,10 @@ registers, memory, the program counter, flags, and the I/O streams for K.
 ```k
     configuration
       <etc>
-        <k> load $PGM:Bytes ~> #fetch </k>
+        <k parser="PGM, BYTES-SYNTAX"> load $PGM:Bytes ~> #fetch </k>
         <pc> 32768 /* 0x8000 */:Int </pc>
         <registers>
           makeRegisters(8):Registers
-        /*
-          <register multiplicity="*" type="Map">
-            <reg-id> 0:Int </reg-id>
-            <value>  0:Int </value>
-          </register>
-        */
         </registers>
         <memory> .Memory </memory>
         <flags>
@@ -63,25 +55,7 @@ The "program" for a simulation loads a program, and starts the simulation.
   //---------------------------------------------------------------------
 ```
 
-Another idea for the configuration is to use a multiplicity="\*" cell for
-registers, which would probably want something like this for
-initialization. The number of registers would depend on `cpuid`.
-
-```
-/*
-    syntax KItem ::= #makeRegisters ( Int )
-    
-    rule <k> #makeRegisters(N => (N -Int 1)) ...</k>
-         (.Bag =>
-         <register>
-           <reg-id> N </reg-id>
-           <value>  0 </value>
-         </register>)
-      requires N >=Int 0
-    rule <k> #makeRegisters(N) => . ...</k>
-      requires N <Int 0
-*/
-```
+## Execution Framework
 
 Now we describe the execution cycle. Because future extensions will make
 instructions variable-width, we can't really bump the program counter
@@ -91,17 +65,16 @@ value of the program counter at the base of the instruction.
 As a solution, we leave the program counter unchanged while executing the
 FDE cycle of each instruction. Each instruction knows how many bytes long it
 was (cached in the instruction by the decoder). At the end, we insert a
-`#pc [ Instruction ]` step which updates the program counter for the next
-instruction.
+`#pc [ Offset ]` step which updates the program counter for the next
+instruction. An alternative, `#setPC [ Address ]` can be used for absolute
+`PC` changes.
 
-Particularly complex instructions can decode their `#exec` into
+Particularly complex instructions can decode their execution into
 micro-ops much as a real processor would. This enables us to specify
 one operation as a combination of others. For example, one such rule
 in the future will likely look like this:
 ```
-    rule <k> #exec [ movz(DST,SRC) ]
-          => #exec [ movs(DST,SRC) ] ~> #exec [ zext(DST) ]
-         ...</k>
+rule <k> movz SIZE DST SRC => movs SIZE DST SRC ~> zext SIZE DST ...</k>
 ```
 
 Note that the above code block does not have a `k` markdown selector, and so
@@ -113,122 +86,44 @@ and then trim it back later.
 If we discover that we need _more_ bytes, the decoder
 can grab more.
 
-instructions will store their size so that they know
-how far to push the instruction pointer (assuming no jump).
-But a SizedInstruction and a raw Instruction are separate,
-because #exec decoding as described above introduces
-synthetic instructions with no meaningful size.
+Decoded instructions must store their size. When defining a new extension
+module, there are utilities that you can take advantage of to handle common
+patterns. For example, the `StraightLineInstruction` sort from module
+`STRAIGHT-LINE` contains this rule, which handles all `PC` updates for the
+common case of straight line code:
 
-`#retire` doesn't technically need to keep the whole instruction around.
-However, it aids debugging if stuck configurations show the entire instruction
-being executed when possible, so we hold onto it.
+```
+    rule <k> I:StraightLineInstruction ISize(N) => I ~> #pc [ N ] ...</k>
+```
+
+By making your new instruction(s) inhabit `StraightLineInstruction`, you get
+this rule for free and can focus on the domain logic of the instruction
+itself.
+
+Of course, if your instruction is _usually_ straight line, but not always,
+you can still use this utility and match on `I ~> #pc [ N ]` later!
+
+## Execution Cycle
+
+Only the most barebones requirements for an execution cycle are defined
+here. Utility modules variously provide more features for common functionality.
+
+At its core, an instruction's execution consists of three steps: fetch, decode,
+and execute. Some instructions may have complicated result-storing semantics
+or complex control flow potential. Such instructions are free to use more
+rewrite steps, of course.
+
 
 ```k
     syntax KItem ::= "#fetch"
-                   | "#decode"    "[" Bytes "]"
-                   | "#exec"      "[" SizedInstruction "]"
-                   | "#retire"    "[" SizedInstruction "," InstructionResult "]"
+                   | "#decode" "[" Bytes "]"
                    | "#halt" String
 
-    rule <k> #halt _MSG ~> (_ => .) ...</k>
+    // Eat the rest of the K cell so that the error message
+    // is displayed nicely and without other leftovers.
+    // This makes the `#halt` symbol act as HCF.
+    rule <k> #halt _MSG ~> (_:KItem ~> _ => .) </k>
 ```
-
-Instructions can have zero, one, or two operands. At the moment we only have
-instructions with one or two. Each operand is either a register or an immediate
-and each instruction has an operand size. For base, the operand size is
-always `word`.
-
-```k
-    syntax Operand ::= RegOperand(RegisterID)
-                     | ImmOperand(ImmWidth, Int)
-    syntax ImmWidth = Int
-    syntax OperandSize = ByteSize
-
-    syntax Instruction ::= BaseJumpOpcode Operand
-                         | BaseCompOpcode OperandSize Operand Operand
-                         | "UnknownInstruction"
-    syntax SizedInstruction 
-        ::= Instruction InstructionSize
-    syntax InstructionSize ::= ISize( Int ) | "NoSize"
-  //--------------------------------------------------------------------------
-
-    syntax Opcode ::= instructionOpcode ( Instruction ) [function, functional]
-    rule instructionOpcode(J:BaseJumpOpcode _)     => J
-    rule instructionOpcode(C:BaseCompOpcode _ _ _) => C
-    rule instructionOpcode(UnknownInstruction)     => UnknownOpcode
-```
-
-Opcode names are the opcode codenames in the ISA spec, _not_ the mnemonics
-from the assembly. We don't want to try and reconstruct the input assembly,
-because we don't care that much. Decoding is not disassembling for us!
-
-```k
-    syntax Opcode ::= BaseCompOpcode | BaseJumpOpcode
-                    | "UnknownOpcode"
-
-    syntax BaseJumpOpcode
-        ::= "je" | "jne" // (not) equal          : Z
-          | "js" | "jns" // (not) sign           : N
-          | "jb" | "jae" // below / above-equal  : C
-          | "jv" | "jnv" // (not) overflow       : V
-          | "jbe" | "ja" // below-equal / above  : C | Z
-          | "jl" | "jge" // less / greater-equal : N != V
-          | "jle" | "jg" // less-equal / greater : Z | (N != V)
-          | "jmp"        // jump always          : 1
-          | "jmp_never"  // ...                  : 0
-
-    syntax BaseCompOpcode
-        ::= "add"
-          | "sub"
-          | "rsub"
-          | "cmp"
-          | "or"
-          | "xor"
-          | "and"
-          | "test"
-          //
-          | "mov"
-          | "load"
-          | "store"
-          | "slo"
-          //
-          | "in"
-          | "out"
-
-    syntax FlagClass
-        ::= "ArithmeticFlags"
-          | "LogicalFlags"
-          | "NoFlags"
-          | opcode2FlagClass ( Opcode ) [function, functional]
-
-    rule opcode2FlagClass(add)  => ArithmeticFlags
-    rule opcode2FlagClass(sub)  => ArithmeticFlags
-    rule opcode2FlagClass(rsub) => ArithmeticFlags
-    rule opcode2FlagClass(cmp)  => ArithmeticFlags
-    rule opcode2FlagClass(or)   => LogicalFlags
-    rule opcode2FlagClass(xor)  => LogicalFlags
-    rule opcode2FlagClass(and)  => LogicalFlags
-    rule opcode2FlagClass(test) => LogicalFlags
-    
-    rule opcode2FlagClass( _:BaseCompOpcode ) => NoFlags [owise]
-    rule opcode2FlagClass( _:BaseJumpOpcode ) => NoFlags
-    rule opcode2FlagClass( UnknownOpcode )    => NoFlags
-
-    // take care that this evaluates to `false` on `store` because
-    // the result is not stored in a register.
-    syntax Bool ::= storesResult ( Opcode ) [function, functional]
-                  | flipCarry ( Opcode )    [function, functional]
-
-    rule storesResult(cmp #Or test #Or store #Or out) => false
-    rule storesResult( _:BaseCompOpcode ) => true [owise]
-    rule storesResult( _:BaseJumpOpcode ) => false
-    rule storesResult( UnknownOpcode )    => false
-    
-    rule flipCarry(cmp #Or sub #Or rsub) => true
-    rule flipCarry( _ ) => false [owise]
-```
-
-## Execution Cycle
 
 ### Fetch
 
@@ -248,389 +143,91 @@ always PC-relative.
 
 ### Decode
 
-Now the goal is to decode the instruction so that we can `#exec` it.
+Now the goal is to decode the instruction so that we can execute it.
+
+Instructions can be anything, and none are defined here. Instruction modules
+should freely and aggressively add constructors and/or subsorts to the `Instruction`
+sort for their instructions.
 
 ```k
-    rule <k> #decode [ BS:Bytes ] => #exec [ decode(BS) ] ...</k>
-```
-
-The first step is to uncover the instruction format (to the first approx)
-and then pass that to a more detailed decoder. In the future, the first step
-will be to uncover prefixes.
-
-Data types are cheap, so we start by specifying the instruction formats.
-```k
-    syntax InstructionFormat
-        ::= "BaseRegReg"
-          | "BaseRegImm"
-          | "BaseJmp"
-          | "BaseReserved"
-          | decodeFormat ( Bytes ) [function, functional]
-
-    rule decodeFormat(BS) => BaseRegReg
-      requires BS[0] >>Int 6 ==Int 0
-    rule decodeFormat(BS) => BaseRegImm
-      requires BS[0] >>Int 6 ==Int 1
-    rule decodeFormat(BS) => BaseJmp
-      requires BS[0] >>Int 6 ==Int 2
-    rule decodeFormat(BS) => BaseReserved
-      requires BS[0] >>Int 6 ==Int 3
-```
-
-For now we ignore the size bits, but that should go here.
-
-```k
-    // decode size bits
-    syntax OperandSize ::= decodeOperandSize ( Bytes ) [function] //,functional]
-
-    rule decodeOperandSize(BS) => half
-      requires (BS[0] >>Int 4) &Int 3 ==Int 0
-    rule decodeOperandSize(BS) => word
-      requires (BS[0] >>Int 4) &Int 3 ==Int 1
-```
-
-The last feature of the first byte to extract is the opcode. This, of course,
-depends on the format. A `#Or` pattern is a K builtin (directly from Matching
-Logic, in fact). It matches if either of its argument patterns match.
-
-```k
-    syntax Opcode ::= decodeOpcode ( Bytes , InstructionFormat ) [function, functional]
-                    | baseCompOpcode ( Int )                     [function, functional]
-                    | baseJumpOpcode ( Int )                     [function, functional]
-
-    rule decodeOpcode(BS, BaseRegReg #Or BaseRegImm) => baseCompOpcode(BS[0] &Int 15)
-    rule decodeOpcode(BS, BaseJmp)                   => baseJumpOpcode(BS[0] &Int 15)
-    rule decodeOpcode(_ , _      )                   => UnknownOpcode [owise]
-
-    rule baseCompOpcode(0 ) => add
-    rule baseCompOpcode(1 ) => sub
-    rule baseCompOpcode(2 ) => rsub
-    rule baseCompOpcode(3 ) => cmp
-    rule baseCompOpcode(4 ) => or
-    rule baseCompOpcode(5 ) => xor
-    rule baseCompOpcode(6 ) => and
-    rule baseCompOpcode(7 ) => test
-    rule baseCompOpcode(8 ) => UnknownOpcode
-    rule baseCompOpcode(9 ) => mov
-    rule baseCompOpcode(10) => load
-    rule baseCompOpcode(11) => store
-    rule baseCompOpcode(12) => slo
-    rule baseCompOpcode(13) => UnknownOpcode
-    rule baseCompOpcode(14) => in
-    rule baseCompOpcode(15) => out
-    rule baseCompOpcode(OP) => UnknownOpcode
-      requires notBool #range(0 <= OP <= 15)
-
-    rule baseJumpOpcode(0 ) => je
-    rule baseJumpOpcode(1 ) => jne
-    rule baseJumpOpcode(2 ) => js
-    rule baseJumpOpcode(3 ) => jns
-    rule baseJumpOpcode(4 ) => jb
-    rule baseJumpOpcode(5 ) => jae
-    rule baseJumpOpcode(6 ) => jv
-    rule baseJumpOpcode(7 ) => jnv
-    rule baseJumpOpcode(8 ) => jbe
-    rule baseJumpOpcode(9 ) => ja
-    rule baseJumpOpcode(10) => jl
-    rule baseJumpOpcode(11) => jge
-    rule baseJumpOpcode(12) => jle
-    rule baseJumpOpcode(13) => jg
-    rule baseJumpOpcode(14) => jmp
-    rule baseJumpOpcode(15) => jmp_never
-    rule baseJumpOpcode(OP) => UnknownOpcode
-      requires notBool #range(0 <= OP <= 15)
-```
-
-Now, using the format bits, we want to decode the operand byte(s).
-
-These probably need an `OperandSize` in the future, but maybe not. Perhaps
-`#exec` can be responsible for chopping appropriately as it does depend a bit
-on the instruction, I think.
-
-```k
-    syntax Operand
-        ::= decodeFstOperand ( Bytes , InstructionFormat ) [function]
-          | decodeSndOperand ( Bytes , InstructionFormat ) [function]
-
-    rule decodeFstOperand(BS, BaseRegReg #Or BaseRegImm) => RegOperand(BS[1] >>Int 5)
-    rule decodeFstOperand(BS, BaseJmp)                   => ImmOperand( 9 , -256 |Int BS[1] )
-      requires bit(4, BS[0]) // displacement sign bit
-    rule decodeFstOperand(BS, BaseJmp)                   => ImmOperand( 9 , BS[1] )
-      requires notBool bit(4, BS[0]) // displacement sign bit
-
-    rule decodeSndOperand(BS, BaseRegReg) => RegOperand((BS[1] >>Int 2) &Int 7)
-    rule decodeSndOperand(BS, BaseRegImm) => ImmOperand( 5 , BS[1] &Int 31 )
-```
-
-Finally, we want to put things together under a single `decode` function.
-* Get the format
-* Get the size and opcode
-* Use opcode information to extract correct number of operands
-* Assemble the Instruction
-
-```k
-    syntax SizedInstruction
-        ::= decode ( Bytes )                                            [function, functional]
     syntax Instruction
-        ::= decode ( Bytes , InstructionFormat )                        [function, functional]
-          | decode ( Bytes , InstructionFormat , OperandSize , Opcode ) [function, functional]
-
-    rule decode(BS) => decode(BS, decodeFormat(BS)) ISize(2)
-  //-------------------------------------------------------------------
-
-    rule decode(BS, FMT) =>
-         decode(BS, FMT, decodeOperandSize(BS), decodeOpcode(BS, FMT))
-  //-------------------------------------------------------------------
-
-    rule decode(BS, FMT, _SIZE, OP:BaseJumpOpcode)
-         => OP decodeFstOperand(BS, FMT)
-    rule decode(BS, FMT,  word #as SIZE, OP:BaseCompOpcode)
-         => OP SIZE decodeFstOperand(BS, FMT) decodeSndOperand(BS, FMT)
-    
-    rule decode(_, _, _, _) => UnknownInstruction [owise]
 ```
 
-### Execute
+A decoded instruction is **required** to mention its size. If, for some reason,
+you don't want to keep the size around, you should not make your instruction an
+inhabitant of `SizedInstruction` directly. Instead, you should make your
+instruction an inhabitant of `UnsizedInstruction`, which will automatically
+enable the following rule to trigger (both from `UNSIZED-INSTRUCTION`):
+```
+/*
+    rule <k> (I:UnsizedInstruction _SIZE):SizedInstruction => I ...</k>
+*/
+```
 
-* Evaluate the result (of a computation)
-* Decide to take a branch, replacing with `jmp` or `jmp_never`
-
-We can split this into two sections. Computations and Jumps.
-Then we provide cases for each instruction separately.
-
-It's possible to share some work, and we provide utilities to do so,
-but it's most flexible from a semantics standpoint to give semantics to
-each operation separately. 
-
-#### Utilities
-
-`evalOperand` evaluates an `Operand` to its value in the current execution
-context. At the moment, it's always either a register or an immediate.
-Signedness is only considered for immediates, which must be extended according
-to the instruction semantics. If a Signedness isn't given, it defaults to
-`Signed`.
+This rule simply deletes the size from the `<k>` cell. Ensure that the instruction
+semantics cause `PC` to get modified, otherwise you will get caught in an infinite
+loop! If your instruction is supposed to cause a halt, then this should be
+modeled explicitly by rewriting it to `#halt` with some message.
 
 ```k
-    syntax InstructionResult
-      ::= "WithOpSigns" "(" Bool "," Bool "," Int ")" // OPL, OPR, RES
-        | Int
-        | evalInstruction ( Instruction ) [function]
+    syntax MaybeInstruction
+      ::= "UnknownInstruction"
+        | SizedInstruction
+        | decode ( Bytes ) [function, functional]
 
-    syntax Int ::= evalOperand ( Operand )              [function]
-                 | evalOperand ( Signedness , Operand ) [function]
+    syntax SizedInstruction 
+      ::= Instruction "ISize" "(" Int ")"
 
-    // considering the current processor flags, decide whether or not
-    // to take a branch. If it's taken, replace the opcode with `jmp`.
-    // If it's not taken, replace it with `jmp_never`.
-    syntax BaseJumpOpcode ::= decideBranch ( BaseJumpOpcode ) [function]
+    rule <k> #decode [ BS:Bytes ] => decode(BS) ~> #fetch ...</k>
 
-    rule evalOperand(OP) => evalOperand(Signed, OP)
-
-    rule evalOperand(       _, RegOperand(RID))        => Reg[RID]
-    rule evalOperand(  Signed, ImmOperand(WIDTH, IMM)) => sextFrom(WIDTH, IMM)
-    rule evalOperand(Unsigned, ImmOperand(WIDTH, IMM)) => zextFrom(WIDTH, IMM)
-  //--------------------------------------------------------------------------
-
-    syntax Int ::= negUInt ( OperandSize , Int ) [function, functional]
-    rule negUInt ( S , I ) => zextFrom(S, ~Int I) +Int 1
+    // priority(400) allows [owise] rules to beat this one!
+    // owise == priority(200) and lower priorities win.
+    // This way you can still define [owise] rules as long as they have
+    // side conditions that meet the responsibility requirement below.
+    rule decode ( _:Bytes ) => UnknownInstruction [priority(400)]
+    rule <k> UnknownInstruction:MaybeInstruction => #EUnknownInstr ...</k>
 ```
 
-#### Type Dispatch
+To hook into the execution cycle, all you need to do is implement the
+`decode` function to transform `Bytes` into your instruction (and its size).
+If you are not given enough `Bytes`, you can retrieve more; see the `#fetch`
+rule above.
 
-Dispatching based on opcode type to some different evaluators helps alleviate
-some of the tension of (mostly) giving each instruction separate semantics.
+Some utility modules require more hooks, but those are not required in general.
 
-For example, jumps never need to do math in the `#exec` stage
+You may implement `decode` however you want, except that you **must not** match
+any `Bytes` patterns that do not correspond to your instructions. This will
+cause your `decode` rules to "steal" those byte patterns from the actual
+instructions they correspond to.
 
-```k
-    rule <k> #exec   [ (_:BaseCompOpcode _OSIZE _OPL _OPR #as I) _SIZE #as SI ] =>
-             #retire [ SI , evalInstruction ( I ) ] ...</k>
+There is an exception to the above restriction:
+If your instructions explicitly reserve space for a particular purpose
+(to be enabled by a different extension), then your instructions _should_ either
 
-    rule <k> #exec   [ jmp ImmOperand( _ , 0 ) _SIZE ]  => #halt "halted successfully!" ...</k>
-    rule <k> #exec   [ J:BaseJumpOpcode OP SIZE ] =>
-             #retire [ decideBranch(J) OP SIZE , evalOperand(OP) ] ...</k> [owise]
+* match those reserved patterns and should define or use a utility function to
+  decode the reserved sub-patterns so that the relevant extension can hook into
+  yours. The size bits in `Base` provide an example of how to do this. If the
+  instruction should be treated as unknown (due to mode or extension specification),
+  the decoder should explicitly return `UnknownInstruction`. **This still
+  terminates the decoding process**, and will cause an `#EUnknownInstr` exception.
+* or not match the instruction at all, requiring the other extension to fill in
+  the gaps. Note that the other extension can fill in the gaps by using a
+  _subsorting hook_ into your extension. If you are able to leave the
+  unimplemented part in a sort, the extension can add new constructors and
+  evaluation rules for that sort to implement the reserved functionality.
+  The operand-mode bits in `Base` provide an example of how to do this.
 
-    rule <k> #exec [ UnknownInstruction _SIZE ] => #halt "Unknown Instruction!" ...</k>
+If it is easy to do so, we recommend implementing the decoder by defining
+something like (block ignored by K):
+```
+    syntax Bool ::= isOneOfMyInstrs ( Bytes ) [function,functional]
+
+    rule decode( BS:Bytes ) => decodeMyInstrs(BS)
+      requires isOneOfMyInstrs(BS)
 ```
 
-#### Computations
-
-```k
-    rule evalInstruction(add OSIZE OPL OPR) =>
-         evalAdd(OSIZE, evalOperand(OPL), evalOperand(OPR))
-
-    rule evalInstruction(sub OSIZE OPL OPR) =>
-         evalSub(OSIZE, evalOperand(OPL), evalOperand(OPR))
-
-    rule evalInstruction(rsub OSIZE OPL OPR) =>
-         evalSub(OSIZE, evalOperand(OPR), evalOperand(OPL))
-
-    rule evalInstruction(cmp OSIZE OPL OPR) =>
-         evalSub(OSIZE, evalOperand(OPL), evalOperand(OPR))
-
-    rule evalInstruction(or _OSIZE OPL OPR) =>
-         evalOperand(OPL) |Int evalOperand(OPR)
-
-    rule evalInstruction(xor _OSIZE OPL OPR) =>
-         evalOperand(OPL) xorInt evalOperand(OPR)
-
-    rule evalInstruction(and _OSIZE OPL OPR) =>
-         evalOperand(OPL) &Int evalOperand(OPR)
-
-    rule evalInstruction(test _OSIZE OPL OPR) =>
-         evalOperand(OPL) &Int evalOperand(OPR)
-
-    rule evalInstruction(mov _OSIZE _OPL OPR) =>
-         evalOperand(OPR)
-
-    // read OSIZE many bytes, but interpret the pointer as being
-    // REG-WIDTH in size.
-    // This will be relevant once `evalOperand` takes an `OperandSize`.
-    rule evalInstruction(load OSIZE _OPL OPR) =>
-         Mem[evalOperand(OPR) : OSIZE]
-
-    rule evalInstruction(store _OSIZE _OPL OPR) =>
-         evalOperand(OPR)
-
-    rule evalInstruction(slo _OSIZE OPL OPR) =>
-         (evalOperand(OPL) <<Int 5) |Int evalOperand(Unsigned, OPR)
-
-    // Not implemented yet
-    //rule evalInstruction((in #Or out) _OSIZE _OPL _OPR)
-  //-------------------------------------------------------------------------
-
-    syntax InstructionResult
-        ::= evalAdd ( OperandSize , Int , Int ) [function, functional]
-          | evalSub ( OperandSize , Int , Int ) [function, functional]
-
-    rule evalAdd(SIZE, L, R)
-         => WithOpSigns(isNegative(SIZE, L), isNegative(SIZE, R), L +Int R)
-
-    rule evalSub(SIZE, L, R)
-         => WithOpSigns(
-                isNegative(SIZE, L),
-                isNegative(SIZE, ~Int R),
-                L +Int negUInt(SIZE, R)
-            )
-```
-
-#### Jumps
-
-```k
-    rule decideBranch(J) => jmp       requires         brTaken(J)
-    rule decideBranch(J) => jmp_never requires notBool brTaken(J)
-  //-------------------------------------------------------------
-
-    syntax Bool ::= brTaken ( BaseJumpOpcode ) [function, functional]
-
-    rule [[ brTaken(je)  => Z ]]
-         <zero> Z </zero>
-    rule brTaken(jne) => notBool brTaken(je)
-
-    rule [[ brTaken(js)  => N ]]
-         <negative> N </negative>
-    rule brTaken(jns) => notBool brTaken(js)
-
-    rule [[ brTaken(jb)  => C ]]
-         <carry> C </carry>
-    rule brTaken(jae) => notBool brTaken(jb)
-
-    rule [[ brTaken(jv)  =>         V ]]
-         <overflow> V </overflow>
-    rule brTaken(jnv) => notBool brTaken(jv)
-
-    rule [[ brTaken(jbe) => C orBool Z ]]
-         <carry> C </carry>
-         <zero>  Z </zero>
-    rule brTaken(ja) => notBool brTaken(jbe)
-
-    rule [[ brTaken(jl)  => N =/=Bool V ]]
-         <negative> N </negative>
-         <overflow> V </overflow>
-    rule brTaken(jge) => notBool brTaken(jl)
-
-    rule [[ brTaken(jle) => Z orBool (N =/=Bool V) ]]
-         <zero>     Z </zero>
-         <negative> N </negative>
-         <overflow> V </overflow>
-    rule brTaken(jg) => notBool brTaken(jle)
-
-    rule brTaken(jmp)       => true
-    rule brTaken(jmp_never) => false
-```
-
-### Retire
-
-* Write the result into the destination (none/register/memory)
-* Set flags according to the FlagClass of the opcode and the result
-* Advance the program counter
-
-```k
-    syntax KItem ::= "#retireWB"    "[" Instruction      "," Int "]"
-                   | "#retireFlags" "[" Instruction      "," InstructionResult "]"
-                   | "#retirePC"    "[" SizedInstruction "," Int "]"
-
-    syntax Int ::= extractResFromInstrRes ( InstructionResult ) [function, functional]
-    rule extractResFromInstrRes(                  RES:Int) => RES
-    rule extractResFromInstrRes(WithOpSigns(_, _, RES)   ) => RES
-
-    rule <k> #retire [ I SIZE , RES ] =>
-                #retireWB    [ I      , extractResFromInstrRes(RES) ]
-             ~> #retireFlags [ I      ,                        RES  ]
-             ~> #retirePC    [ I SIZE , extractResFromInstrRes(RES) ]
-             ~> #fetch
-         ...</k>
-  //---------------------------------------------------------------
-
-    rule <k> #retireWB [ store OSIZE OPL _OPR , RES:Int ] =>
-             Mem[evalOperand(OPL) : OSIZE ] = RES ...</k>
-
-    rule <k> #retireWB [ OP OSIZE RegOperand(RID) _OPR , RES:Int ] =>
-             Reg[RID] = chopTo(OSIZE, RES)
-         ...</k>
-      requires storesResult(OP)
-
-    rule <k> #retireWB [ _ , _ ] => . ...</k> [owise]
-  //---------------------------------------------------------------
-
-    rule <k> #retireFlags [ OP OSIZE _OPL _OPR , RES:Int ] => . ...</k>
-         <flags>
-            <zero>     _ => chopTo(OSIZE, RES)  ==Int 0 </zero>
-            <negative> _ => sextFrom(OSIZE, RES) <Int 0 </negative>
-            <carry>    _                                </carry>
-            <overflow> _                                </overflow>
-         </flags>
-      requires LogicalFlags :=K opcode2FlagClass(OP)
-
-    rule <k> #retireFlags [ OP OSIZE _OPL _OPR , WithOpSigns(LS, RS, RES) ] => . ...</k>
-         <flags>
-            <zero>     _ => chopTo    (OSIZE, RES) ==Int 0 </zero>
-            <negative> _ => sextFrom  (OSIZE, RES)  <Int 0 </negative>
-            <carry> 
-                _ => flipCarry(OP) xorBool carried(OSIZE, RES)
-            </carry>
-            <overflow>
-                _ => overflowed(OSIZE, LS, RS, RES)
-            </overflow>
-         </flags>
-      requires ArithmeticFlags :=K opcode2FlagClass(OP)
-
-    rule <k> #retireFlags [ I , _ ] => . ...</k>
-      requires NoFlags :=K opcode2FlagClass(instructionOpcode(I))
-
-    rule <k> #retireFlags [ _ , _ ]
-          => #halt "Wrong result type for opcode. Needs debugging!"
-          ...</k>
-          [owise]
-  //---------------------------------------------------------------
-
-    rule <k> #retirePC [ jmp _OP _SIZE , SIGNEDDISP ] => . ...</k>
-         <pc> PC => PC +Int SIGNEDDISP </pc> [priority(49)]
-    rule <k> #retirePC [ _ ISize(N) , _ ] => . ...</k>
-         <pc> PC => PC +Int N </pc>
-    rule <k> #retirePC [ _ NoSize   , _ ] => . ...</k>
-```
-
+Once decoding is isolated to your own domain logic, you no longer have to worry
+about being a responsible implementor of `decode`.
 
 ## EDSL for Reg/Mem Reads/Writes
 
@@ -639,19 +236,35 @@ for both reading and writing. Here we implement a tiny EDSL with standard
 semantic syntax for these things.
 
 ```k
-    syntax Int ::= "Mem" "[" Int ":" ByteSize "]" [function]
-                 | "Reg" "[" RegisterID "]"  [function]
+    syntax Int ::= "Mem" "[" Int ":" ByteSize "]"         [function]
+                 | "Reg" "[" RegisterID ":" ByteSize "]"  [function]
+                 // this mode always accesses at the full width
+                 | "Reg" "[" RegisterID "]"               [function]
 
     rule [[ Mem [ ADDR : WIDTH ]
          => Bytes2Int(#range(MEM, ADDR, WIDTH), LE, Unsigned) ]]
-         <memory> MEM </memory>
+         <memory> MEM      </memory>
          <reg-width> RSIZE </reg-width>
       requires #rangeByteSize(RSIZE, ADDR)
+  //-------------------------------------------------------------
+    
+    rule [[ Reg [ RID ] => Reg [ RID : SIZE ] ]]
+         <reg-width> SIZE </reg-width>
 
-    rule [[ Reg [ RID ] => RS[RID] ]]
-         <registers> RS </registers>
+    rule [[ Reg [ (RID:Int) : SIZE ] => chopTo(SIZE, RS[RID]) ]]
+         <registers> RS     </registers>
          <reg-count> RCOUNT </reg-count>
       requires #range(0 <= RID < RCOUNT)
+
+    rule [[ Reg [ CRcpuid : SIZE ] => chopTo(SIZE, CPUID) ]]
+         <cpuid> CPUID </cpuid>
+    rule [[ Reg [ CRexten : SIZE ] => chopTo(SIZE, EXTEN) ]]
+         <exten> EXTEN </exten>
+
+    syntax RegisterID ::= "CRcpuid" | "CRexten"
+                        | controlRegFromNum ( Int ) [function]
+    rule controlRegFromNum(0) => CRcpuid
+    rule controlRegFromNum(1) => CRexten
 ```
 
 That lets us read memory and registers with a K function. We should also be able to
@@ -659,18 +272,50 @@ _write_ the memory and registers with the same syntax. These cannot be functions
 
 ```k
     syntax KItem ::= "Mem" "[" Int ":" ByteSize "]" "=" Int
+                   | "Reg" "[" RegisterID ":" ByteSize "]" "=" Int
+                   // This always writes to the full width,
+                   // useful for getting zero extension
                    | "Reg" "[" RegisterID "]" "=" Int
 
     rule <k> Mem[ADDR : WIDTH] = R => . ...</k>
          <memory> MEM => MEM [ ADDR := Int2Bytes(ByteSize2NumBytes(WIDTH), R, LE) ] </memory>
          <reg-width> RSIZE </reg-width>
       requires #rangeByteSize(RSIZE, ADDR)
+
+    rule [[ Reg [ RID ] => Reg [ RID : SIZE ] ]]
+         <reg-width> SIZE </reg-width>
     
-    rule <k> Reg[RID] = R => . ...</k>
-         <registers> RS => RS [ RID <- R ] </registers>
+    rule <k> Reg [ (RID:Int) : SIZE ] = R => . ...</k>
+         <registers> RS => RS [ RID <- sextFrom(SIZE, R) ] </registers>
          <reg-count> RCOUNT </reg-count>
       requires #range(0 <= RID < RCOUNT)
+
+    // CPUID is immutable
+    rule <k> Reg [ CRcpuid : _SIZE ] = _R => . ...</k>
+    // EXTEN is immutable, for now.
+    rule <k> Reg [ CRexten : _SIZE ] = _R => . ...</k>
 ```
+
+## Operands
+
+Operands are not specified here. However, any operand definition must
+implement the `evalOperand` utility function, which takes an operand
+and whether or not the context is signed and produces the value of the operand.
+
+The ETC.A base operands are defined in `base/spec.md`, in the
+`BASE-OPERANDS` module.
+
+```k
+    syntax Operand
+    syntax Int ::= evalOperand ( Operand )              [function, functional]
+                 | evalOperand ( Signedness , Operand ) [function, functional]
+
+    rule evalOperand(OP:Operand) => evalOperand(Signed,OP) [owise]
+```
+
+The last rule is marked `[owise]` so that a particular operand constructor
+can define its own default rule which takes priority over this one.
+
 ```k
 endmodule
 ```

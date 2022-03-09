@@ -11,17 +11,30 @@ We want these to have a degree of generality as well.
 
 Since we want generality, everything is implemented over K's `Int`. K has a `MInt{Width}` parametric
 type, but the fixed width reduces generality and it also appears to have some bugs. Other projects
-like `kframework/evm-semantics` have demonstrate that `Int` is sufficient even for large projects.
+like `kframework/evm-semantics` have demonstrated that `Int` is sufficient even for large projects.
+
 ```k
 module ETC-TYPES
-    imports INT
-    imports STRING
+    imports ETC-NUMERIC
+    imports ETC-EXCEPTIONS
+    imports REGISTERS
+    imports PAGED-MEMORY
+
     imports COLLECTIONS
-    imports BOOL
-    imports BYTES
+endmodule
 ```
 
-## Utilities
+## Numeric Utilities
+
+First we define a module containing shared syntax and basic functions
+for sizes and some important numbers.
+
+```k
+module ETC-NUMERIC
+    imports INT
+    imports BOOL
+```
+
 
 ### Important Sizes
 
@@ -182,7 +195,46 @@ We want to be able to check these on a bit-by-bit basis.
     rule bit(N, I) => bitRangeInt(I, N, 1) ==Int 1 [concrete]
 ```
 
-### Memory
+```k
+endmodule // NUMERIC
+```
+
+## Registers
+
+Registers are identified by number and map to their contents, an `Int`.
+There is also an extra `temp` register for use in instruction implementations.
+
+We keep the `Int` a positive value and interpret it as signed with `sextFrom`
+when needed.
+
+```k
+module REGISTERS
+    imports MAP
+    imports INT
+    
+    syntax RegisterID ::= Int
+    syntax Registers  ::= Registers ( Map )
+
+    syntax Int ::= Registers "[" RegisterID "]" [function]
+    rule Registers(RS) [ N:RegisterID ] => {RS [ N ]}:>Int
+
+    syntax Registers ::= Registers "[" RegisterID "<-" Int "]" [function]
+    rule Registers(RS) [ N <- VAL ] => Registers(RS [ N <- VAL ])
+
+    syntax Registers ::= makeRegisters ( Int ) [macro]
+    rule makeRegisters( N ) => Registers( fillMap(N -Int 1, 0) )
+    
+    syntax Map ::= fillMap ( Int , KItem ) [function, functional]
+    rule fillMap(0, V) => 0 |-> V
+    rule fillMap(N, V) => N |-> V fillMap(N -Int 1, V)
+      requires N >Int 0
+    rule fillMap(N, _) => .Map
+      requires N <Int 0
+```
+```k
+endmodule
+```
+## Memory
 
 Everything happens in memory. The first thing that the interpreter does is load
 the given binary into the memory at address 0x8000. Addresses below 0x8000 are
@@ -201,12 +253,37 @@ functions.
   The result is padded with zeros as needed.
 
 ```k
+module PAGED-MEMORY
+    imports INT
+    imports MAP
+    imports BYTES
+
+    imports private ETC-NUMERIC
+```
+
+### Definition
+
+```k
     syntax Memory = Map // Map{Int,Bytes}
     syntax Memory ::= ".Memory" [macro]
     rule .Memory => .Map
+```
 
+### Writing
+
+The function `M [ A := BS]` overwrites the memory starting at address `A`
+with the byte array `BS`. As many bytes as the length of `BS` are overwritten.
+
+There is no alignment restriction.
+
+```k
     syntax Memory ::= Memory "[" Int ":=" Bytes "]" [function, functional]
+    //syntax Address = Int
+```
 
+This rule implements accesses that do not cross page boundaries.
+
+```k
     rule MEM [ START := BS' ]
          => MEM [ START >>Int 8 <-
                 replaceAtBytes(
@@ -221,7 +298,12 @@ functions.
             ]
       requires START >=Int 0
        andBool chopTo(half, START) +Int lengthBytes(BS') <=Int pow8 [concrete]
+```
 
+This rule implements accesses which cross page boundaries, by recursively
+breaking down the access into subaccesses which are each within a single page.
+
+```k
     rule MEM [ START := BS' ]
          => (MEM [ START >>Int 8 <-
                 replaceAtBytes(
@@ -238,19 +320,48 @@ functions.
                ]
       requires START >=Int 0
        andBool chopTo(half, START) +Int lengthBytes(BS') >Int pow8 [concrete]
+```
 
+If the start address is invalid, we return an empty `Memory`. Note that we don't
+return the input Memory. Instead we do this, which will most likely cause a
+crash. In the future, if we do symbolic execution on the semantics, this
+will be easier to reason about.
+
+```k
     rule _:Map [ START := _:Bytes ] => .Memory
       requires START <Int 0 [concrete]
-  //----------------------------------------------------------------------------------------------------
+```
 
+### Reading
+
+The `#range(M, A, SIZE)` function reads the range of length `SIZE` starting from
+address `A` from memory `M`. The `SIZE` can be given as a number of bytes or as
+an operation size like `half` or `word`.
+
+```k
     syntax Bytes ::= #range ( Memory , Int , Int )      [function, functional]
                    | #range ( Memory , Int , ByteSize ) [function, functional]
+```
 
+If the size is given as a `ByteSize`, replace it with the corresponding
+number of bytes.
+
+```k
     rule #range(MEM, START, WIDTH:ByteSize) => #range(MEM, START, ByteSize2NumBytes(WIDTH))
+```
 
+If the address or width is invalid, return an empty `.Bytes`. This is likely to crash
+if a programming mistake triggers this rule, and K's runtime error messages are...
+not good. If it works, it would probably be better to replace this with `#halt "..."`.
+
+```k
     rule #range(_, START, WIDTH) => .Bytes
       requires notBool(START >=Int 0 andBool WIDTH >=Int 0) [concrete]
+```
 
+Similar to writing, this rule handles single-page memory reads.
+
+```k
     rule #range(MEM, START, WIDTH)
          => substrBytes(
                 padRightBytes({MEM[START >>Int 8] orDefault .Bytes}:>Bytes, pow8, 0),
@@ -260,7 +371,11 @@ functions.
       requires START >=Int 0
        andBool WIDTH >=Int 0
        andBool chopTo(half, START) +Int WIDTH <=Int pow8 [concrete]
+```
 
+And also similar to writing, this rule handles reads that cross page lines.
+
+```k
     rule #range(MEM, START, WIDTH)
          => substrBytes(
                 padRightBytes({MEM[START >>Int 8] orDefault .Bytes}:>Bytes, pow8, 0),
@@ -272,34 +387,27 @@ functions.
        andBool WIDTH >=Int 0
        andBool chopTo(half, START) +Int WIDTH >Int pow8 [concrete]
 ```
-
-### Registers
-
-Registers are identified by number and map to their contents, an `Int`.
-
-We keep the `Int` a positive value and interpret it as signed with `sextFrom`
-when needed.
-
 ```k
-    syntax RegisterID ::= Int
-    syntax Registers  ::= Registers ( Map )
-
-    syntax Int ::= Registers "[" RegisterID "]" [function]
-    rule Registers(RS) [ N::RegisterID ] => {RS [ N ]}:>Int
-
-    syntax Registers ::= Registers "[" RegisterID "<-" Int "]" [function]
-    rule Registers(RS) [ N <- VAL ] => Registers(RS [ N <- VAL ])
-
-    syntax Registers ::= makeRegisters ( Int ) [macro]
-    rule makeRegisters( N ) => Registers( fillMap(N -Int 1, 0) )
-    
-    syntax Map ::= fillMap ( Int , KItem ) [function, functional]
-    rule fillMap(0, V) => 0 |-> V
-    rule fillMap(N, V) => N |-> V fillMap(N -Int 1, V)
-      requires N >Int 0
-    rule fillMap(N, _) => .Map
-      requires N <Int 0
+endmodule
 ```
+
+## Exceptions
+
+Several execution events can cause exceptions internal to the processor. If
+an interrupt system is available via extensions, such exceptions can trigger
+an interrupt, but otherwise the processor should essentially report the exception
+and halt. A real processor would `hlt`, entering a low-power idle state until
+receiving an external interrupt. There's not really a point for us to model
+that, so we signal `KItem`s with no rules to halt the processor.
+
+An interrupts extension could add rules for these error codes, conditional
+on the extension being enabled, which trigger interrupts.
+
 ```k
+module ETC-EXCEPTIONS
+
+    syntax KItem
+        ::= "#EUnknownInstr"
+
 endmodule
 ```
