@@ -350,7 +350,7 @@ of subtraction flag logic and just throw the result-writeback on top of that.
 ```k
     rule <k> #operands[LV,RV] ~> cmp SIZE _ _
           => #setArithmeticFlags( SIZE
-                                , LV -Int RV
+                                , LV +Int chopTo(SIZE, ~Int RV) +Int 1
                                 , isNegative(SIZE, ~Int LV)
                                 , isNegative(SIZE, ~Int RV)
                                 )
