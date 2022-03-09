@@ -57,7 +57,9 @@ module ETC-FLAGS
          <flags>
             <zero>     _ => chopTo(SIZE,R) ==Int 0 </zero>
             <negative> _ => isNegative(SIZE, R)    </negative>
-            ...
+            
+            <carry>    _ => 0 </carry>
+            <overflow> _ => 0 </overflow>
          </flags>
 ```
 
