@@ -104,6 +104,14 @@ If the LSB of the port number is 0, then the port number refers to a control reg
 1) CPUID uses a bitfield to specify the available extensions. A value of 0 means no extensions are available.
 2) This uses a bitfield in the same format as CPUID. Attempting to enable a non-available extension should leave the bit cleared. Attempting to disable a non-disableable extension should leave the bit set.
 
+## Memory Semantics
+
+Unaligned memory accesses are undefined behavior. A memory access is unaligned if the address modulus the read/write width is not equal to zero. The read/write width is defined by the SS bits, which for the base ISA corresponds to a read/write width of 2 bytes.
+
+### Separation of Program ROM and RAM
+
+Aside from program rom starting at address 0x8000, there are no requirements for how the memory address space is layed out. For ease of implementation, this spec does NOT require program memory to be accessible with the load and store instructions nor does it require that RAM be executable. Loads and stores of program memory are undefined behavior. Executing from RAM is undefined behavior. Future extensions will change this behavior
+
 ## Flag Semantics
 
 Flags conceptually maintain these values. A future, more rigorous specification of this standard will include a detailed description of affected flags for every instruction individually.
@@ -138,7 +146,3 @@ Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte o
 | `1101` | greater                 | <code> ~Z &amp; (N = V) </code>  |         |
 | `1110` | always                  |                                  |         |
 | `1111` | never                   |                                  |         |
-
-## Separation of Program ROM and RAM
-
-Aside from program rom starting at address 0x8000, there are no requirements for how the memory address space is layed out. For ease of implementation, this spec does NOT require program memory to be accessible with the load and store instructions nor does it require that RAM be executable. Loads and stores of program memory are undefined behavior. Executing from RAM is undefined behavior. Future extensions will change this behavior
