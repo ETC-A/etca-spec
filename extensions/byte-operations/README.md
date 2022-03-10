@@ -10,6 +10,7 @@
 - Operations that write to a register _must_ sign extend the value to the register's width before writing it to the register.
 - Operations that modify flags _must_ modify them as if the operation was for 8 bit values.
 - Memory stores in this mode _must_ only affect the 8 bit section that is being written to.
+- Memory address alignment in this mode is 1 byte
 
 # Added Instructions
 

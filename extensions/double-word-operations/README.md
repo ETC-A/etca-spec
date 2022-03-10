@@ -12,6 +12,7 @@
 - Operations that modify flags _must_ modify them as if the operation was for 32 bit values.
 - Memory stores in this mode _must_ only affect the 32 bit section that is being written to.
 - Memory stores with the SS bits set to 01 _must_ only affect the 16 bit section that is being written to
+- Memory address alignment in this mode is 4 bytes
 
 # Added Instructions
 
