@@ -299,12 +299,17 @@ Now we use basically a "heating/cooling" pair of rules to get the values
 of the operands for all `BaseCompInstruction`s. We want to leave the operands
 themselves around for the arithmetic instructions to give to `#setArithmeticFlags`.
 
+It's important that we `chopTo SIZE` the operands here. If we are given a negative
+immediate, we need to ensure that the check for the carry bit (say) doesn't have
+to care that the infinite-precision representation of the immediate had the carry
+bit already set.
+
 ```k
     syntax KItem ::= "#operands" "[" Int "," Int "]"
 
-    rule <k> ((OP:BaseCompOpcode _SIZE OPL OPR) #as I):BaseCompInstruction
-          => #operands [ evalOperand(OPL)
-                       , evalOperand(immediateSignedness(OP), OPR)
+    rule <k> ((OP:BaseCompOpcode SIZE OPL OPR) #as I):BaseCompInstruction
+          => #operands [ chopTo(SIZE, evalOperand(OPL))
+                       , chopTo(SIZE, evalOperand(immediateSignedness(OP), OPR))
                        ]
           ~> I
          ...</k>
@@ -351,7 +356,7 @@ of subtraction flag logic and just throw the result-writeback on top of that.
     rule <k> #operands[LV,RV] ~> cmp SIZE _ _
           => #setArithmeticFlags( SIZE
                                 , LV +Int chopTo(SIZE, ~Int RV) +Int 1
-                                , isNegative(SIZE, ~Int LV)
+                                , isNegative(SIZE, LV)
                                 , isNegative(SIZE, ~Int RV)
                                 )
           ~> #carryToBorrow

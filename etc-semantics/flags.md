@@ -44,9 +44,9 @@ module ETC-FLAGS
 
     rule <k> #setArithmeticFlags(SIZE, R, LSIGN, RSIGN) => . ...</k>
          <flags>
-            <carry>    _ => bit(ByteSize2NumBits(SIZE) +Int 1, R) </carry>
-            <zero>     _ => R  ==Int 0                            </zero>
-            <negative> _ => isNegative(SIZE, R)                   </negative>
+            <carry>    _ => bit(ByteSize2NumBits(SIZE), R) </carry>
+            <zero>     _ => chopTo(SIZE, R) ==Int 0        </zero>
+            <negative> _ => isNegative(SIZE, R)            </negative>
             <overflow> _ =>
               (LSIGN ==Bool RSIGN)
               andBool (LSIGN =/=Bool isNegative(SIZE, R))
