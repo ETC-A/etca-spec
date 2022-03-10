@@ -75,6 +75,11 @@ The following opcodes are now defined.
 - The conditional absolute register function call will conditionally store the next instruction's address in the link register and jump to the address stored inside `RRR`
 - The absolute unconditional functional call will store the next instruction's address in the link register and jump to the address specified by `III IIII IIII I000` for the lower 15 bits with any upper bits being preserved from the current instruction address.
 
+## Stack Semantics
+
+- The stack grows down towards address 0
+- Before executing the call instruction, it is the callers job to ensure that SP is properly aligned to register width on systems that do not support unaligned memory access.
+
 # Example Function Call Snippets
 
 Here is an example of how a function call, header, and tail could look when only saving the `ln`, `bp`, and `sp` registers
