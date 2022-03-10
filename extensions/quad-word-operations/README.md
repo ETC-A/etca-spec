@@ -18,7 +18,4 @@ The added instructions are the same as for the [Double Word Operations](../doubl
 
 # Memory Address Space Changes and Consistency
 
-- The address range 0x0000 to 0x7FFF when this extension is disabled must still be contiguous when this extension is enabled
-- The address range 0x8000 to 0xFFFF when this extension is disabled must still be contiguous when this extension is enabled
-- The address range 0x00000000 to 0x7FFFFFFF when this extension is disabled must still be contiguous when this extension is enabled
-- The address range 0x80000000 to 0xFFFFFFFF when this extension is disabled must still be contiguous when this extension is enabled
+When this extension is enabled, the PC should be sign extended from 16 bits or 32 bits to 64 bits depending on the current register width to preserve the intended address space mappings

@@ -31,5 +31,4 @@ As an example, `movz r0, -1` with the SS bits set to 01 will store the value 655
 
 # Memory Address Space Changes and Consistency
 
-- The address range 0x0000 to 0x7FFF when this extension is disabled must still be contiguous when this extension is enabled
-- The address range 0x8000 to 0xFFFF when this extension is disabled must still be contiguous when this extension is enabled
+When this extension is enabled, the PC should be sign extended from 16 bits to 32 bits to preserve the intended address space mappings
