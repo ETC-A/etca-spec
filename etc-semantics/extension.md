@@ -71,7 +71,7 @@ module EXTENSION
     syntax MaybeEtcExtension ::= EtcExtension | "UnknownExtension"
 
     syntax MaybeEtcExtension ::= bit2Extension ( Int ) [function, functional]
-    syntax Int ::= extension2bit ( EtcExtension ) [function, functional]
+    syntax Int ::= extension2Bit ( EtcExtension )      [function, functional]
 
     syntax List ::= extensionDependsOn ( EtcExtension ) [function, functional]
 
