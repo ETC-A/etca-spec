@@ -77,9 +77,14 @@ module EXTENSION
 
     syntax Bool ::= extensionCanToggle ( EtcExtension ) [function, functional]
                   | extensionDefault   ( EtcExtension ) [function, functional]
+                  | checkExtension     ( EtcExtension ) [function, functional]
 
     rule bit2Extension ( _ ) => UnknownExtension [owise]
   //----------------------------------------------------
+
+    rule [[ checkExtension(EXT) => bit(extension2Bit(EXT), EXTEN) ]]
+         <exten> EXTEN </exten>
+  //------------------------------------------------------------------------
 
     rule <k> #enableDefaultExtensions => #enableDefaultExtensions(0) ...</k>
 

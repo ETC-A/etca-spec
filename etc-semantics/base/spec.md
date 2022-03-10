@@ -46,11 +46,17 @@ over them.
 And for extensibility, we define `#writeWOperand` as well.
 
 ```k
-    syntax KItem ::= #writeWOperand ( RWOperand , Int )
+    syntax KItem ::= #writeWOperand   ( RWOperand , Int )
+                   | #writeWOperandZX ( RWOperand , Int )
 
     rule <k> #writeWOperand(RegOperand(SIZE, RID), RES)
           => Reg[RID : SIZE] = RES
          ...</k>
+
+    rule <k> #writeWOperandZX(RegOperand(SIZE, RID), RES) => . ...</k>
+         <registers> RS => RS [ RID <- zextFrom(SIZE, RES) ] </registers>
+         <reg-count> RCOUNT </reg-count>
+      requires #range(0 <= RID < RCOUNT)
 ```
 
 ```k
@@ -400,7 +406,9 @@ and the process of evaluating address operands will use the full-width
 registers in general.
 
 ```k
-    rule <k> #operands[_LV,RV] ~> mov _ OPL _ => #writeWOperand(OPL, RV) ...</k>
+    rule <k> #operands[_LV,RV] ~> mov SIZE OPL _
+          => #writeWOperand(OPL, sextFrom(SIZE,RV))
+         ...</k>
 
     rule <k> #operands[_LV,RV] ~> store SIZE RegOperand(_,RID) _
           => Mem[Reg[RID] : SIZE] = RV

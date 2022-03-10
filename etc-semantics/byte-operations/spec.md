@@ -45,6 +45,31 @@ All we need to do is tell `base` how to decode `byte` size bits.
 
 ```k
     rule decodeOperandSize(0) => half
+      requires checkExtension(ByteOperations)
+```
+
+# New Instruction
+
+The extension defines a new instruction, `movz`, which behaves by moving
+its argument to the destination operand and zero-extending it from the operand
+width to the full register width.
+
+```k
+    syntax BaseCompOpcode ::= "movz"
+
+    rule decode(BS:Bytes) => decodeBaseCRR(BS)
+      requires BS[0] &Int 207 ==Int 8  // 00xx1000
+       andBool checkExtension(ByteOperations)
+    rule decode(BS:Bytes) => decodeBaseCRI(BS)
+      requires BS[0] &Int 207 ==Int 72 // 01xx1000
+       andBool checkExtension(ByteOperations)
+
+    rule decodeBaseCompOpcode(8) => movz
+      requires checkExtension(ByteOperations)
+
+    rule <k> #operands[_LV,RV] ~> movz _ OPL _
+          => #writeWOperandZX(OPL, RV)
+         ...</k>
 ```
 
 That is literally it.
