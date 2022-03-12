@@ -18,4 +18,4 @@ The added instructions are the same as for the [Double Word Operations](../doubl
 
 # Memory Address Space Changes and Consistency
 
-When this extension is enabled, the PC should be sign extended from 16 bits or 32 bits to 64 bits depending on the current register width to preserve the intended address space mappings
+When this extension is enabled, the PC _must_ be sign extended from 16 bits or 32 bits to 64 bits depending on the current register width to preserve the intended address space mappings

@@ -31,4 +31,4 @@ As an example, `movz r0, -1` with the SS bits set to 01 will store the value 655
 
 # Memory Address Space Changes and Consistency
 
-When this extension is enabled, the PC should be sign extended from 16 bits to 32 bits to preserve the intended address space mappings
+When this extension is enabled, the PC _must_ be sign extended from 16 bits to 32 bits to preserve the intended address space mappings
