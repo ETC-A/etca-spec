@@ -93,7 +93,7 @@ If the first two bits are zero, we usually have a `BaseCRRInstruction` (although
 we have invalid size or operand-mode bits). The exceptions are if the first two
 opcode bits are 3 or the last operand bits are not 0.
 Opcodes 12-15 do not have reg-reg modes, and non-0 operand mode bits indicate
-something more complex than reg-reg.
+something more complex than reg-reg. Additionally, opcodes 8 and 13 are reserved.
 
 ```k
     rule decode(BS:Bytes) => decodeBaseCRR(BS)

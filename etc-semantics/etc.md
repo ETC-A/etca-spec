@@ -32,7 +32,9 @@ registers, memory, the program counter, flags, and the I/O streams for K.
           <overflow> false:Bool </overflow>
         </flags>
         <machine-details>
-          <cpuid> 16:Int </cpuid>
+          <cpuid parser="CPUID, INT-SYNTAX">
+            $CPUID:Int
+          </cpuid>
           <exten> 0:Int </exten>
           <reg-width> word:ByteSize </reg-width>
           <reg-count> 8:Int </reg-count>

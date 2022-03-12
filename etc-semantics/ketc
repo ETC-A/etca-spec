@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+debug=false
+verbose=false
+KETC=ketc
+
+fatal() { echo "[FATAL] $@" >&2 ; exit 1 ; }
+
+check_k_install() {
+    which krun &> /dev/null \
+        || fatal "Must have K installed! See https://github.com/kframework/k/releases."
+}
+
+INSTALL_BIN="$(cd "$(dirname "$0")" && pwd)"
+INSTALL_LIB="$(dirname "${INSTALL_BIN}")/lib/${KETC}"
+INSTALL_INCLUDE=${INSTALL_LIB}/include
+
+export PATH="${INSTALL_BIN}:${INSTALL_LIB}:${PATH}"
+
+run_kompile() {
+    local kompile_opts
+    
+    kompile_opts=( "${run_file}" --directory "${backend_dir}" )
+
+    kompile "${kompile_opts[@]}" "$@"
+}
+
+run_krun() {
+    local cpgm ccpuid parser
+
+    check_k_install
+
+    # At the moment, we only support the LLVM backend, but we plan to support
+    # the Haskell backend in the future.
+    case "$backend" in
+        *)
+            cpgm=$cPGM_kore
+            ccpuid=$cCPUID_kore
+            parser='cat'
+            ;;
+    esac
+    krun --directory "$backend_dir"         \
+        -cPGM="$cpgm"     -pPGM="$parser"   \
+        -cCPUID="$ccpuid" -pCPUID="$parser" \
+        "$@"
+}
+
+parse_binary_file() {
+    hexdump -ve '1/1 "\\x%.2x"' "$1"
+}
+
+# Main
+# ----------
+
+if [[ $# -eq 0 ]] ; then
+    set "help"
+fi
+
+run_command="$1" ; shift
+
+if [[ "$run_command" == 'help' ]] || [[ "$run_command" == '--help' ]] ; then
+    echo "
+        usage: ${KETC} run     [--verbose|--debug] <${KETC} arg> <pgm>  <K arg>*
+               ${KETC} kompile [--verbose|--debug]            <main> <K arg>*
+
+               ${KETC} [help|--help|version|--version]
+          
+          ${KETC} run     : Run a single ETC.A program.
+          ${KETC} kompile : Run Kompile with the appropriate setup for ketc.
+          ${KETC} help    : Display this help message.
+          ${KETC} version : Display the versions of ketc and K in use.
+          
+          Note: <pgm> is a path to a file containing a raw binary ETC.A program.
+                <${KETC} arg> is one of [--mode (NORMAL|STRICT|EVIL)]
+                                     [--cpuid <number>]
+                                     [--debug]
+                <K arg> is an argument you want to pass through to K.
+    "
+    exit 0
+fi
+
+if [[ "$run_command" == 'version' ]] || [[ "$run_command" == '--version' ]] ; then
+    echo "${KETC} version"
+    cat  "$INSTALL_LIB"/version
+    krun --version
+    exit 0
+fi
+
+backend="llvm"
+mode=NORMAL
+cpuid=0
+
+args=()
+while [[ $# -gt 0 ]] ; do
+    case "$1" in
+        --mode)          mode="2"                    ; shift 2 ;;
+        --cpuid)         cpuid="2"                   ; shift 2 ;;
+        --backend)       backend="$2"                ; shift 2 ;;
+        --directory)     backend_dir="$2"            ; shift 2 ;;
+        --debug)         debug=true   ; args+=("$1") ; shift   ;;
+        --verbose)       verbose=true ; args+=("$1") ; shift   ;;
+        *)               args+=("$1")                ; shift   ;;
+    esac
+done
+
+[[ "${#args[@]}" -le 0 ]] || set -- "${args[@]}"
+backend_dir="${backend_dir:-$INSTALL_LIB/$backend}"
+
+[[ "$backend" == llvm ]] || fatal "Only the LLVM backend is currently supported."
+[[ "$mode" == NORMAL  ]] || fatal "Only NORMAL mode is currently supported."
+
+# get the run file
+run_file="$1" ; shift
+if [[ "${run_file}" == '-' ]] ; then
+    tmp_input="$(mktemp)"
+    trap "rm -rf ${tmp_input}" INT TERM EXIT
+    cat - > "${tmp_input}"
+    run_file="{tmp_input}"
+fi
+[[ -f "${run_file}" ]] || fatal "File does not exist: ${run_file}"
+
+cPGM_kore="\dv{SortBytes{}}(\"$(parse_binary_file ${run_file})\")"
+cCPUID_kore="\dv{SortInt{}}(\"${cpuid}\")"
+
+! ${debug} || set -x
+
+case "$run_command-$backend" in
+    run-llvm)     run_krun "$@"    ;;
+    kompile-llvm) run_kompile "$@" ;;
+    *) ${KETC} help ; fatal "Unknown command-backend combination: $run_command $backend" ;;
+esac
