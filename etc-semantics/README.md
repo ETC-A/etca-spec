@@ -33,6 +33,8 @@ Once installed (either to the build directory or globally), you can run an assem
 
 We currently implement the following extensions:
 * bit 4: Byte Operations
+* bit 6: Doubleword Operations
+* bit 7: Quadword Operations
 
 #### Machine Mode
 
