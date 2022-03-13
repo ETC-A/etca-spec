@@ -95,8 +95,8 @@ cpuid=0
 args=()
 while [[ $# -gt 0 ]] ; do
     case "$1" in
-        --mode)          mode="2"                    ; shift 2 ;;
-        --cpuid)         cpuid="2"                   ; shift 2 ;;
+        --mode)          mode="$2"                   ; shift 2 ;;
+        --cpuid)         cpuid="$2"                  ; shift 2 ;;
         --backend)       backend="$2"                ; shift 2 ;;
         --directory)     backend_dir="$2"            ; shift 2 ;;
         --debug)         debug=true   ; args+=("$1") ; shift   ;;
