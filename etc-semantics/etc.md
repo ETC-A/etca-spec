@@ -25,29 +25,30 @@ An ETC.A machine always boots with the `<reg-mode>` set to `word`.
           ~> load $PGM:Bytes
           ~> #fetch
         </k>
-        <pc> 32768 /* 0x8000 */:Int </pc>
+        <pc format="%1 %2 %3"> 32768 /* 0x8000 */:Int </pc>
         <registers>
           makeRegisters(8):Registers
         </registers>
         <memory> .Memory </memory>
         <flags>
-          <carry>    false:Bool </carry>
-          <zero>     false:Bool </zero>
-          <negative> false:Bool </negative>
-          <overflow> false:Bool </overflow>
+          <carry format="%1    %2 %3"> false:Bool </carry>
+          <zero format="%1     %2 %3"> false:Bool </zero>
+          <negative format="%1 %2 %3"> false:Bool </negative>
+          <overflow format="%1 %2 %3"> false:Bool </overflow>
         </flags>
         <machine-details>
-          <cpuid parser="CPUID, INT-SYNTAX">
+          <cpuid parser="CPUID, INT-SYNTAX"
+                 format="%1 %2 %3">
             $CPUID:Int
           </cpuid>
-          <exten> 0:Int </exten>
-          <reg-mode> word:ByteSize </reg-mode>
-          <reg-width> word:ByteSize </reg-width>
-          <reg-count> 8:Int </reg-count>
-          <evil-mode> false:Bool </evil-mode>
+          <exten format="%1 %2 %3"> 0:Int </exten>
+          <reg-mode format="%1  %2 %3"> word:ByteSize </reg-mode>
+          <reg-width format="%1 %2 %3"> word:ByteSize </reg-width>
+          <reg-count format="%1 %2 %3"> 8:Int </reg-count>
+          <evil-mode format="%1 %2 %3"> false:Bool </evil-mode>
         </machine-details>
-        <in color="magenta" stream="stdin"> .List </in>
-        <out color="Orchid" stream="stdout"> .List </out>
+        <in color="magenta" stream="stdin" format="%1 %3"> .List </in>
+        <out color="Orchid" stream="stdout" format="%1 %3"> .List </out>
       </etc>
 ```
 

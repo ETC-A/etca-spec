@@ -260,7 +260,7 @@ module REGISTERS
     imports INT
     
     syntax RegisterID ::= Int
-    syntax Registers  ::= Registers ( Map )
+    syntax Registers  ::= Registers ( Map ) [format(%3)]
 
     syntax Int ::= Registers "[" RegisterID "]" [function]
     rule Registers(RS) [ N:RegisterID ] => {RS [ N ]}:>Int
