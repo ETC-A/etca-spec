@@ -37,14 +37,17 @@ distclean:
 
 KOMPILE := $(KETC) kompile
 
-ketc_files := etc.md                  \
-			  etc-driver.md           \
-			  etc-types.md            \
-			  extension.md            \
-			  flags.md                \
-			  simple-instructions.md  \
-			  base/spec.md            \
-			  byte-operations/spec.md \
+ketc_files := etc.md                                         \
+			  etc-driver.md                                  \
+			  etc-types.md                                   \
+			  extension.md                                   \
+			  flags.md                                       \
+			  simple-instructions.md                         \
+			  base/spec.md                                   \
+			  width-extensions/width-extensions.md           \
+			  width-extensions/byte-operations.md            \
+              width-extensions/doubleword-operations.md      \
+              width-extensions/quadword-operations.md
 
 ketc_includes := $(patsubst %, $(KETC_INCLUDE)/%, $(ketc_files))
 
@@ -59,7 +62,7 @@ ifneq (,$(RELEASE))
 endif
 
 ifneq (,$(VERBOSE))
-    KOMPILE_OPTS += --verbose
+	KOMPILE_OPTS += --verbose
 endif
 
 # LLVM

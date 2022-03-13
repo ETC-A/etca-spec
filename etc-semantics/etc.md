@@ -12,12 +12,17 @@ The configuration contains all the machine-state information about the hypotheti
 ETC.A machine. This includes supported and enabled extensions (configurable),
 registers, memory, the program counter, flags, and the I/O streams for K.
 
+The `<reg-width>` cell stores the width of a _machine word_ - the widest size that
+the registers of the simulated machien can store in any mode. This is determined
+by the value of CPUID. The `<reg-mode>` cell stores the current behavioral width.
+An ETC.A machine always boots with the `<reg-mode>` set to `word`.
+
 ```k
     configuration
       <etc>
-        <k parser="PGM, BYTES-SYNTAX"> 
-             load $PGM:Bytes
-          ~> #enableDefaultExtensions
+        <k parser="PGM, BYTES-SYNTAX">
+             #enableDefaultExtensions
+          ~> load $PGM:Bytes
           ~> #fetch
         </k>
         <pc> 32768 /* 0x8000 */:Int </pc>
@@ -36,6 +41,7 @@ registers, memory, the program counter, flags, and the I/O streams for K.
             $CPUID:Int
           </cpuid>
           <exten> 0:Int </exten>
+          <reg-mode> word:ByteSize </reg-mode>
           <reg-width> word:ByteSize </reg-width>
           <reg-count> 8:Int </reg-count>
           <evil-mode> false:Bool </evil-mode>
@@ -58,8 +64,13 @@ The "program" for a simulation loads a program, and starts the simulation.
     syntax EtcCommand ::= "load" Bytes
 
     rule <k> load P => . ... </k>
-         <memory> MEM => MEM[32768 /* 0x8000 */ := P] </memory>
-  //---------------------------------------------------------------------
+         <pc> PC </pc>
+         <reg-width> RSIZE </reg-width>
+         <reg-mode>  RMODE </reg-mode>
+         <memory>
+           MEM => MEM[ zextFrom(RSIZE, sextFrom(RMODE, PC)) := P ]
+         </memory>
+  //----------------------------------------------------------------------
 ```
 
 ## Execution Framework
@@ -143,9 +154,13 @@ unchanged to ease the `#pc` step of jump instructions, which (in base) are
 always PC-relative.
 
 ```k
-    rule <k> #fetch => #decode [ #range(MEM, PC, word) ] ...</k>
-         <memory> MEM </memory>
+    rule <k> #fetch => #decode [ 
+                #range(MEM, zextFrom(RSIZE, sextFrom(RMODE, PC)), word)
+             ] ...</k>
          <pc> PC </pc>
+         <memory> MEM </memory>
+         <reg-width> RSIZE </reg-width>
+         <reg-mode>  RMODE </reg-mode>
 ```
 
 ### Decode
@@ -249,10 +264,16 @@ semantic syntax for these things.
                  | "Reg" "[" RegisterID "]"               [function]
 
     rule [[ Mem [ ADDR : WIDTH ]
-         => Bytes2Int(#range(MEM, ADDR, WIDTH), LE, Unsigned) ]]
+         => Bytes2Int
+              ( #range(MEM, zextFrom(RSIZE, sextFrom(RMODE, ADDR)), WIDTH)
+              , LE
+              , Unsigned
+              ) 
+         ]]
          <memory> MEM      </memory>
+         <reg-mode>  RMODE </reg-mode>
          <reg-width> RSIZE </reg-width>
-      requires #rangeByteSize(RSIZE, ADDR)
+      requires #rangeByteSize(RMODE, ADDR)
   //-------------------------------------------------------------
     
     rule [[ Reg [ RID ] => Reg [ RID : SIZE ] ]]
@@ -285,15 +306,21 @@ _write_ the memory and registers with the same syntax. These cannot be functions
                    | "Reg" "[" RegisterID "]" "=" Int
 
     rule <k> Mem[ADDR : WIDTH] = R => . ...</k>
-         <memory> MEM => MEM [ ADDR := Int2Bytes(ByteSize2NumBytes(WIDTH), R, LE) ] </memory>
+         <memory> 
+               MEM 
+            => MEM [ zextFrom(RSIZE, sextFrom(RMODE, ADDR))
+                   := Int2Bytes(ByteSize2NumBytes(WIDTH), R, LE)
+                   ] 
+         </memory>
          <reg-width> RSIZE </reg-width>
-      requires #rangeByteSize(RSIZE, ADDR)
+         <reg-mode>  RMODE </reg-mode>
+      requires #rangeByteSize(RMODE, ADDR)
 
     rule [[ Reg [ RID ] => Reg [ RID : SIZE ] ]]
          <reg-width> SIZE </reg-width>
     
     rule <k> Reg [ (RID:Int) : SIZE ] = R => . ...</k>
-         <registers> RS => RS [ RID <- /*chopTo(RWIDTH,*/ sextFrom(SIZE, R)/*)*/ ] </registers>
+         <registers> RS => RS [ RID <- sextFrom(SIZE, R) ] </registers>
          <reg-count> RCOUNT </reg-count>
          // <reg-width> RWIDTH </reg-width>
       requires #range(0 <= RID < RCOUNT)

@@ -44,18 +44,33 @@ describe features like register width and operand size.
 ```k
     syntax ByteSize ::= "half"       // 1 byte
                       | "word"       // 2 bytes
-                      /*
                       | "doubleword" // 4 bytes
                       | "quadword"   // 8 bytes
-                      */
 
     syntax Int ::= ByteSize2NumBits  ( ByteSize ) [function, functional]
                  | ByteSize2NumBytes ( ByteSize ) [function, functional]
-    rule ByteSize2NumBits ( half ) => 8
-    rule ByteSize2NumBits ( word ) => 16
+    rule ByteSize2NumBits ( half       ) => 8
+    rule ByteSize2NumBits ( word       ) => 16
+    rule ByteSize2NumBits ( doubleword ) => 32
+    rule ByteSize2NumBits ( quadword   ) => 64
 
-    rule ByteSize2NumBytes ( half ) => 1
-    rule ByteSize2NumBytes ( word ) => 2
+    rule ByteSize2NumBytes ( half       ) => 1
+    rule ByteSize2NumBytes ( word       ) => 2
+    rule ByteSize2NumBytes ( doubleword ) => 4
+    rule ByteSize2NumBytes ( quadword   ) => 8
+```
+
+It is useful to be able to compare these sizes:
+
+```k
+    syntax Bool ::= ByteSize  "<ByteSize" ByteSize [function, functional]
+                  | ByteSize "<=ByteSize" ByteSize [function, functional]
+
+    rule LSIZE <ByteSize RSIZE 
+      => ByteSize2NumBytes(LSIZE) <Int ByteSize2NumBytes(RSIZE)
+
+    rule LSIZE <=ByteSize RSIZE 
+      => ByteSize2NumBytes(LSIZE) <=Int ByteSize2NumBytes(RSIZE)
 ```
 
 ### Important Powers
@@ -65,9 +80,13 @@ allows us to refer to them by name instead of with a `^Int` expression everywher
 expanded wherever they appear in rules.
 
 ```k
-    syntax Int ::= "pow16" [alias] /* 2 ^Int 16 */
+    syntax Int ::= "pow64" [alias] /* 2 ^Int 64 */
+                 | "pow32" [alias] /* 2 ^Int 32 */
+                 | "pow16" [alias] /* 2 ^Int 16 */
                  | "pow8"  [alias] /* 2 ^Int 8  */
 
+    rule pow64 => 18446744073709551616
+    rule pow32 => 4294967296
     rule pow16 => 65536
     rule pow8  => 256
  //------------------------------------------------
@@ -79,6 +98,14 @@ expanded wherever they appear in rules.
                  | "maxSInt16" [alias]
                  | "minUInt16" [macro]
                  | "maxUInt16" [alias]
+                 | "minSInt32" [alias]
+                 | "maxSInt32" [alias]
+                 | "minUInt32" [macro]
+                 | "maxUInt32" [alias]
+                 | "minSInt64" [alias]
+                 | "maxSInt64" [alias]
+                 | "minUInt64" [macro]
+                 | "maxUInt64" [alias]
 
     rule minSInt8  => -128    /* -2^7      */
     rule maxSInt8  =>  127    /*  2^7  - 1 */
@@ -91,6 +118,18 @@ expanded wherever they appear in rules.
 
     rule minUInt16 =>  0
     rule maxUInt16 =>  65535  /*  2^16 - 1 */
+
+    rule minSInt32 => -2147483648  /* -2^31     */
+    rule maxSInt32 =>  2147483647  /*  2^31 - 1 */
+
+    rule minUInt32 =>  0
+    rule maxUInt32 =>  4294967295  /*  2^32 - 1 */
+
+    rule minSInt64 => -9223372036854775808   /* -2^63     */
+    rule maxSInt64 =>  9223372036854775807   /*  2^63 - 1 */
+
+    rule minUInt64 =>  0
+    rule maxUInt64 =>  18446744073709551615  /*  2^64 - 1 */
 ```
 
 ### Ranges
@@ -109,13 +148,19 @@ for example.
     rule #rangeBool (      X ) => X ==Int 0 orBool X ==Int 1
     rule #rangeSInt ( 8  , X ) => #range ( minSInt8  <= X <= maxSInt8  )
     rule #rangeSInt ( 16 , X ) => #range ( minSInt16 <= X <= maxSInt16 )
+    rule #rangeSInt ( 32 , X ) => #range ( minSInt32 <= X <= maxSInt32 )
+    rule #rangeSInt ( 64 , X ) => #range ( minSInt64 <= X <= maxSInt64 )
     rule #rangeSInt ( _  ,_X ) => false [owise]
     rule #rangeUInt ( 8  , X ) => #range ( minUInt8  <= X <= maxUInt8  )
     rule #rangeUInt ( 16 , X ) => #range ( minUInt16 <= X <= maxUInt16 )
+    rule #rangeUInt ( 32 , X ) => #range ( minUInt32 <= X <= maxUInt32 )
+    rule #rangeUInt ( 64 , X ) => #range ( minUInt64 <= X <= maxUInt64 )
     rule #rangeUInt ( _  ,_X ) => false [owise]
     
-    rule #rangeByteSize ( half , X ) => #rangeUInt ( 8  , X )
-    rule #rangeByteSize ( word , X ) => #rangeUInt ( 16 , X )
+    rule #rangeByteSize ( half       , X ) => #rangeUInt ( 8  , X )
+    rule #rangeByteSize ( word       , X ) => #rangeUInt ( 16 , X )
+    rule #rangeByteSize ( doubleword , X ) => #rangeUInt ( 32 , X )
+    rule #rangeByteSize ( quadword   , X ) => #rangeUInt ( 64 , X )
     // this rule is not possible, but the LLVM code generator gets really angry
     // if it is not present.
     rule #rangeByteSize ( _   , _X ) => false [owise]
@@ -137,8 +182,10 @@ signednesses.
 ```k
     syntax Int ::= chopTo ( ByteSize , Int ) [function]
 
-    rule chopTo ( half , I:Int ) => I modInt pow8  [concrete]
-    rule chopTo ( word , I:Int ) => I modInt pow16 [concrete]
+    rule chopTo ( half       , I:Int ) => I modInt pow8  [concrete]
+    rule chopTo ( word       , I:Int ) => I modInt pow16 [concrete]
+    rule chopTo ( doubleword , I:Int ) => I modInt pow32 [concrete]
+    rule chopTo ( quadword   , I:Int ) => I modInt pow64 [concrete]
   //-----------------------------------------------------
 
     syntax Int ::= zextFrom ( Int      , Int ) [function, functional]
