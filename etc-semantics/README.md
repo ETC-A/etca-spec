@@ -59,7 +59,11 @@ The semantics of ETC.A's Base instruction set is comprised of:
 
 The semantics of ETC.A extensions are comprised of:
 * `extension.md`: defines an interface to the EXTEN bits which extensions can implement
-* `byte-operations/spec.md`: defines the semantics of the Byte Operations extension.
+* `width-extensions/width-extensions.md`: defines the shared semantics of the
+  {byte/doubleword/quadword} Operations extensions. Currently, that is the semantics of `movz`.
+* `width-extensions/byte-operations.md`: defines the semantics of the Byte Operations extension.
+* `width-extensions/doubleword-operations.md`: ''    ; Doubleword Operations
+* `width-extensions/quadword-operations.md`: ''    ; Quadword Operations
 
 # Questions
 
