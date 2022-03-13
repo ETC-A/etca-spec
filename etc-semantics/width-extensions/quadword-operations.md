@@ -20,8 +20,8 @@ Firstly, specify the extension name.
 This extension gets bit 6.
 
 ```k
-    rule bit2Extension(6) => QuadwordOperations
-    rule extension2Bit(QuadwordOperations) => 6
+    rule bit2Extension(7) => QuadwordOperations
+    rule extension2Bit(QuadwordOperations) => 7
 ```
 
 This extension does not depend on any other extensions.
