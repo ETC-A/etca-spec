@@ -46,8 +46,8 @@ ketc_files := etc.md                                         \
 			  base/spec.md                                   \
 			  width-extensions/width-extensions.md           \
 			  width-extensions/byte-operations.md            \
-              width-extensions/doubleword-operations.md      \
-              width-extensions/quadword-operations.md
+			  width-extensions/doubleword-operations.md      \
+			  width-extensions/quadword-operations.md
 
 ketc_includes := $(patsubst %, $(KETC_INCLUDE)/%, $(ketc_files))
 

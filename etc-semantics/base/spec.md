@@ -445,8 +445,11 @@ the ports to arbitrary files.
          <in> ListItem(INPUT:Int) => .List ...</in>
       requires RV &Int 1 ==Int 1
 
-    rule <k> #operands[_,RV] ~> in _ OPL _
-          => #writeWOperand(OPL, Reg[controlRegFromNum(RV >>Int 1)])
+    rule <k> #operands[_,RV] ~> in SIZE OPL _
+          => #writeWOperand
+                ( OPL
+                , chopTo(SIZE, Reg[controlRegFromNum(RV >>Int 1)])
+                )
          ...</k>
       requires RV &Int 1 ==Int 0
 ```
@@ -455,8 +458,8 @@ the ports to arbitrary files.
          <out>... .List => ListItem(LV) </out>
       requires RV &Int 1 ==Int 1
 
-    rule <k> #operands[LV,RV] ~> out _ _ _
-          => Reg[controlRegFromNum(RV >>Int 1)] = LV
+    rule <k> #operands[LV,RV] ~> out SIZE _ _
+          => Reg[controlRegFromNum(RV >>Int 1) : SIZE] = LV
          ...</k>
       requires RV &Int 1 ==Int 0
 ```

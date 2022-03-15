@@ -30,10 +30,10 @@ This extension does not depend on any other extensions.
     rule extensionDependsOn(DoublewordOperations) => .List
 ```
 
-This extension cannot be disabled and is off by default.
+This extension can be toggled but is off by default.
 
 ```k
-    rule extensionCanToggle(DoublewordOperations) => false
+    rule extensionCanToggle(DoublewordOperations) => true
     rule extensionDefault  (DoublewordOperations) => false
 ```
 
@@ -56,7 +56,7 @@ extend the program counter to maintain the memory address mapping.
     rule <k> #enableExtension(DoublewordOperations) => . ...</k>
          <reg-mode> OLD => doubleword </reg-mode>
          <reg-width> RWIDTH </reg-width>
-         <pc> PC => zextFrom(RWIDTH, sextFrom(OLD, PC)) </pc>
+         <pc> PC => zextFrom(doubleword, sextFrom(OLD, PC)) </pc>
       requires OLD <ByteSize doubleword
 
     rule <k> #enableExtension(DoublewordOperations) => . ...</k>

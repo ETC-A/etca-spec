@@ -236,5 +236,11 @@ module EXTENSION
 
     rule <k> #checkExtenCoherence(BIT:Int)
           => #checkExtenCoherence(BIT, #extensionDependsOn(BIT)) ...</k>
+         <cpuid> CPUID </cpuid>
+      requires (1 <<Int BIT) <=Int CPUID
+
+    rule <k> #checkExtenCoherence(BIT:Int) => . ...</k>
+         <cpuid> CPUID </cpuid>
+      requires (1 <<Int BIT) >Int CPUID
 endmodule
 ```

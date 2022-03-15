@@ -23,6 +23,10 @@ run_kompile() {
     local kompile_opts
     
     kompile_opts=( "${run_file}" --directory "${backend_dir}" )
+    # This is needed to get `kpyk` to work on the definition for printing
+    # However I'm leaving that disabled for now anyways because `kpyk print`
+    # does not (currently) respect format attributes.
+    # kompile_opts+=( --emit-json                               )
 
     kompile "${kompile_opts[@]}" "$@"
 }

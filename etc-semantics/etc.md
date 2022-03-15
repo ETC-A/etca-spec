@@ -317,7 +317,7 @@ _write_ the memory and registers with the same syntax. These cannot be functions
          <reg-mode>  RMODE </reg-mode>
       requires #rangeByteSize(RMODE, ADDR)
 
-    rule [[ Reg [ RID ] => Reg [ RID : SIZE ] ]]
+    rule <k> Reg [ RID ] = R => Reg [ RID : SIZE ] = R ...</k>
          <reg-width> SIZE </reg-width>
     
     rule <k> Reg [ (RID:Int) : SIZE ] = R => . ...</k>

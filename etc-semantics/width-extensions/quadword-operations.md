@@ -30,10 +30,10 @@ This extension does not depend on any other extensions.
     rule extensionDependsOn(QuadwordOperations) => .List
 ```
 
-This extension cannot be disabled and is off by default.
+This extension can be toggled but is off by default.
 
 ```k
-    rule extensionCanToggle(QuadwordOperations) => false
+    rule extensionCanToggle(QuadwordOperations) => true
     rule extensionDefault  (QuadwordOperations) => false
 ```
 
@@ -58,7 +58,7 @@ future-proofing here.
     rule <k> #enableExtension(QuadwordOperations) => . ...</k>
          <reg-mode> OLD => quadword </reg-mode>
          <reg-width> RWIDTH </reg-width>
-         <pc> PC => zextFrom(RWIDTH, sextFrom(OLD, PC)) </pc>
+         <pc> PC => zextFrom(quadword, sextFrom(OLD, PC)) </pc>
       requires OLD <ByteSize quadword
 
     rule <k> #enableExtension(QuadwordOperations) => . ...</k>
