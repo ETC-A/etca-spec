@@ -55,7 +55,7 @@ extend the program counter to maintain the memory address mapping.
 ```k
     rule <k> #enableExtension(DoublewordOperations) => . ...</k>
          <reg-mode> OLD => doubleword </reg-mode>
-         <reg-width> RWIDTH </reg-width>
+         <reg-width> _RWIDTH </reg-width>
          <pc> PC => zextFrom(doubleword, sextFrom(OLD, PC)) </pc>
       requires OLD <ByteSize doubleword
 

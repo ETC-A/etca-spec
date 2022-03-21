@@ -57,7 +57,7 @@ future-proofing here.
 ```k
     rule <k> #enableExtension(QuadwordOperations) => . ...</k>
          <reg-mode> OLD => quadword </reg-mode>
-         <reg-width> RWIDTH </reg-width>
+         <reg-width> _RWIDTH </reg-width>
          <pc> PC => zextFrom(quadword, sextFrom(OLD, PC)) </pc>
       requires OLD <ByteSize quadword
 
