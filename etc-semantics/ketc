@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
+shopt -s extglob
 
 debug=false
 verbose=false
@@ -22,7 +23,7 @@ export PATH="${INSTALL_BIN}:${INSTALL_LIB}:${PATH}"
 run_kompile() {
     local kompile_opts
     
-    kompile_opts=( "${run_file}" --directory "${backend_dir}" )
+    kompile_opts=( "${run_file}" --backend "${backend}" --directory "${backend_dir}" )
     # This is needed to get `kpyk` to work on the definition for printing
     # However I'm leaving that disabled for now anyways because `kpyk print`
     # does not (currently) respect format attributes.
@@ -36,15 +37,10 @@ run_krun() {
 
     check_k_install
 
-    # At the moment, we only support the LLVM backend, but we plan to support
-    # the Haskell backend in the future.
-    case "$backend" in
-        *)
-            cpgm=$cPGM_kore
-            ccpuid=$cCPUID_kore
-            parser='cat'
-            ;;
-    esac
+    cpgm=$cPGM_kore
+    ccpuid=$cCPUID_kore
+    parser='cat'
+
     krun --directory "$backend_dir"         \
         -cPGM="$cpgm"     -pPGM="$parser"   \
         -cCPUID="$ccpuid" -pCPUID="$parser" \
@@ -78,8 +74,10 @@ if [[ "$run_command" == 'help' ]] || [[ "$run_command" == '--help' ]] ; then
           
           Note: <pgm> is a path to a file containing a raw binary ETC.A program.
                 <${KETC} arg> is one of [--mode (NORMAL|STRICT|EVIL)]
+                                     [--backend (llvm|haskell)]
                                      [--cpuid <number>]
                                      [--debug]
+                    The default is NORMAL mode, llvm backend, cpuid 0.
                 <K arg> is an argument you want to pass through to K.
     "
     exit 0
@@ -112,7 +110,9 @@ done
 [[ "${#args[@]}" -le 0 ]] || set -- "${args[@]}"
 backend_dir="${backend_dir:-$INSTALL_LIB/$backend}"
 
-[[ "$backend" == llvm ]] || fatal "Only the LLVM backend is currently supported."
+[[ "$backend" == llvm ]]           \
+    || [[ "$backend" == haskell ]] \
+    || fatal "Only the LLVM backend is currently supported."
 [[ "$mode" == NORMAL  ]] || fatal "Only NORMAL mode is currently supported."
 
 # get the run file
@@ -131,7 +131,7 @@ cCPUID_kore="\dv{SortInt{}}(\"${cpuid}\")"
 ! ${debug} || set -x
 
 case "$run_command-$backend" in
-    run-llvm)     run_krun "$@"    ;;
-    kompile-llvm) run_kompile "$@" ;;
-    *) ${KETC} help ; fatal "Unknown command-backend combination: $run_command $backend" ;;
+    run-@(llvm|haskell)     ) run_krun "$@"    ;;
+    kompile-@(llvm|haskell) ) run_kompile "$@" ;;
+    *) ${KETC} help ; fatal "Unknown command-backend combination: $run_command-$backend" ;;
 esac

@@ -22,6 +22,6 @@ etc-as.py "$asm_file" -mformat=binary -o "$bin_file" "${ETC_AS_OPTS[@]}"
 script_file="${asm_file%.s}.sh"
 echo 'set -eu' > $script_file
 for cpuid in ${CPUIDS[@]}; do
-  echo "./scripts/test.sh \"\$1\" \"\$2\" \"$bin_file\" $cpuid" >> $script_file
+  echo "./scripts/test.sh \"\$1\" \"\$2\" \"\$3\" \"$bin_file\" $cpuid" >> $script_file
 done
 chmod +x $script_file

@@ -85,12 +85,30 @@ $(KETC_LIB)/$(llvm_kompiled): $(ketc_includes) $(KETC_BIN)/ketc
 		--syntax-module $(llvm_syntax_module) \
 		$(KOMPILE_OPTS)
 
+# Haskell
+# -------
+
+haskell_dir           := haskell
+haskell_main_module   := ETC-DRIVER
+haskell_syntax_module := $(haskell_main_module)-SYNTAX
+haskell_main_file     := etc-driver.md
+haskell_main_filename := $(basename $(notdir $(haskell_main_file)))
+haskell_kompiled      := $(haskell_dir)/$(haskell_main_filename)-kompiled/definition.kore
+
+$(KETC_LIB)/$(haskell_kompiled): $(ketc_includes) $(KETC_BIN)/ketc
+	$(KOMPILE) --backend haskell                 \
+		$(haskell_main_file)                     \
+		--main-module $(haskell_main_module)     \
+		--syntax-module $(haskell_syntax_module) \
+		$(KOMPILE_OPTS)
+
 # Installing
 # ----------
 
 install_bins := ketc
 
-install_libs := $(llvm_kompiled) \
+install_libs := $(llvm_kompiled)    \
+				$(haskell_kompiled) \
 				version
 
 build_bins := $(install_bins)
@@ -107,6 +125,7 @@ $(KETC_LIB)/version:
 build: $(patsubst %, $(KETC_BIN)/%, $(install_bins)) $(patsubst %, $(KETC_LIB)/%, $(install_libs))
 
 build-llvm: $(KETC_LIB)/$(llvm_kompiled)
+build-haskell: $(KETC_LIB)/$(haskell_kompiled)
 
 all_bin_sources := $(shell find $(KETC_BIN) -type f | sed 's|^$(KETC_BIN)/||')
 all_lib_sources := $(shell find $(KETC_LIB) -type f              \
@@ -131,6 +150,8 @@ uninstall:
 # All Tests
 #---------------
 
+BACKEND ?= llvm
+
 test: test-concrete
 
 # Concrete Tests
@@ -142,6 +163,7 @@ concrete_test_files := \
 				test/half_ops.s                 \
 				test/enable_dops.s              \
 				test/enable_qops.s				\
+				test/store_load.s               \
 				test/test_jumps.s
 
 all_concrete_test_deps := \
@@ -157,13 +179,13 @@ test-concrete: build-test-concrete   \
 				$(concrete_test_files:=.run)
 
 %.s.run:
-	$*.sh $(KETC) run
+	$*.sh $(KETC) run $(BACKEND)
 
 update-test-concrete: build-test-concrete \
 				$(concrete_test_files:=.update)
 
 %.s.update:
-	$*.sh $(KETC) update
+	$*.sh $(KETC) update $(BACKEND)
 
 %.accept: %.actual
 	mv $*.actual $*.expected

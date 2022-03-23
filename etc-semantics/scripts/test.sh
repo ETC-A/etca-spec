@@ -2,13 +2,14 @@ set -euo pipefail
 
 KETC="$1"
 mode="$2"
-runfile="$3"
-cpuid="$4"
+backend="$3"
+runfile="$4"
+cpuid="$5"
 
 test_name="${runfile%.bin}.$cpuid"
 
 run_test() {
-  "$KETC" run "$runfile" --cpuid $cpuid > "$test_name.actual"
+  "$KETC" run "$runfile" --cpuid $cpuid --backend "$backend" > "$test_name.actual"
   if ! cmp "$test_name.actual" "$test_name.expected" >/dev/null ; then
     echo "Output for $test_name does not match!"
     exit 1
