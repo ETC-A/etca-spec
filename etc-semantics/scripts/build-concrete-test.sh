@@ -20,7 +20,8 @@ etc-as.py "$asm_file" -mformat=binary -o "$bin_file" "${ETC_AS_OPTS[@]}"
 
 # construct the runner script
 script_file="${asm_file%.s}.sh"
-echo 'set -eu' > $script_file
+# note we don't set -e, we want the script to continue if one line fails!
+echo 'set -u' > $script_file
 for cpuid in ${CPUIDS[@]}; do
   echo "./scripts/test.sh \"\$1\" \"\$2\" \"\$3\" \"$bin_file\" $cpuid" >> $script_file
 done
