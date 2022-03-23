@@ -143,7 +143,7 @@ for example.
     syntax Bool ::= #rangeBool ( Int )       [macro]
                   | #rangeSInt ( Int , Int ) [macro]
                   | #rangeUInt ( Int , Int ) [macro]
-                  | #rangeByteSize ( ByteSize , Int ) [macro]
+                  | #rangeByteSize ( ByteSize , Int ) [function, functional]
 
     rule #rangeBool (      X ) => X ==Int 0 orBool X ==Int 1
     rule #rangeSInt ( 8  , X ) => #range ( minSInt8  <= X <= maxSInt8  )
@@ -163,7 +163,7 @@ for example.
     rule #rangeByteSize ( quadword   , X ) => #rangeUInt ( 64 , X )
     // this rule is not possible, but the LLVM code generator gets really angry
     // if it is not present.
-    rule #rangeByteSize ( _   , _X ) => false [owise]
+    // rule #rangeByteSize ( _   , _X ) => false [owise]
   //--------------------------------------------------------------------
 
     syntax Bool ::= "#range" "(" Int "<=" Int "<=" Int ")" [macro]
