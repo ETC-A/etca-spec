@@ -8,10 +8,14 @@ Each test consists of:
 * A comment containing the CPUIDs that that test should be run with. If empty, `0` is assumed.
 * The assembly code to run.
 Paired with a `testname.cpuid.expected` file for each specified `cpuid` containing the expected output.
+The `.bin` and `.sh` files are test running artifacts (the assembled binary and a driver, respectively).
 
 Run `make build-test-concrete` (in the `etc-semantics` dir) to regenerate all of the files needed to run the tests. Then
-run `make test-concrete` to run them. Outputs that differ from the expected output will be reported and saved. Outputs
+run `make test-concrete -k` to run them. Outputs that differ from the expected output will be reported and saved. Outputs
 that match will be cleaned up.
+
+By default, the `llvm` backend is assumed. Use `make test-concrete -k BACKEND=haskell` to use the K Haskell backend
+for concrete tests.
 
 To accept a new differing output as being expected, perhaps after fixing a bug, replace `testname.cpuid.out` with `testname.cpuid.actual`. The make target `test/testname.cpuid.accept` can be used to do this automatically.
 
