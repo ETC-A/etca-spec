@@ -160,6 +160,7 @@ test: test-concrete
 concrete_test_files := \
 				test/small_movs.s               \
 				test/negative_mov.s             \
+				test/movz.s                     \
 				test/half_ops.s                 \
 				test/enable_dops.s              \
 				test/enable_qops.s				\
