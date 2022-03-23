@@ -1,6 +1,8 @@
 # Settings
 # --------
 
+SHELL := /bin/bash
+
 BUILD_DIR   := .build
 BUILD_LOCAL := $(abspath $(BUILD_DIR)/local)
 LOCAL_LIB   := $(BUILD_LOCAL)/lib
@@ -22,7 +24,8 @@ KETC_RELEASE_TAG ?= v$(KETC_VERSION)-$(shell git rev-parse --short HEAD)
 PATH := $(abspath $(KETC_BIN)):$(LOCAL_BIN):$(PATH)
 export PATH
 
-.PHONY: all clean build test install uninstall
+.PHONY: all clean build install uninstall \
+				test test-concrete
 
 all: build
 
@@ -124,3 +127,43 @@ $(DESTDIR)$(INSTALL_LIB)/%: $(KETC_LIB)/%
 uninstall:
 	rm -rf $(DESTDIR)$(INSTALL_BIN)/ketc
 	rm -rf $(DESTDIR)$(INSTALL_LIB)/ketc
+
+# All Tests
+#---------------
+
+test: test-concrete
+
+# Concrete Tests
+#---------------
+
+concrete_test_files := \
+				test/small_movs.s               \
+				test/negative_mov.s             \
+				test/half_ops.s                 \
+				test/enable_dops.s              \
+				test/enable_qops.s				\
+				test/test_jumps.s
+
+all_concrete_test_deps := \
+				$(concrete_test_files:.s=.bin) \
+				$(concrete_test_files:.s=.sh)
+
+build-test-concrete: $(all_concrete_test_deps)
+
+test/%.bin test/%.sh: test/%.s
+	./scripts/build-concrete-test.sh $<
+
+test-concrete: build-test-concrete   \
+				$(concrete_test_files:=.run)
+
+%.s.run:
+	$*.sh $(KETC) run
+
+update-test-concrete: build-test-concrete \
+				$(concrete_test_files:=.update)
+
+%.s.update:
+	$*.sh $(KETC) update
+
+%.accept: %.actual
+	mv $*.actual $*.expected
