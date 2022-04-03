@@ -32,22 +32,23 @@ This extension adds instructions to allow for convenient use of the stack as wel
 
 The following opcodes are now defined.
 
-| First byte    | Second Byte  | Comment                                       |
-|:--------------|:-------------|:----------------------------------------------|
-| `00 01 1100`  | `RRR ??? 00` | pop from stack                                |
-| `00 01 1101`  | `??? RRR 00` | push register to stack                        |
-| `01 01 1101`  | `??? IIIII`  | push immediate to stack                       |
-| `10 1 0 CCCC` | `RRR 00000`  | (conditional) absolute register jump          |
-| `10 1 0 CCCC` | `RRR 10000`  | (conditional) absolute register function call |
-| `10 1 1 IIII` | `IIIIIIII`   | absolute unconditional function call          |
+| First byte    | Second Byte  | Comment                                                 |
+|:--------------|:-------------|:--------------------------------------------------------|
+| `00 01 1100`  | `RRR ??? 00` | pop from stack                                          |
+| `00 01 1101`  | `??? RRR 00` | push register to stack                                  |
+| `01 01 1101`  | `??? IIIII`  | push immediate to stack                                 |
+| `10 1 0 1111` | `RRR 0 CCCC` | (conditional) absolute register jump                    |
+| `10 1 0 1111` | `RRR 1 CCCC` | (conditional) absolute register function call           |
+| `10 1 0 ????` |              | when `????` is not 1111, reserved for future extensions |
+| `10 1 1 IIII` | `IIIIIIII`   | absolute unconditional function call                    |
 
-| Symbol | Meaning                      |
-|--------|------------------------------|
-| C      | opcode bit                   |
-| R      | register id                  |
-| I      | immediate                    |
-| S      | size (reserved)              |
-| ?      | reserved for unknown purpose |
+| Symbol | Meaning                                    |
+|--------|--------------------------------------------|
+| C      | opcode bit                                 |
+| R      | register id                                |
+| I      | immediate                                  |
+| S      | size (reserved)                            |
+| ?      | reserved for extensions or another purpose |
 
 ## Added Calculation Opcodes
 
@@ -72,12 +73,12 @@ The following opcodes are now defined.
 
 ## Added Call Instructions
 
-- The conditional absolute register function call will conditionally store the next instruction's address in the link register and jump to the address stored inside `RRR`
-- The absolute unconditional functional call will store the next instruction's address in the link register and jump to the address specified by `III IIII IIII I000` for the lower 15 bits with any upper bits being preserved from the current instruction address.
+- The conditional absolute register function call will conditionally store the next instruction's address in the link register and jump to the address stored inside `RRR`.
+- The absolute unconditional functional call will store the next instruction's address in the link register and jump to the address specified by `III IIII IIII I000`. Any bits above the these 15 specified bits will be preserved from the current instruction's address.
 
 ## Stack Semantics
 
-- The stack grows down towards address 0
+- The stack grows down towards address 0.
 - Before executing the call instruction, it is the callers job to ensure that SP is properly aligned to register width on systems that do not support unaligned memory access.
 
 # Example Function Call Snippets
