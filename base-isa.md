@@ -42,7 +42,7 @@ The highest two bits of the first byte are a format marker:
 
 ### Execution of Reserved Instructions
 
-When executing a reserved instruction, the CPU must halt normal execution of the program. This can mean Halt and Catch Fire, halt and wait to be interrupted, trigger an interrupt, or other such behaviors. A future extension is expected to tighten this restriction to "the CPU must trigger a specified interrupt."
+Execution of a reserved instruction is undefined behavior. A future extension will change this to "the CPU must trigger a specific interrupt."
 
 
 ## Computation Instructions
