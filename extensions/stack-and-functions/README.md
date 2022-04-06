@@ -56,7 +56,7 @@ The following opcodes are now defined.
 
 | `CCCC` | NAME    | Operation                                 | Flags  | Comment |
 |--------|---------|-------------------------------------------|--------|---------|
-| `1100` | `POP`   | <code>A ← mem[SP + 2]; SP ← SP + 2</code> | None   | (1)     |
+| `1100` | `POP`   | <code>SP ← SP + 2; A ← mem[SP]</code>     | None   | (1)     |
 | `1101` | `PUSH`  | <code>mem[SP] ← B; SP ← SP - 2</code>     | None   | (1)     |
 
 ### Immediate mode
