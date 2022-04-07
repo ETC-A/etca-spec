@@ -65,36 +65,36 @@ operand `B`. The immediate is sign extended for the first 12 operations.
 
 TODO: This is a baseline, very much still floating
 
-| `CCCC` | NAME    | Operation                          | Flags  | Comment     |
-|--------|---------|------------------------------------|--------|-------------|
-| `0000` | `ADD`   | `A ← A + B`                        | `ZNCV` |             |
-| `0001` | `SUB`   | `A ← A - B`                        | `ZNCV` |             |
-| `0010` | `RSUB`  | `A ← B - A`                        | `ZNCV` | (1)         |
-| `0011` | `CMP`   | `_ ← A - B`                        | `ZNCV` | (2)         |
-| `0100` | `OR`    | <code>A ← A &#124; B</code>        | `ZN`   | (5)         |
-| `0101` | `XOR`   | `A ← A ^ B`                        | `ZN`   | (5)         |
-| `0110` | `AND`   | `A ← A & B`                        | `ZN`   | (5)         |
-| `0111` | `TEST`  | `_ ← A & B`                        | `ZN`   | (2) (5)     |
-| `1000` |         |                                    |        | reserved    |
-| `1001` | `MOV`   | `A ← B`                            | None   |             |
-| `1010` | `LOAD`  | `A ← MEM[B]`                       | None   |             |
-| `1011` | `STORE` | `MEM[A] ← B`                       | None   | (2)         |
-| `1100` | `SLO`   | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
-| `1101` |         |                                    |        | reserved    |
-| `1110` | `IN`    | `A ← PORT[B]`                      | None   | (4) (6)     |
-| `1111` | `OUT`   | `PORT[B] ← A`                      | None   | (2) (4) (6) |
+| `CCCC` | NAME      | Operation                          | Flags  | Comment     |
+|--------|-----------|------------------------------------|--------|-------------|
+| `0000` | `ADD`     | `A ← A + B`                        | `ZNCV` |             |
+| `0001` | `SUB`     | `A ← A - B`                        | `ZNCV` |             |
+| `0010` | `RSUB`    | `A ← B - A`                        | `ZNCV` | (1)         |
+| `0011` | `CMP`     | `_ ← A - B`                        | `ZNCV` | (2)         |
+| `0100` | `OR`      | <code>A ← A &#124; B</code>        | `ZN`   | (5)         |
+| `0101` | `XOR`     | `A ← A ^ B`                        | `ZN`   | (5)         |
+| `0110` | `AND`     | `A ← A & B`                        | `ZN`   | (5)         |
+| `0111` | `TEST`    | `_ ← A & B`                        | `ZN`   | (2) (5)     |
+| `1000` |           |                                    |        | reserved    |
+| `1001` | `MOV`     | `A ← B`                            | None   |             |
+| `1010` | `LOAD`    | `A ← MEM[B]`                       | None   |             |
+| `1011` | `STORE`   | `MEM[A] ← B`                       | None   | (2)         |
+| `1100` | `SLO`     | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
+| `1101` |           |                                    |        | reserved    |
+| `1110` | `READCR`  | `A ← PORT[B]`                      | None   | (4) (6)     |
+| `1111` | `WRITECR` | `PORT[B] ← A`                      | None   | (2) (4) (6) |
 
 
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
 2) Placed here for now to ease decoding; `xx11` => do not store result.
 3) Designed to allow for building a larger immediate value. To reach the full 16 bit one extra `NOT` instruction may be required.
-4) Primary intent is that these are used with immediate. Exact assignment of ports is still floating. At least the level IO and the CPU status/extension control should be present.
+4) Primary intent is that these are used with immediate. Exact assignment of control registers is still floating. At least the the CPU status/extension control should be present.
 5) The C and O flags are in an undefined state after execution of these instructions. Implementations may do whatever is easiest. An extension may mandate a particular behavior, with good enough reason, but must *not* mandate that the value of these flags after the operation depends on their value before the operation.
 6) These instructions do not have a 2 register mode. The corresponding bit patterns (`00 SS 11??`) for the first byte are reserved. This can easily be detected by using similar to 2)
 
-#### Input and Output Instructions
+#### Control Register Read and Write Instructions
 
-If the LSB of the port number is 0, then the port number refers to a control register. If the LSB of the port number is 1, then the port number refers to an IO device. Undefined control registers are reserved and reading from or writing to them is undefined behavior. No IO devices are specified and how they are used is implementation specific.
+Undefined control registers are reserved and reading from or writing to them is undefined behavior.
 
 | `CRN`  | NAME       | Description                                                                                                              | Comment |
 |--------|------------|--------------------------------------------------------------------------------------------------------------------------|---------|
@@ -107,6 +107,8 @@ If the LSB of the port number is 0, then the port number refers to a control reg
 ## Memory Semantics
 
 Unaligned memory accesses are undefined behavior. A memory access is unaligned if the address modulus the read/write width is not equal to zero. The read/write width is defined by the SS bits, which for the base ISA corresponds to a read/write width of 2 bytes.
+
+All IO is memory mapped
 
 ### Separation of Program ROM and RAM
 

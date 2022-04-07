@@ -26,8 +26,8 @@
 
     slo => 0xC
 
-    port_read => 0xE
-    port_write => 0xF
+    cr_read => 0xE
+    cr_write => 0xF
 
 }
 
@@ -95,9 +95,9 @@
 
 #subruledef control_register
 {
-    cpuid => 0`4
-    exten => 1`4
-    cr{c: u4} => c
+    cpuid => 0`5
+    exten => 1`5
+    cr{c: u5} => c
 }
 
 
@@ -125,11 +125,8 @@
     mov {target: register}, [{pointer: s5}] => asm {load {target}, pointer}
     mov [{pointer: s5}], {source: register} => asm {store {pointer}, {source}}
 
-    inp {target: register}, {port: u4} => asm {port_read {target}, port @ 0b1}
-    out {source: register}, {port: u4} => asm {port_write {source}, port @ 0b1}
-
-    mov {target: register}, {control: control_register} => asm {port_read {target}, control @ 0b0}
-    mov {control: control_register}, {source: register} => asm {port_write {source}, control @ 0b0}
+    mov {target: register}, {control: control_register} => asm {cr_read {target}, control}
+    mov {control: control_register}, {source: register} => asm {cr_write {source}, control}
 }
 
 #ruledef
