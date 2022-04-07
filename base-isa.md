@@ -78,7 +78,7 @@ TODO: This is a baseline, very much still floating
 | `1000` |           |                                    |        | reserved    |
 | `1001` | `MOV`     | `A ← B`                            | None   |             |
 | `1010` | `LOAD`    | `A ← MEM[B]`                       | None   |             |
-| `1011` | `STORE`   | `MEM[A] ← B`                       | None   | (2)         |
+| `1011` | `STORE`   | `MEM[B] ← A`                       | None   | (2)         |
 | `1100` | `SLO`     | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
 | `1101` |           |                                    |        | reserved    |
 | `1110` | `READCR`  | `A ← PORT[B]`                      | None   | (4) (6)     |
