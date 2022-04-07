@@ -81,8 +81,8 @@ TODO: This is a baseline, very much still floating
 | `1011` | `STORE`   | `MEM[B] ← A`                       | None   | (2)         |
 | `1100` | `SLO`     | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
 | `1101` |           |                                    |        | reserved    |
-| `1110` | `READCR`  | `A ← PORT[B]`                      | None   | (4) (6)     |
-| `1111` | `WRITECR` | `PORT[B] ← A`                      | None   | (2) (4) (6) |
+| `1110` | `READCR`  | `A ← CR[B]`                        | None   | (4) (6)     |
+| `1111` | `WRITECR` | `CR[B] ← A`                        | None   | (2) (4) (6) |
 
 
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
