@@ -409,14 +409,20 @@ registers in general.
     rule <k> #operands[_LV,RV] ~> mov SIZE OPL _
           => #writeWOperand(OPL, sextFrom(SIZE,RV))
          ...</k>
+  //-------------------------------------------------------------
 
-    rule <k> #operands[_LV,RV] ~> store SIZE RegOperand(_,RID) _
-          => Mem[Reg[RID] : SIZE] = RV
+    rule <k> #operands[LV,_] ~> store SIZE _OPL RegOperand(_,RID)
+          => Mem[Reg[RID] : SIZE] = LV
+         ...</k> [priority(25)]
+
+    rule <k> #operands[LV,ADDR] ~> store SIZE _OPL _
+          => Mem[ADDR : SIZE] = LV
          ...</k>
+
   //-------------------------------------------------------------
     rule <k> #operands[_,_] ~> load SIZE OPL RegOperand(_,RID)
           => #writeWOperand(OPL, Mem[Reg[RID] : SIZE])
-         ...</k>
+         ...</k> [priority(25)]
 
     rule <k> #operands[_,ADDR] ~> load SIZE OPL _
           => #writeWOperand(OPL, Mem[ADDR : SIZE])
@@ -433,35 +439,26 @@ what was needed to allow building bigger immediates. Oh well.
          ...</k>
 ```
 
-The LSB of the `in/out` command port number is used to determine if it is
-an I/O port or a control register. For the moment, all I/O happens on
-stdin and stdout, but in the future `ketc` will be configurable to connect
-the ports to arbitrary files.
+The `in` and `out` opcodes are used for reading/writing to control registers.
+They will be renamed soon.
+
+Previously, ETCa specified that IO was port-mapped and we could easily use
+stdin/out and connect them to all ports. But now, ETCa specs that all IO is
+memory-mapped. Rather than picking some arbitrary mapping, we want to make
+the mapping configurable somehow (presumably with a mapping config file)
+but until then, `ketc` is simply unable to perform IO.
 
 ```k
-    rule <k> #operands[_,RV] ~> in _ OPL _
-          => #writeWOperand(OPL, INPUT)
-         ...</k>
-         <in> ListItem(INPUT:Int) => .List ...</in>
-      requires RV &Int 1 ==Int 1
-
     rule <k> #operands[_,RV] ~> in SIZE OPL _
           => #writeWOperand
                 ( OPL
-                , chopTo(SIZE, Reg[controlRegFromNum(RV >>Int 1)])
+                , chopTo(SIZE, Reg[controlRegFromNum(RV)])
                 )
          ...</k>
-      requires RV &Int 1 ==Int 0
-```
-```k
-    rule <k> #operands[LV,RV] ~> out _ _ _ => . ...</k>
-         <out>... .List => ListItem(LV) </out>
-      requires RV &Int 1 ==Int 1
 
     rule <k> #operands[LV,RV] ~> out SIZE _ _
-          => Reg[controlRegFromNum(RV >>Int 1) : SIZE] = LV
+          => Reg[controlRegFromNum(RV) : SIZE] = LV
          ...</k>
-      requires RV &Int 1 ==Int 0
 ```
 
 #### Jumps

@@ -9,7 +9,7 @@
     movh %rh3,[%rh1]
     addx %rx1,1
     movh %rh4,[%rh1]  
-    movh [%rh1],1    ; note 1: not word-aligned
+    movh [%rh1],%rh0 ; note 1: not word-aligned
                      ; note 2: config checks *0 unchanged
 end:
     jmp  end
