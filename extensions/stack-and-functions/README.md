@@ -69,12 +69,22 @@ The following opcodes are now defined.
 
 ## Added Jump Instructions
 
-- The conditional absolute register jump instruction will conditionally jump to the address stored inside `RRR`. Function returns can be performed by jumping to the address in the link register.
+| First Byte    | Second Byte  | Operation                   | Comment|
+|---------------|--------------|-----------------------------|--------|
+| `10 1 0 1111` | `RRR 0 CCCC` | <pre>IF CCCC:<br>  IP ← reg[RRR]<br>FI</pre> | (2) |
+
+2) The conditional absolute register jump instruction will conditionally jump to the address stored inside `RRR`. Function returns can be performed by jumping to the address in the link register.
 
 ## Added Call Instructions
 
-- The conditional absolute register function call will conditionally store the next instruction's address in the link register and jump to the address stored inside `RRR`.
-- The absolute unconditional functional call will store the next instruction's address in the link register and jump to the address specified by `III IIII IIII I000`. Any bits above the these 15 specified bits will be preserved from the current instruction's address.
+| First Byte    | Second Byte  | Operation | Comment |      
+|--|--|--|--|
+| `10 1 0 1111` | `RRR 1 CCCC` | <pre>IF CCCC:<br>  temp ← IP<br>  IP ← reg[RRR]<br>  reg[7] ← temp + 2<br>FI</pre> | (3) |
+| `10 1 1 IIII` | `IIIIIIII`   | <pre>reg[7] ← IP + 2<br>IP ← {IP[:12],(IIIIIIIIIIII)[11:0]}</pre>                  | (4) |
+
+
+3) The conditional absolute register function call will conditionally store the next instruction's address in the link register and jump to the address stored inside `RRR`.
+4) The absolute unconditional functional call will store the next instruction's address in the link register and jump to the address `{IP[:12],IIII IIII IIII}`. That is, bits above the the 12 specified bits will be preserved from the current instruction's address.
 
 ## Stack Semantics
 
