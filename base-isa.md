@@ -58,31 +58,30 @@ The second byte has the format `AAA BBB 00` where `AAA` and `BBB` are references
 
 ### Immediate Computation
 
-The second byte has the format `RRR IIIII`, where the 5bit immediate acts as
-operand `B`. The immediate is sign extended for the first 12 operations.
+The second byte has the format `RRR IIIII`, where the 5bit immediate acts as operand `B`. The immediate is sign extended for operations 0-7 and operation 9. The immediate is zero extended for operation 8 and operations 10-15. While interleaving of signed and unsigned immediate at the border of the 2 sections seems unusual at first glance, it's done to make decoding hardware simpler.
 
 ### Opcodes
 
 TODO: This is a baseline, very much still floating
 
-| `CCCC` | NAME      | Operation                          | Flags  | Comment     |
-|--------|-----------|------------------------------------|--------|-------------|
-| `0000` | `ADD`     | `A ← A + B`                        | `ZNCV` |             |
-| `0001` | `SUB`     | `A ← A - B`                        | `ZNCV` |             |
-| `0010` | `RSUB`    | `A ← B - A`                        | `ZNCV` | (1)         |
-| `0011` | `CMP`     | `_ ← A - B`                        | `ZNCV` | (2)         |
-| `0100` | `OR`      | <code>A ← A &#124; B</code>        | `ZN`   | (5)         |
-| `0101` | `XOR`     | `A ← A ^ B`                        | `ZN`   | (5)         |
-| `0110` | `AND`     | `A ← A & B`                        | `ZN`   | (5)         |
-| `0111` | `TEST`    | `_ ← A & B`                        | `ZN`   | (2) (5)     |
-| `1000` |           |                                    |        | reserved    |
-| `1001` | `MOV`     | `A ← B`                            | None   |             |
-| `1010` | `LOAD`    | `A ← MEM[B]`                       | None   |             |
-| `1011` | `STORE`   | `MEM[B] ← A`                       | None   | (2)         |
-| `1100` | `SLO`     | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
-| `1101` |           |                                    |        | reserved    |
-| `1110` | `READCR`  | `A ← CR[B]`                        | None   | (4) (6)     |
-| `1111` | `WRITECR` | `CR[B] ← A`                        | None   | (2) (4) (6) |
+| `CCCC` | NAME            | Operation                          | Flags  | Comment     |
+|--------|-----------------|------------------------------------|--------|-------------|
+| `0000` | `ADD`           | `A ← A + B`                        | `ZNCV` |             |
+| `0001` | `SUB`           | `A ← A - B`                        | `ZNCV` |             |
+| `0010` | `RSUB`          | `A ← B - A`                        | `ZNCV` | (1)         |
+| `0011` | `CMP`           | `_ ← A - B`                        | `ZNCV` | (2)         |
+| `0100` | `OR`            | <code>A ← A &#124; B</code>        | `ZN`   | (5)         |
+| `0101` | `XOR`           | `A ← A ^ B`                        | `ZN`   | (5)         |
+| `0110` | `AND`           | `A ← A & B`                        | `ZN`   | (5)         |
+| `0111` | `TEST`          | `_ ← A & B`                        | `ZN`   | (2) (5)     |
+| `1000` | `MOVZ`          | `A ← B`                            | None   | (7)         |
+| `1001` | `MOV` or `MOVS` | `A ← B`                            | None   | (8)         |
+| `1010` | `LOAD`          | `A ← MEM[B]`                       | None   |             |
+| `1011` | `STORE`         | `MEM[B] ← A`                       | None   | (2)         |
+| `1100` | `SLO`           | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
+| `1101` |                 |                                    |        | reserved    |
+| `1110` | `READCR`        | `A ← CR[B]`                        | None   | (4) (6)     |
+| `1111` | `WRITECR`       | `CR[B] ← A`                        | None   | (2) (4) (6) |
 
 
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
@@ -91,6 +90,8 @@ TODO: This is a baseline, very much still floating
 4) Primary intent is that these are used with immediate. Exact assignment of control registers is still floating. At least the the CPU status/extension control should be present.
 5) The C and O flags are in an undefined state after execution of these instructions. Implementations may do whatever is easiest. An extension may mandate a particular behavior, with good enough reason, but must *not* mandate that the value of these flags after the operation depends on their value before the operation.
 6) These instructions do not have a 2 register mode. The corresponding bit patterns (`00 SS 11??`) for the first byte are reserved. This can easily be detected by using similar to 2)
+7) This instruction zero extends argument B as if the value read is of the size specified by the SS bits in the instruction (assuming the relevant feature is present)
+8) This instruction sign extends argument B as if the value read is of the size specified by the SS bits in the instruction (assuming the relevant feature is present)
 
 #### Control Register Read and Write Instructions
 
