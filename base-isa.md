@@ -86,8 +86,8 @@ TODO: This is a baseline, very much still floating
 
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
 2) Placed here for now to ease decoding; `xx11` => do not store result.
-3) Designed to allow for building a larger immediate value. To reach the full 16 bit one extra `NOT` instruction may be required.
-4) Primary intent is that these are used with immediate. Exact assignment of control registers is still floating. At least the the CPU status/extension control should be present.
+3) Designed to allow for building a larger immediate value. To reach a full 16 bit immediate, a 4th `SLO` or an additional `NOT` may be required.
+4) Primary intent is that these are used with immediate. Exact assignment of control registers is still floating. At least the the CPU status/extension/feature control registers should be present.
 5) The C and O flags are in an undefined state after execution of these instructions. Implementations may do whatever is easiest. An extension may mandate a particular behavior, with good enough reason, but must *not* mandate that the value of these flags after the operation depends on their value before the operation.
 6) These instructions do not have a 2 register mode. The corresponding bit patterns (`00 SS 11??`) for the first byte are reserved. This can easily be detected by using similar to 2)
 7) This instruction zero extends argument B as if the value read is of the size specified by the SS bits in the instruction (assuming the relevant feature is present)
