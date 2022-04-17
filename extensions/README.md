@@ -5,7 +5,7 @@
 |     0     | Memory Mode Operations + Expanded Immediates              | VWI          | Planned           |
 |     1     | [Stack & Functions](./stack-and-functions)                | None         | Under Development |
 |     2     | Interrupts                                                | 1            | Planned           |
-|     3     | Conditional Execution                                     | VWI          | Planned           |
+|     3     | [Conditional Execution](./conditional-prefix)             | VWI          | Planned           |
 |     4     | [Expanded Registers](./expanded-registers)                | VWI          | Under Development |
 |     5     | Privileged Mode                                           | 2            | Planned           |
 |     6     | Cache Instructions                                        | VWI          | Planned           |
