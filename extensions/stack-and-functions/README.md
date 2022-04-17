@@ -44,7 +44,7 @@ The following opcodes are now defined.
 
 | Symbol | Meaning                                    |
 |--------|--------------------------------------------|
-| C      | opcode bit                                 |
+| C      | condition code bit                         |
 | R      | register id                                |
 | I      | immediate                                  |
 | S      | size (reserved)                            |
