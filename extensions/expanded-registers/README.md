@@ -3,7 +3,7 @@
 **Extension State: Under Development**  
 **Enabled by Default: Yes**  
 **Requires: Base, VWI**  
-**CPUID Bit: 5**
+**CPUID Bit: 4**
 
 # Overview
 
@@ -11,12 +11,12 @@ This extension adds an instruction prefix byte which expands the number of avail
 
 | Register | Alias | Who saves it |
 |----------|-------|--------------|
-| `r8`     | `a2`  | Caller Saved |
-| `r9`     | `a3`  | Caller Saved |
-| `r10`    | `a4`  | Caller Saved |
-| `r11`    | `a5`  | Caller Saved |
-| `r12`    | `a6`  | Caller Saved |
-| `r13`    | `v1`  | Caller Saved |
+| `r8`     | `a3`  | Caller Saved |
+| `r9`     | `a4`  | Caller Saved |
+| `r10`    | `a5`  | Caller Saved |
+| `r11`    | `a6`  | Caller Saved |
+| `r12`    | `a7`  | Caller Saved |
+| `r13`    | `a8`  | Caller Saved |
 | `r14`    | `t0`  | Caller Saved |
 | `r15`    | `t1`  | Caller Saved |
 | `r16`    | `t2`  | Caller Saved |
@@ -37,7 +37,6 @@ This extension adds an instruction prefix byte which expands the number of avail
 | `r31`    | `s9`  | Callee Saved |
 
 - aN registers are argument registers and store the first N arguments to a function call. Additional arguments should be pushed to the stack.
-- vN registers are return value registers and store the return values from a function.
 - sN registers are registers that must be saved before re-using.
 - tN registers are temporary registers which a function can use however it wants.
 

@@ -100,9 +100,11 @@ Undefined control registers are reserved and reading from or writing to them is 
 |--------|------------|--------------------------------------------------------------------------------------------------------------------------|---------|
 | `0000` | `CPUID`    | Reading from this control register puts the available CPU extensions in the destination register. Writing to it is a NOP | (1)     |
 | `0001` | `EXTEN`    | This control register specifies which available extensions are enabled or disabled.                                      | (2)     |
+| `0010` | `FEAT`     | Reading from this control register puts the available CPU features in the destination register. Writing to it is a NOP   | (3)     |
 
 1) CPUID uses a bitfield to specify the available extensions. A value of 0 means no extensions are available.
 2) This uses a bitfield in the same format as CPUID. Attempting to enable a non-available extension should leave the bit cleared. Attempting to disable a non-disableable extension should leave the bit set.
+3) FEAT uses a bitfield to specify the available features. A value of 0 means no features are available.
 
 ## Memory Semantics
 

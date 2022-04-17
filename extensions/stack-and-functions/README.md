@@ -9,19 +9,19 @@
 
 This extension adds instructions to allow for convenient use of the stack as well as instructions for function calls. It also provides a recommended usage for each register to minimize the time spent unneccesarily pushing and popping registers to and from the stack.
 
-| Register | Alias | Who saves it |
-|----------|-------|--------------|
-| `r0`     | `a0`  | Caller Saved |
-| `r1`     | `a1`  | Caller Saved |
-| `r2`     | `v0`  | Caller Saved |
-| `r3`     | `s0`  | Callee Saved |
-| `r4`     | `s1`  | Callee Saved |
-| `r5`     | `bp`  | Callee Saved |
-| `r6`     | `sp`  | Callee Saved |
-| `r7`     | `ln`  | Caller Saved |
+| Register | Alias     | Who saves it |
+|----------|-----------|--------------|
+| `r0`     | `a0`/`v0` | Caller Saved |
+| `r1`     | `a1`/`v1` | Caller Saved |
+| `r2`     | `a2`      | Caller Saved |
+| `r3`     | `s0`      | Callee Saved |
+| `r4`     | `s1`      | Callee Saved |
+| `r5`     | `bp`      | Callee Saved |
+| `r6`     | `sp`      | Callee Saved |
+| `r7`     | `ln`      | Caller Saved |
 
 - aN registers are argument registers and store the first N arguments to a function call. Additional arguments should be pushed to the stack.
-- vN registers are return value registers and store the return values from a function.
+- vN registers are the first N return values to a function call. Additional return values should be pushed to the stack.
 - sN registers are registers that must be saved before re-using.
 - tN registers are temporary registers which a function can use however it wants.
 - bp is the base pointer register and stores the address of the bottom of the stack for this function.
