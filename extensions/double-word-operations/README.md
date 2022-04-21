@@ -1,7 +1,9 @@
 # General design
 
 **Extension State: Under Development**  
-**CPUID Bit: 2**  
+**Enabled by Default: Yes**  
+**Requires: Base**  
+**CPUID Bit: 9**
 
 - All registers (excluding the `PC`) _must_ be able to store 32 bit (double word) values
 - The SS bits in the calculation opcode can now be set to 10.
