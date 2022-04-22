@@ -34,8 +34,8 @@ The following opcodes are now defined.
 
 | First byte    | Second Byte  | Comment                                                 |
 |:--------------|:-------------|:--------------------------------------------------------|
-| `00 SS 1100`  | `110 RRR 00` | pop from stack                                          |
-| `00 SS 1100`  | `??? RRR 00` | when `???` is not 110, reserved for future extensions   |
+| `00 SS 1100`  | `RRR 110 00` | pop from stack                                          |
+| `00 SS 1100`  | `RRR ??? 00` | when `???` is not 110, reserved for future extensions   |
 | `00 SS 1101`  | `110 RRR 00` | push register to stack                                  |
 | `00 SS 1101`  | `??? RRR 00` | when `???` is not 110, reserved for future extensions   |
 | `01 SS 1101`  | `110 IIIII`  | push immediate to stack                                 |
