@@ -3,7 +3,7 @@
 **Extension State: Under Development**  
 **Enabled by Default: Yes**  
 **Requires: Base**  
-**CPUID Bit: 13**
+**CPUID Bit: 15**
 
 - All registers (excluding the `PC`) _must_ be able to store 64 bit (quad word) values
 - The SS bits in the calculation opcode can now be set to 11.
