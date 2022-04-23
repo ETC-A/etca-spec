@@ -43,7 +43,7 @@ The following opcodes are now defined.
 | `10 1 0 1111` | `RRR 0 CCCC` | (conditional) absolute register jump                    |
 | `10 1 0 1111` | `RRR 1 CCCC` | (conditional) absolute register function call           |
 | `10 1 0 ????` |              | when `????` is not 1111, reserved for future extensions |
-| `10 1 1 IIII` | `IIIIIIII`   | absolute unconditional function call                    |
+| `10 1 1 IIII` | `IIIIIIII`   | relative unconditional function call                    |
 
 | Symbol | Meaning                                    |
 |--------|--------------------------------------------|
@@ -83,11 +83,11 @@ The following opcodes are now defined.
 | First Byte    | Second Byte  | Operation | Comment |      
 |--|--|--|--|
 | `10 1 0 1111` | `RRR 1 CCCC` | <pre>IF CCCC:<br>  temp ← IP<br>  IP ← reg[RRR]<br>  reg[7] ← temp + 2<br>FI</pre> | (3) |
-| `10 1 1 IIII` | `IIIIIIII`   | <pre>reg[7] ← IP + 2<br>IP ← {IP[:12],(IIIIIIIIIIII)[11:0]}</pre>                  | (4) |
+| `10 1 1 IIII` | `IIIIIIII`   | <pre>reg[7] ← IP + 2<br>IP ← {IP + sign_extend(IIIIIIIIIIII)}</pre>                | (4) |
 
 
 3) The conditional absolute register function call will conditionally store the next instruction's address in the link register and jump to the address stored inside `RRR`.
-4) The absolute unconditional functional call will store the next instruction's address in the link register and jump to the address `{IP[:12],IIII IIII IIII}`. That is, bits above the the 12 specified bits will be preserved from the current instruction's address.
+4) The relative unconditional functional call will store the next instruction's address in the link register and jump to the address `{IP + IIII IIII IIII}`. That is, the 12 immediate bits specified will be sign extended and added to the instruction's address.
 
 ## Stack Semantics
 
