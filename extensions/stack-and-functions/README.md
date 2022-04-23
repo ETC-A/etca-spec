@@ -83,7 +83,7 @@ The following opcodes are now defined.
 | First Byte    | Second Byte  | Operation | Comment |      
 |--|--|--|--|
 | `10 1 0 1111` | `RRR 1 CCCC` | <pre>IF CCCC:<br>  temp ← IP<br>  IP ← reg[RRR]<br>  reg[7] ← temp + 2<br>FI</pre> | (3) |
-| `10 1 1 IIII` | `IIIIIIII`   | <pre>reg[7] ← IP + 2<br>IP ← {IP + sign_extend(IIIIIIIIIIII)}</pre>                | (4) |
+| `10 1 1 IIII` | `IIIIIIII`   | <pre>reg[7] ← IP + 2<br>IP ← IP + sign_extend(IIIIIIIIIIII)</pre>                  | (4) |
 
 
 3) The conditional absolute register function call will conditionally store the next instruction's address in the link register and jump to the address stored inside `RRR`.
