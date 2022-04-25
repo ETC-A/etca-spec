@@ -19,8 +19,8 @@ Less common cases can be emulated with the compact instructions, but will have a
 
 The most common cases of many types of instructions cannot arise in the base ISA. One of the most common instructions in typical x86 assembly is `call`, which the base ISA
 does not even have. Most (but not all) of the reserved space is reserved for such common instructions which do not make sense in the base ISA. The bits labeled `SS` are reserved
-as _size bits_, allowing an instruction to have an operational width of 1, 2, 4, or 8 bytes. One of the bits near the jump format is reserved for turning (relative) jumps into
-(absolute) calls, while another is for returns. We are not yet sure what we want to use the two LSBs of the operand byte for, but some ideas include a mode switch similar to
+as _size bits_, allowing an instruction to have an operational width of 1, 2, 4, or 8 bytes. One of the bits near the jump format is reserved for turning jumps into
+calls, while another is for indirect jumps. We are not yet sure what we want to use the two LSBs of the operand byte for, but some ideas include a mode switch similar to
 x86's `MOD R/M` byte.
 
 The most significant bits of the opcode byte being `11` are reserved for any extensions to use as is relevant to them.
@@ -36,8 +36,9 @@ Such jumps are usually a short distance compared to absolute jumps or calls. Wit
 This instruction is "shift-left 5 bits, then OR." Since the base ISA only has 5-bit immediate formats, it is very difficult to build larger constant values with typical operations.
 The `slo` operation can be used to build any 16-bit immediate in at most 4 instructions, and most in 3. The first one or two instructions are from the following lines:
 ```
-[movi r,imm[14:10]]                      if bit 15 is the same as bit 14 (this will cause sign extension)
-[movi r,imm[15]]; [slo r,imm[14:10]]     if bit 15 is different than bit 14
+[mov r,imm[14:10]]                      if bit 15 is the same as bit 14 (this will cause sign extension)
+[movz r,imm[14:10]]                     if bit 15 is zero and bit 14 is one
+[mov r,imm[15]]; [slo r,imm[14:10]]     if bit 15 is one and bit 14 is zero
 ```
 This puts the top 6 bits in `r[5:0]`. The remainder of the construction is `slo r,imm[9:5]; slo r,imm[4:0]`.
 
@@ -74,20 +75,6 @@ stored in a ROM, and divided from data memory. By not requiring executable RAM, 
 bare metal devices.
 
 Of course, an extension will indicate that the processor supports executable RAM.
-
-### `movs` and `movz`
-
-This section is mostly to record the contents of a discord discussion, which began with [this message](https://discord.com/channels/828292123936948244/946806826756882552/947890406631280670). 
-The discussion concerned potential `movs` and `movz` instructions, and their semantics. Endershadow noticed that `mov` already functions as `movs` regardless of
-the size bits (if extensions that use the sign bits are available) because it sign-extends its `src` argument to the _full_ width of the `dst` register.
-By placing `movz` nearby to `movs`, we could simplify decoding and make the most reasonable use of a reserved instruction slot.
-
-The question is what `movz` should do when it has a negative immediate argument. Are immediates to be sign extended, as is the default behavior for instructions
-with opcodes under `1100`? Or should it be zero-extended, as that is name of the instruction?
-
-We settled on a behavior that exactly matches the behavior of a pair of instructions that could emulate `movz` if it weren't present. A previous iteration of the
-Bytes extension offered a `zext` instruction, which would zero-extend its `dst` operand into the full width of its register. We settled on specifying that `movz r0,r1/i`
-behave identically to `movs r0,r1/i; zext r0`. As a result, the 2-byte encoding of `movz` cannot encode `movz %rhN, 31`, as the 5-bit immediate `31` sign-extends to `255`.
 
 ### Placement of Extensions
 
