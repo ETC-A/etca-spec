@@ -150,4 +150,6 @@ Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte o
 | `1100` | less or equal           | <code> Z &#124; (N ≠ V) </code>  |         |
 | `1101` | greater                 | <code> ~Z &amp; (N = V) </code>  |         |
 | `1110` | always                  |                                  |         |
-| `1111` | never                   |                                  |         |
+| `1111` | never                   |                                  | (1)     |
+
+1) Only a displacement of 0 is considered canonical for this instruction. Non-zero displacements may be overloaded to act differently in future extensions. Overloads of these displacements _must_ require NOP as an acceptable behavior for the overload on implementations that do not implement the extension.
