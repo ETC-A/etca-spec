@@ -16,4 +16,5 @@ Instruction prefixes are a sequence of one or more bytes which modify the instru
 
 ### Defined Prefix Sequences
 
+`1010 xxxx` when `xxxx` is not `1111` nor `1110`
 `110x xxxx`
