@@ -60,8 +60,8 @@ When the base opcode `CCCC` matches `1xxx`, the new opcode is `01 CCCC`
 | `001111` |                 |                                    |        | reserved    |
 | `010000` | `SHL`           | `A ← A << B`                       | `ZN`   | (5)         |
 | `010001` | `ROL`           | `A ← A rotate left B`              | `ZN`   | (5)         |
-| `010010` | `LSHR`          | `A ← A >> B`                       | `ZN`   | (5)         |
-| `010011` | `ASHR`          | `A ← A >>> B`                      | `ZN`   | (5)         |
+| `010010` | `LSHR`          | `A ← A >>> B`                      | `ZN`   | (5)         |
+| `010011` | `ASHR`          | `A ← A >> B`                       | `ZN`   | (5)         |
 | `010100` |                 |                                    |        | reserved    |
 | `010101` |                 |                                    |        | reserved    |
 | `010110` |                 |                                    |        | reserved    |
