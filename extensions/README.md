@@ -11,7 +11,7 @@
 |     6     | Privileged Mode                                           | 2            | Planned           |
 |     7     | Cache Instructions                                        | VWI          | Planned           |
 |     8     | [Arbitrary Stack Pointer](./arbitrary-stack-pointer)      | 1            | Under Development |
-|     9     | Expanded Opcodes                                          | VWI          | Planned           |
+|     9     | [Expanded Opcodes](./expanded-opcodes)                    | VWI          | Under Development |
 |     14    | [32 Bit Operations + Registers](./double-word-operations) | None         | Under Development |
 |     15    | [64 Bit Operations + Registers](./quad-word-operations)   | None         | Under Development |
 |     16    | 32 Bit Address Space                                      | 14           | Planned           |
