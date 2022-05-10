@@ -50,18 +50,18 @@ This extension adds an expanded instruction format to allow for a larger number 
 
 | First byte    | 2nd-9th Byte | Comment                                                             |
 |:--------------|:-------------|:--------------------------------------------------------------------|
-| `111 10 0 JJ` | `DDDD DDDD`  | Relative jump                                                       |
-| `111 10 1 JJ` | `IIII IIII`  | Absolute jump                                                       |
-| `111 11 0 JJ` | `DDDD DDDD`  | Relative call if stack extension is implemented, otherwise reserved |
-| `111 11 1 JJ` | `IIII IIII`  | Absolute call if stack extension is implemented, otherwise reserved |
+| `111 10 0 SS` | `DDDD DDDD`  | Relative jump                                                       |
+| `111 10 1 SS` | `IIII IIII`  | Absolute jump                                                       |
+| `111 11 0 SS` | `DDDD DDDD`  | Relative call if stack extension is implemented, otherwise reserved |
+| `111 11 1 SS` | `IIII IIII`  | Absolute call if stack extension is implemented, otherwise reserved |
 
 | Symbol | Meaning                                         |
 |--------|-------------------------------------------------|
-| J      | the number of bytes to use for the displacement |
+| S      | the number of bytes to use for the displacement |
 | D      | signed displacement                             |
 | I      | unsigned immediate                              |
 
-`JJ` is log base 2 of the number of bytes to use for the displacement. This means that `JJ = 00` is 1 additional byte and `JJ = 11` is 8 additional bytes.
+`SS = 00,01,10,11` means that read 1,2,4,8 additional bytes as the signed displacement.
 
 Absolute jumps only overwrite the lower bits of the program counter.
 
