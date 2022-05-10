@@ -48,15 +48,20 @@ This extension adds an expanded instruction format to allow for a larger number 
 
 ## Jump and Call
 
-| First byte   | 2nd-9th Byte | Comment                                                             |
-|:-------------|:-------------|:--------------------------------------------------------------------|
-| `111 10 JJJ` | `DDDD DDDD`  | Relative jump                                                       |
-| `111 11 JJJ` | `DDDD DDDD`  | Relative call if stack extension is implemented, otherwise reserved |
+| First byte    | 2nd-9th Byte | Comment                                                             |
+|:--------------|:-------------|:--------------------------------------------------------------------|
+| `111 10 0 JJ` | `DDDD DDDD`  | Relative jump                                                       |
+| `111 10 1 JJ` | `IIII IIII`  | Absolute jump                                                       |
+| `111 11 0 JJ` | `DDDD DDDD`  | Relative call if stack extension is implemented, otherwise reserved |
+| `111 11 1 JJ` | `IIII IIII`  | Absolute call if stack extension is implemented, otherwise reserved |
 
 | Symbol | Meaning                                         |
 |--------|-------------------------------------------------|
 | J      | the number of bytes to use for the displacement |
 | D      | signed displacement                             |
+| I      | unsigned immediate                              |
 
-`JJJ` is 1 less than the number of bytes to use for the displacement. This means that `JJJ = 000` is 1 additional byte and `JJJ = 111` is 8 additional bytes.
+`JJ` is log base 2 of the number of bytes to use for the displacement. This means that `JJ = 00` is 1 additional byte and `JJ = 11` is 8 additional bytes.
+
+Absolute jumps only overwrite the lower bits of the program counter.
 
