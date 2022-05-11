@@ -61,7 +61,7 @@ This extension adds an expanded instruction format to allow for a larger number 
 | D      | signed displacement                             |
 | I      | unsigned immediate                              |
 
-`SS = 00,01,10,11` means that 1,2,4,8 additional bytes are read as the signed displacement. These SS bits are unrelated to the operand size SS bits.
+`SS = 00,01,10,11` means that 1,2,4,8 additional bytes are read as the signed displacement. These SS bits are different from the SS bits used in calculation instructions. `SS = 10` is reserved unless the 32 or 64 bit address extensions are enabled. `SS = 11` is reserved unless the 64 bit address extension is enabled.
 
 Absolute jumps only overwrite the lower bits of the program counter.
 
