@@ -17,9 +17,10 @@ Instruction prefixes are a sequence of one or more bytes which modify the instru
 ### Defined Prefix Sequences
 
 
-| Prefix      | Description        |
-|:------------|:-------------------|
-| `1010 xxxx` | Unused             |
-| `1100 xxxx` | Expanded registers |
-| `1101 xxxx` | Unused             |
+| Prefix      | Description                                                  |
+|:------------|:-------------------------------------------------------------|
+| `1010 xxxx` | When `xxxx` is neither `1110` nor `1111`, conditional prefix |
+| `1010 1110` | Unused                                                       |
+| `1100 xxxx` | Expanded registers                                           |
+| `1101 xxxx` | Unused                                                       |
 
