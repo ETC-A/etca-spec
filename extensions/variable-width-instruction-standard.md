@@ -12,10 +12,12 @@ If the first byte of an instruction is `11xx xxxx`, it is a VWI
 
 ## Instruction Prefixes
 
-Instruction prefixes are a sequence of one or more bytes which modify the instruction immediately after it. The prefix and the instruction after it are considered as a single VWI
+Instruction prefixes are a sequence of one or more bytes which modify the instruction immediately after it. The prefix and the instruction after it are considered as a single VWI. Multiple prefixes can be used on a single instruction at once but they _must_ be in the following order when present.
+
+1. Conditional Prefix
+2. Expanded Registers
 
 ### Defined Prefix Sequences
-
 
 | Prefix      | Description                                                  |
 |:------------|:-------------------------------------------------------------|
