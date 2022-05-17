@@ -42,3 +42,6 @@ An 8-byte literal immediate cannot be encoded by this extension. However, any en
 which "modifies the meaning of `iS`" will affect the `iS` immediate defined here.
 
 TODO: add explicit reference to the `REX.Q` bit once that is specified.
+
+The added instructions can be seen in the complete Advanced Operand Extensions table, which encompasses the FI, MO1, and MO2 extensions. They are under `Mode=01`, `ABM.regB = 01x`.
+![AOE Table](../etca_aoe_table.png)
