@@ -123,3 +123,8 @@ encode `rx2 ← r0 + 4 * r1 + 10` in one 4-byte instruction, as `1E 5A 88 0A`.
 This same specification of `LEA` is described in [memory-operands-2](../memory-operands-2/README.md), but these extensions
 are independent and can each coexist without the other. It is generally recommend, however, that a system supporting
 MO2 also support MO1.
+
+# AOE Table
+
+The added instructions can be seen in the complete Advanced Operand Extensions table, which encompasses the FI, MO1, and MO2 extensions. They are under `Mode=1x`.
+![AOE Table](../etca_aoe_table.png)
