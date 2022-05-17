@@ -25,9 +25,7 @@ The following ABM byte values are added:
 | ABM | Following Bytes | Meaning |
 |-----|-----------------|---------|
 | <pre>+-----+-----+----+<br>\| AAA \| 010 \| 01 \|<br>+-----+-----+----+</pre> | `i8` | The instruction is followed by a 1-byte immediate |
-|-----|-----------------|---------|
 | <pre>+-----+-----+----+<br>\| AAA \| 011 \| 01 \|<br>+-----+-----+----+</pre> | `iS` | The instruction is followed by a "sized" immediate, as explained below |
-|-----|-----------------|---------|
 
 An `i8` is always a 1-byte literal value. An `iS` is a flexibly-sized immediate value. The size is determined
 according to the operand size (usually, determined by the `SS` bits of the instruction) according to
