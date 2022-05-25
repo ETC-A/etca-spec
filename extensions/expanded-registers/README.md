@@ -11,41 +11,32 @@ This extension adds an instruction prefix byte which expands the number of avail
 
 | Register | Alias | Who saves it |
 |----------|-------|--------------|
-| `r8`     | `a3`  | Caller Saved |
-| `r9`     | `a4`  | Caller Saved |
-| `r10`    | `a5`  | Caller Saved |
-| `r11`    | `a6`  | Caller Saved |
-| `r12`    | `a7`  | Caller Saved |
-| `r13`    | `a8`  | Caller Saved |
-| `r14`    | `t0`  | Caller Saved |
-| `r15`    | `t1`  | Caller Saved |
-| `r16`    | `t2`  | Caller Saved |
-| `r17`    | `t3`  | Caller Saved |
-| `r18`    | `t4`  | Caller Saved |
-| `r19`    | `t5`  | Caller Saved |
-| `r20`    | `t6`  | Caller Saved |
-| `r21`    | `t7`  | Caller Saved |
-| `r22`    | `t8`  | Caller Saved |
-| `r23`    | `t9`  | Caller Saved |
-| `r24`    | `s2`  | Callee Saved |
-| `r25`    | `s3`  | Callee Saved |
-| `r26`    | `s4`  | Callee Saved |
-| `r27`    | `s5`  | Callee Saved |
-| `r28`    | `s6`  | Callee Saved |
-| `r29`    | `s7`  | Callee Saved |
-| `r30`    | `s8`  | Callee Saved |
-| `r31`    | `s9`  | Callee Saved |
+| `r8`     | `t0`  | Caller Saved |
+| `r9`     | `t1`  | Caller Saved |
+| `r10`    | `t2`  | Caller Saved |
+| `r11`    | `t3`  | Caller Saved |
+| `r12`    | `t4`  | Caller Saved |
+| `r13`    | `s2`  | Caller Saved |
+| `r14`    | `s3`  | Caller Saved |
+| `r15`    | `s4`  | Caller Saved |
 
 - aN registers are argument registers and store the first N arguments to a function call. Additional arguments should be pushed to the stack.
 - sN registers are registers that must be saved before re-using.
 - tN registers are temporary registers which a function can use however it wants.
 
+Remember that the above are just suggestions. A complete specification of a standard calling convention for ETC-A is not yet specified.
+
 # Added Instructions
 
-The following prefix is now defined.
+The following 1-byte instruction prefix is now defined.
 
-| First byte   |
-|:-------------|
-| `1100 AA BB` |
+| `REX`   | | | | |
+|:-------------|---|----|----|----|
+| `1100` | `Q` | `A` | `B` | `X` |
 
-AA is used for bits 3 and 4 of the A register and BB is used for bits 3 and 4 of the B register. This gives us a 5 bit register index instead of the original 3 bit index. If an instruction only has one register parameter, the unused bits in this prefix are ignored.
+When used with an instruction that uses an `A` register, `REX.A` provides a 4th bit to be used as the most significant bit of the register specifier.
+When used with an instruction that uses a `B` register (including an `SIB.B` if [MO1](../memory-operands-1/README.md) or [MO2](../memory-operands-2/README.md) is available), `REX.B` provides a 4th bit for the specifier in the same way.
+When used with an instruction that uses an `SIB.X` register, `REX.X` provides a 4th bit for the specifier in the same way.
+
+`REX.Q` is reserved.
+
