@@ -37,6 +37,20 @@ Familiarity with the full-immediates extension is encouraged likewise.
 
 The value `ip` is the address in memory of the current instruction.
 
+## `REX.Q`
+
+A `REX.Q` prefix can be used with instructions in this format if all of the following conditions are met:
+  - The instruction has _exactly one_ of a displacement or immediate. It cannot have both.
+  - The instruction is an `iS` mode with Operand Size attribute `quad`
+  - The instruction is a `dP` mode and the current Addressing Mode is `quad`
+  - The [register expansion](../expanded-registers/README.md) extension is available
+Then the `iS` or `dP` will be an 8-byte value rather than a 4-byte value.
+
+The prefix remains illegal if any of the `REX.A`, `REX.B`, or `REX.X` bits are set and the register expansion extension is not enabled.
+`REX.Q` is **illegal**, not reserved, for instructions in these formats which do not satisfy the above conditions.
+
+In all other instruction formats, `REX.Q` remains reserved.
+
 # Added Instruction
 
 | Name | Encoding | Operands | Description |
