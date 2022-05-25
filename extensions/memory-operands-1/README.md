@@ -49,9 +49,12 @@ If the [register expansion](../expanded-registers/README.md) extension is availa
   - The current Addressing Mode is `quadword`
 In this case, the `dP` is an 8-byte value rather than a 4-byte value.
 
-For other instructions in these formats, `REX.Q` is **illegal**, not reserved.
+For other instructions in these formats, `REX.Q` is **illegal**, not reserved. This terminology means that
+if a `REX` prefix is present, the 8s bit must be 0 and that further extensions must not change this.
 
 `REX.Q` remains reserved in formats not specified by this extension.
+
+`REX.A`, `REX.B`, and `REX.X` prefixes are allowed with these instructions, but only if the register expansion prefix is enabled.
 
 # Added Instruction Formats
 
