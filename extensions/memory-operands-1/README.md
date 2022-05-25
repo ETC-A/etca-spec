@@ -15,7 +15,7 @@ This extension enables an operand to most instructions to refer to a memory loca
 At most one operand may refer to a memory location. It is not possible to have both a memory
 operand and an immediate operand using the encodings from this extension.
 
-Such operations are not, by default, atomic.
+Such operations are not atomic by default.
 
 # New Notation
 
@@ -89,20 +89,16 @@ When `D` is 1, these are swapped. In all cases, the value in the memory location
 When the `dst` operation is a memory location, the result of the operation must also be stored there.
 
 If an operation uses an `ABM` byte to encode two operands, but only treats one of them as an input, then this
-behavior should likewise apply to memory operations; memory need not be loaded if the memory operand is not an input
-(e.g., as is the case for `mov m, r/i`), however, extraneous memory _reads_ are permitted. 
-If the operation does not store its result, then memory must not be modified.
+behavior applies likewise to memory operations; memory must not be (visibly) loaded if the memory operand is not an input
+(e.g., as is the case for `mov m, r/i`). If the operation does not store its result, then memory must not be modified.
 
-The instructions Operand Size (usually from the instruction `SS` bits, but NOT from the `SIB.S` bits) informs the size of the read or writes. These reads
+The instruction's Operand Size (usually from the instruction `SS` bits, but NOT from the `SIB.S` bits) informs the size of the read or writes. These reads
 and writes must behave, with regards to how memory is read and modified, the same as `ld` or `st` instructions
 to the same address, with the same operand size.
 
 When computing an address, register contents must be treated as if they were the width of an
 address in the current address mode. When performing the operation, the operation must be performed
 as though the operand values were the size specified by the instruction's Operand Size attribute.
-
-There is no performance restriction on instructions using these modes. They do not need to operate in
-the same amount of time as the corresponding register-to-register operation.
 
 # Added Instruction
 
