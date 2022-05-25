@@ -2,7 +2,7 @@
 
 | CPUID bit | Extension                                                 | Dependencies | State             |
 |:---------:|-----------------------------------------------------------|:------------:|-------------------|
-|     0     | [Full Immediate](./full-immediates)                       | VWI          | Planned           |
+|     0     | [Full Immediate](./full-immediates)                       | VWI          | Under Developtmet |
 |     1     | [Stack & Functions](./stack-and-functions)                | None         | Under Development |
 |     2     | Interrupts                                                | 1            | Planned           |
 |     3     | [8 Bit Operations + Registers](./half-word-operations)    | None         | Under Development |
