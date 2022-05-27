@@ -47,6 +47,7 @@ this extension cannot encode an 8 byte displacement. In `quadword` address mode,
 If the [register expansion](../expanded-registers/README.md) extension is available, then a `REX.Q` prefix may be used with instructions in these formats if
   - The instruction contains a `dP`
   - The current Addressing Mode is `quadword`
+
 In this case, the `dP` is an 8-byte value rather than a 4-byte value.
 
 For other instructions in these formats, `REX.Q` is **illegal**, not reserved. This terminology means that
