@@ -2,7 +2,7 @@
 
 | CPUID bit | Extension                                                 | Dependencies | State             |
 |:---------:|-----------------------------------------------------------|:------------:|-------------------|
-|     0     | Memory Mode Operations + Expanded Immediates              | VWI          | Planned           |
+|     0     | [Full Immediate](./full-immediates)                       | VWI          | Under Development |
 |     1     | [Stack & Functions](./stack-and-functions)                | None         | Under Development |
 |     2     | Interrupts                                                | 1            | Planned           |
 |     3     | [8 Bit Operations + Registers](./half-word-operations)    | None         | Under Development |
@@ -12,6 +12,8 @@
 |     7     | Cache Instructions                                        | VWI          | Planned           |
 |     8     | [Arbitrary Stack Pointer](./arbitrary-stack-pointer)      | 1            | Under Development |
 |     9     | [Expanded Opcodes](./expanded-opcodes)                    | VWI          | Under Development |
+|     12    | [Memory Operands 1](./memory-operands-1) (MO1)            | VWI          | Under Development |
+|     13    | [Memory Operands 2](./memory-operands-2) (MO2)            | VWI          | Under Development |
 |     14    | [32 Bit Operations + Registers](./double-word-operations) | None         | Under Development |
 |     15    | [64 Bit Operations + Registers](./quad-word-operations)   | None         | Under Development |
 |     16    | 32 Bit Address Space                                      | 14           | Planned           |
