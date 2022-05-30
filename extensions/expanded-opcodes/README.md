@@ -3,7 +3,7 @@
 **Extension State: Under Development**  
 **Enabled by Default: Yes**  
 **Requires: Base, VWI**  
-**CPUID Bit: 9**
+**CPUID 2 Bit: 0**
 
 # Overview
 

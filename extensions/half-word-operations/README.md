@@ -3,7 +3,7 @@
 **Extension State: Under Development**  
 **Enabled by Default: Yes**  
 **Requires: Base**  
-**CPUID Bit: 3**
+**CPUID 1 Bit: 3**
 
 - The SS bits in the calculation opcode can now be set to 00.
 - When the SS bits are set to 00, the calculation is performed as if the operation was for 8 bit values.

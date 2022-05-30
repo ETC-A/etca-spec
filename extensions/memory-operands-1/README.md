@@ -6,7 +6,7 @@
 
 **Requires: Base, VWI**
 
-**CPUID Bit: 12**
+**CPUID 2 Bit: 1**
 
 # Overview
 
