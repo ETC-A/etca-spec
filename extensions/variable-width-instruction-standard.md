@@ -10,6 +10,10 @@ Note that this does not preclude pipelining, so long as any references to the in
 
 If the first byte of an instruction is `11xx xxxx`, it is a VWI
 
+## Single Byte NOP
+
+All CPUs which support at least 1 VWI extension must also accept `1010 1110` as a single byte NOP instruction
+
 ## Instruction Prefixes
 
 Instruction prefixes are a sequence of one or more bytes which modify the instruction immediately after it. The prefix and the instruction after it are considered as a single VWI. Multiple prefixes can be used on a single instruction at once but they _must_ be in the following order when present.
@@ -22,7 +26,6 @@ Instruction prefixes are a sequence of one or more bytes which modify the instru
 | Prefix      | Description                                                  |
 |:------------|:-------------------------------------------------------------|
 | `1010 xxxx` | When `xxxx` is neither `1110` nor `1111`, conditional prefix |
-| `1010 1110` | Unused                                                       |
-| `1100 xxxx` | Expanded registers                                           |
+| `1100 xxxx` | Expanded registers prefix and large immediate bit            |
 | `1101 xxxx` | Unused                                                       |
 
