@@ -97,11 +97,11 @@ TODO: This is a baseline, very much still floating
 
 Undefined control registers are reserved and reading from or writing to them is undefined behavior.
 
-| `CRN`  | NAME       | Description                                                                                                                            | Comment |
-|--------|------------|----------------------------------------------------------------------------------------------------------------------------------------|---------|
-| `0000` | `CPUID1`   | Reading from this control register puts the first set of available CPU extensions in the destination register. Writing to it is a NOP  | (1)     |
-| `0001` | `CPUID2`   | Reading from this control register puts the second set of available CPU extensions in the destination register. Writing to it is a NOP | (1)     |
-| `0010` | `FEAT`     | Reading from this control register puts the available CPU features in the destination register. Writing to it is a NOP                 | (2)     |
+| `CRN`  | NAME       | Description                                                                                                                             | Comment |
+|--------|------------|-----------------------------------------------------------------------------------------------------------------------------------------|---------|
+| `0000` | `CPUID1`   | Reading from this control register puts the first set of available CPU extensions in the destination register. Writing to it is a NOP.  | (1)     |
+| `0001` | `CPUID2`   | Reading from this control register puts the second set of available CPU extensions in the destination register. Writing to it is a NOP. | (1)     |
+| `0010` | `FEAT`     | Reading from this control register puts the available CPU features in the destination register. Writing to it is a NOP.                 | (2)     |
 
 1) CPUID uses a bitfield to specify the available extensions. A value of 0 means no extensions are available.
 2) FEAT uses a bitfield to specify the available features. A value of 0 means no features are available.
