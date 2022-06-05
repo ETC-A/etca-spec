@@ -93,4 +93,4 @@ fail:
           hlt               ; halt and catch fire
 can_work: ... ; rest of the program (including interupt setup)
 ```
-These eight extensions together make up `etca.f.f.0` or the "core extensions".
+These eight extensions together make up `ETCa.F.F.0` or the "core extensions".
