@@ -78,14 +78,19 @@ Of course, an extension will indicate that the processor supports executable RAM
 
 ### Placement of Extensions
 
-The selection of which extensions are put into the first 4 bits of `CPUID` is done with the thought that these are commonly (but not always) used and implemented extensions, that if not present are for many programs complete deal-breakers, i.e. they can't work if those are missing. They are assigned to the first 4 bits because those are easy to check for/enable when only base-isa is available, using code similar to this
+The selection of which extensions are put into the first 4 bits of `CPUID1` and `CPUID2` is done with the thought that these are commonly (but not always) used and implemented extensions, that if not present are for many programs complete deal-breakers, i.e. they can't work if those are missing. They are assigned to the first 4 bits because those are easy to check for/enable when only base-isa is available, using code similar to this.
 
 ```asm
-          mov  %r0, cpudid
+          mov  %r0, cpuid1
+          and  %r0, 0xF
+          cmp  %r0, 0xF     ; are the core extensions available?
+          jne  fail
+          mov  %r0, cpuid2
           and  %r0, 0xF
           cmp  %r0, 0xF     ; are the core extensions available?
           jeq  can_work
+fail:
           hlt               ; halt and catch fire
 can_work: ... ; rest of the program (including interupt setup)
 ```
-These four extensions together make up `ETC.a.F` or the "core extensions".
+These eight extensions together make up `ETCa.F.F.0` or the "core extensions".

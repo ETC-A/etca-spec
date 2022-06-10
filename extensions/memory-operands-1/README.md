@@ -1,12 +1,9 @@
 # General design
 
-**Extension State: Under Development**
-
-**Enabled by Default: Yes**
-
-**Requires: Base, VWI**
-
-**CPUID Bit: 12**
+**Extension State: Under Development**  
+**Enabled by Default: Yes**  
+**Requires: Base, VWI**  
+**CPUID Bit: CP2.1**
 
 # Overview
 

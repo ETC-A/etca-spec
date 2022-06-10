@@ -3,7 +3,7 @@
 **Extension State: Under Development**  
 **Enabled by Default: Yes**  
 **Requires: Base**  
-**CPUID Bit: 1**
+**CPUID Bit: CP1.1**
 
 # Overview
 
