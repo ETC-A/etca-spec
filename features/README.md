@@ -6,4 +6,4 @@
 |     1     | [Unaligned Memory Access](./unaligned-memory)             | Under Development |
 
 
-Features is a second set of extensions that follow are considered to be UB if they are used on a CPU that does not implement them. This differs from normal extensions in that they cause an interrupt when used with the interrupts extension present and enabled.
+Features are a second type of extension that are considered to be UB if they are used on a CPU that does not implement them. They differ from normal extensions in that they do not cause an interrupt when used in an unsupported system with the interrupts extension present.
