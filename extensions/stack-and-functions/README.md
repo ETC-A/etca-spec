@@ -26,7 +26,7 @@ This extension adds instructions to allow for convenient use of the stack as wel
 - tN registers (see the [Expanded Registers](../expanded-registers/README.md) extension) are temporary registers which a function can use however it wants.
 - bp is the base pointer register and stores the address of the bottom of the stack for this function.
 - sp is the stack pointer register and stores the address of the top of the stack for this function. This is hardcoded into the push and pop instructions.
-- ln is the link register and stores the address that this function should return to. This is hard coded into the call and return instructions.
+- ln is the link register and stores the address that this function should return to. This is hardcoded into the call and return instructions.
 
 # Added Instructions
 
