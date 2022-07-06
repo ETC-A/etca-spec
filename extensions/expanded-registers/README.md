@@ -16,9 +16,9 @@ This extension adds an instruction prefix byte which expands the number of avail
 | `r10`    | `t2`  | Caller Saved |
 | `r11`    | `t3`  | Caller Saved |
 | `r12`    | `t4`  | Caller Saved |
-| `r13`    | `s2`  | Caller Saved |
-| `r14`    | `s3`  | Caller Saved |
-| `r15`    | `s4`  | Caller Saved |
+| `r13`    | `s2`  | Callee Saved |
+| `r14`    | `s3`  | Callee Saved |
+| `r15`    | `s4`  | Callee Saved |
 
 - aN registers are argument registers and store the first N arguments to a function call. Additional arguments should be pushed to the stack.
 - sN registers are registers that must be saved before re-using.
