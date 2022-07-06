@@ -7,7 +7,11 @@
 
 # Overview
 
-This extension adds an instruction prefix byte which expands the number of available registers from 8 registers to 16 registers. The aliases below along with who saves it is for if the stack and functions extension is implemented
+This extension adds an instruction prefix byte expanding the number of available registers from 8 registers to 16, and suggests an extension of the [Stack & Functions](../stack-and-functions/readme.md) extension's calling conventions to the added registers.
+
+# Calling Conventions
+
+When used together with the [Stack & Functions](../stack-and-functions/readme.md) extension, the following table gives the recommended interpretation of the expanded registers.
 
 | Register | Alias | Who saves it |
 |----------|-------|--------------|
@@ -20,18 +24,17 @@ This extension adds an instruction prefix byte which expands the number of avail
 | `r14`    | `s3`  | Callee Saved |
 | `r15`    | `s4`  | Callee Saved |
 
-- aN registers are argument registers and store the first N arguments to a function call. Additional arguments should be pushed to the stack.
-- sN registers are registers that must be saved before re-using.
+- sN registers are registers that should be saved before re-using.
 - tN registers are temporary registers which a function can use however it wants.
 
-Remember that the above are just suggestions. A complete specification of a standard calling convention for ETC-A is not yet specified.
+Remember that the above are just suggestions. Until a more complete specification of a standard calling convention for ETC-A is specified, expect some implementations not to follow them. 
 
 # Added Instructions
 
 The following 1-byte instruction prefix is now defined.
 
-| `REX`   | | | | |
-|:-------------|---|----|----|----|
+| `REX`  |     |     |     |     |
+|:-------|-----|-----|-----|-----|
 | `1100` | `Q` | `A` | `B` | `X` |
 
 When used with an instruction that uses an `A` register, `REX.A` provides a 4th bit to be used as the most significant bit of the register specifier.
@@ -39,4 +42,3 @@ When used with an instruction that uses a `B` register (including an `SIB.B` if 
 When used with an instruction that uses an `SIB.X` register, `REX.X` provides a 4th bit for the specifier in the same way.
 
 `REX.Q` is reserved.
-
