@@ -38,7 +38,7 @@ When used together with the [Stack & Functions](../stack-and-functions/readme.md
 | `r14`    | `s3`  | Callee Saved |
 | `r15`    | `s4`  | Callee Saved |
 
-- sN registers are registers that should be saved before re-using.
+- sN registers should be saved before, and restored after, use.
 - tN registers are temporary registers which a function can use however it wants.
 
 Remember that the above are just suggestions. Until a more complete specification of a standard calling convention for ETC-A is specified, expect some implementations not to follow them. 

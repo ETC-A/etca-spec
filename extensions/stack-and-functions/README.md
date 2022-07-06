@@ -21,12 +21,12 @@ This extension adds instructions to allow for convenient use of the stack as wel
 | `r7`     | `ln`      | Caller Saved |
 
 - aN registers are argument registers and store the first N arguments to a function call. Additional arguments should be pushed to the stack.
-- vN registers are the first N return values to a function call. Additional return values should be pushed to the stack.
-- sN registers are registers that must be saved before re-using.
-- tN registers are temporary registers which a function can use however it wants.
+- vN registers are the first N return values from a function call. Additional return values should be pushed to the stack.
+- sN registers are registers that must be saved before, and restored after, use.
+- tN registers (see the [Expanded Registers](../expanded-registers/README.md) extension) are temporary registers which a function can use however it wants.
 - bp is the base pointer register and stores the address of the bottom of the stack for this function.
-- sp is the stack pointer register and stores the address of the top of the stack for this function. This is hardcoded into the push and pop instructions
-- ln is the link register and stores the address that this function should return to. This is hard coded into the call and return instructions
+- sp is the stack pointer register and stores the address of the top of the stack for this function. This is hardcoded into the push and pop instructions.
+- ln is the link register and stores the address that this function should return to. This is hard coded into the call and return instructions.
 
 # Added Instructions
 
