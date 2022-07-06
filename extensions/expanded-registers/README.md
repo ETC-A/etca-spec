@@ -7,7 +7,7 @@
 
 # Overview
 
-This extension adds an instruction prefix byte which expands the number of available registers from 8 registers to 32 registers. The aliases below along with who saves it is for if the stack and functions extension is implemented
+This extension adds an instruction prefix byte which expands the number of available registers from 8 registers to 16 registers. The aliases below along with who saves it is for if the stack and functions extension is implemented
 
 | Register | Alias | Who saves it |
 |----------|-------|--------------|
