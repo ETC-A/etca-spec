@@ -11,14 +11,14 @@ This extension adds instructions to allow for convenient use of the stack as wel
 
 | Register | Alias     | Calling Convention |
 |----------|-----------|----------------|
-| `r0`     | `a0`/`v0` | call-clobbered |
-| `r1`     | `a1`/`v1` | call-clobbered |
-| `r2`     | `a2`      | call-clobbered |
-| `r3`     | `s0`      | call-preserved |
-| `r4`     | `s1`      | call-preserved |
-| `r5`     | `bp`      | call-preserved |
-| `r6`     | `sp`      | call-preserved |
-| `r7`     | `ln`      | call-clobbered |
+| `r0`     | `a0`/`v0` | caller saved |
+| `r1`     | `a1`/`v1` | caller saved |
+| `r2`     | `a2`      | caller saved |
+| `r3`     | `s0`      | callee saved |
+| `r4`     | `s1`      | callee saved |
+| `r5`     | `bp`      | callee saved |
+| `r6`     | `sp`      | callee saved |
+| `r7`     | `ln`      | caller saved |
 
 - aN registers are argument registers and store the first N arguments to a function call. Additional arguments should be pushed to the stack.
 - vN registers are the first N return values from a function call. Additional return values should be pushed to the stack.
