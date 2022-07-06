@@ -27,16 +27,16 @@ When used with an instruction that uses an `SIB.X` register, `REX.X` provides a 
 
 When used together with the [Stack & Functions](../stack-and-functions/readme.md) extension, the following table gives the recommended interpretation of the expanded registers.
 
-| Register | Alias | Who saves it |
-|----------|-------|--------------|
-| `r8`     | `t0`  | Caller Saved |
-| `r9`     | `t1`  | Caller Saved |
-| `r10`    | `t2`  | Caller Saved |
-| `r11`    | `t3`  | Caller Saved |
-| `r12`    | `t4`  | Caller Saved |
-| `r13`    | `s2`  | Callee Saved |
-| `r14`    | `s3`  | Callee Saved |
-| `r15`    | `s4`  | Callee Saved |
+| Register | Alias | Calling Convention |
+|----------|-------|----------------|
+| `r8`     | `t0`  | call-clobbered |
+| `r9`     | `t1`  | call-clobbered |
+| `r10`    | `t2`  | call-clobbered |
+| `r11`    | `t3`  | call-clobbered |
+| `r12`    | `t4`  | call-clobbered |
+| `r13`    | `s2`  | call-preserved |
+| `r14`    | `s3`  | call-preserved |
+| `r15`    | `s4`  | call-preserved |
 
 - sN registers should be saved before, and restored after, use.
 - tN registers are temporary registers which a function can use however it wants.

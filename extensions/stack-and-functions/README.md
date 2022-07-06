@@ -9,16 +9,16 @@
 
 This extension adds instructions to allow for convenient use of the stack as well as instructions for function calls. It also provides a recommended usage for each register to minimize the time spent unneccesarily pushing and popping registers to and from the stack.
 
-| Register | Alias     | Who saves it |
-|----------|-----------|--------------|
-| `r0`     | `a0`/`v0` | Caller Saved |
-| `r1`     | `a1`/`v1` | Caller Saved |
-| `r2`     | `a2`      | Caller Saved |
-| `r3`     | `s0`      | Callee Saved |
-| `r4`     | `s1`      | Callee Saved |
-| `r5`     | `bp`      | Callee Saved |
-| `r6`     | `sp`      | Callee Saved |
-| `r7`     | `ln`      | Caller Saved |
+| Register | Alias     | Calling Convention |
+|----------|-----------|----------------|
+| `r0`     | `a0`/`v0` | call-clobbered |
+| `r1`     | `a1`/`v1` | call-clobbered |
+| `r2`     | `a2`      | call-clobbered |
+| `r3`     | `s0`      | call-preserved |
+| `r4`     | `s1`      | call-preserved |
+| `r5`     | `bp`      | call-preserved |
+| `r6`     | `sp`      | call-preserved |
+| `r7`     | `ln`      | call-clobbered |
 
 - aN registers are argument registers and store the first N arguments to a function call. Additional arguments should be pushed to the stack.
 - vN registers are the first N return values from a function call. Additional return values should be pushed to the stack.
