@@ -9,6 +9,20 @@
 
 This extension adds an instruction prefix byte expanding the number of available registers from 8 registers to 16, and suggests an extension of the [Stack & Functions](../stack-and-functions/readme.md) extension's calling conventions to the added registers.
 
+# Added Instructions
+
+The following 1-byte instruction prefix is now defined.
+
+| `REX`  |     |     |     |     |
+|:-------|-----|-----|-----|-----|
+| `1100` | `Q` | `A` | `B` | `X` |
+
+When used with an instruction that uses an `A` register, `REX.A` provides a 4th bit to be used as the most significant bit of the register specifier.
+When used with an instruction that uses a `B` register (including an `SIB.B` if [MO1](../memory-operands-1/README.md) or [MO2](../memory-operands-2/README.md) is available), `REX.B` provides a 4th bit for the specifier in the same way.
+When used with an instruction that uses an `SIB.X` register, `REX.X` provides a 4th bit for the specifier in the same way.
+
+`REX.Q` is reserved.
+
 # Calling Conventions
 
 When used together with the [Stack & Functions](../stack-and-functions/readme.md) extension, the following table gives the recommended interpretation of the expanded registers.
@@ -28,17 +42,3 @@ When used together with the [Stack & Functions](../stack-and-functions/readme.md
 - tN registers are temporary registers which a function can use however it wants.
 
 Remember that the above are just suggestions. Until a more complete specification of a standard calling convention for ETC-A is specified, expect some implementations not to follow them. 
-
-# Added Instructions
-
-The following 1-byte instruction prefix is now defined.
-
-| `REX`  |     |     |     |     |
-|:-------|-----|-----|-----|-----|
-| `1100` | `Q` | `A` | `B` | `X` |
-
-When used with an instruction that uses an `A` register, `REX.A` provides a 4th bit to be used as the most significant bit of the register specifier.
-When used with an instruction that uses a `B` register (including an `SIB.B` if [MO1](../memory-operands-1/README.md) or [MO2](../memory-operands-2/README.md) is available), `REX.B` provides a 4th bit for the specifier in the same way.
-When used with an instruction that uses an `SIB.X` register, `REX.X` provides a 4th bit for the specifier in the same way.
-
-`REX.Q` is reserved.
