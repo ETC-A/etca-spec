@@ -1,6 +1,6 @@
 # General design
 
-**Feature State: Under Development**  
+**Feature State: Mostly Stable**  
 **FEAT Bit: 0**
 
 * Instruction and data memories must share an address space.
