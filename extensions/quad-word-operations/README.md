@@ -1,7 +1,6 @@
 # General design
 
-**Extension State: Under Development**  
-**Enabled by Default: Yes**  
+**Extension State: Mostly Stable**  
 **Requires: Base**  
 **CPUID Bit: CP1.15**
 
