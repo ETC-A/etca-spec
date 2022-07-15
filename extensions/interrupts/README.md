@@ -56,13 +56,13 @@ The following opcodes are now defined. The bits which are normally reserved for 
 
 CPU interrupts from external hardware are rising edge triggered.
 
-If a synchronous interrupt occurs while the CPU is already handling another interrupt or the corresponding bit in the `INT_MASK` CR is unset, the CPU _must_ reset as there is no way for it to handle the interrupt.
-If the CPU is not handling an interrupt when a synchronous interrupt occurs and the corresponding mask bit is set, then the corresponding bit in the `INT_PENDING` CR will be set and the CPU will immediately
-transition to handling that interrupt without finishing it's current instruction. This means that the CPU _must_ be in the same effective state as before execution of the instruction was attempted aside from what is
-required to handle the interrupt caused by the exceptional instruction. One of the implied effects of this is that the `INT_RET_PC` CR points to the instruction which caused the interrupt.
+If a synchronous interrupt occurs while the CPU is already handling another interrupt, the CPU _must_ reset or halt execution as there is no way for it to handle the interrupt. If the CPU is not handling an interrupt
+when a synchronous interrupt occurs, then the corresponding bit in the `INT_PENDING` CR will be set and the CPU will immediately transition to handling that interrupt without finishing it's current instruction. This
+means that the CPU _must_ be in the same effective state as before execution of the instruction was attempted aside from what is required to handle the interrupt caused by the exceptional instruction. One of the
+implied effects of this is that the `INT_RET_PC` CR points to the instruction which caused the interrupt.
 
-When an asynchronous interrupt occurs, the relevant bit in the pending interrupt CR will be set. If the CPU is not handling an interrupt and any bit in the result of ANDing the `INT_PENDING` CR with the `INT_MASK`
-CR is set, the interrupt for the lowest set bit of that result will be handled.
+When an asynchronous interrupt occurs, the relevant bit in the pending interrupt CR will be set. If the CPU is not handling an interrupt and any bit in the result of ANDing the `INT_PENDING` CR with the `INT_MASK` CR
+is set, the interrupt for the lowest set bit of that result will be handled.
 
 In order to handle an interrupt, the CPU _must_ do the following.
 
@@ -73,10 +73,12 @@ In order to handle an interrupt, the CPU _must_ do the following.
 5. Set the `SP` register to the value in the `INT_SP` CR.
 6. Mark that it is handling an interrupt. This is to prevent multiple interrupts from being handled at the same time.
 
-At this point, the CPU can now resume code execution. When the `IRET` instruction is encountered, the following _must_ occur
+At this point, the CPU can now resume code execution. When the `IRET` instruction is encountered, the following _must_ occur.
 
 1. Set the `PC` register to the value in `INT_RET_PC`.
 2. Set the `SP` register to the value in `INT_RET_SP`.
 3. Mark that it is no longer handling an interrupt.
 
 At this point, the CPU can now resume code execution.
+
+Note: If another asynchronous interrupt would occur, you _may_ optimize away redundant steps that would occur when returning from an interrupt and then immediately entering an interrupt.
