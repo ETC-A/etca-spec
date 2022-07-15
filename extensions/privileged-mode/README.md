@@ -27,6 +27,8 @@ While this extension by itself doesn't add much, it's a pre-requisite for more a
 
 The `PRIV` CR and all CRs prefixed by `INT_` are only writable in system mode. Attempting to write to it in user mode _must_ trigger a general protection fault.
 
+At startup, the `PRIV` CR must be set to 1.
+
 # Interrupt Flow
 
 The interrupt flow is modified by adding the following additional requirements.
