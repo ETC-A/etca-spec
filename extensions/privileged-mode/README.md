@@ -25,7 +25,9 @@ While this extension by itself doesn't add much, it's a pre-requisite for more a
 | User Mode   | 0     | This is the least privileged mode and is used by user space programs. |
 | System Mode | 1     | This is the most privileged mode and is used by the operating system. |
 
-The `PRIV` CR and all CRs prefixed by `INT_` are only writable in system mode. Attempting to write to it in user mode _must_ trigger a general protection fault.
+The `PRIV` CR is only writable in system mode. Attempting to write to it in user mode _must_ trigger a general protection fault.
+
+All CRs prefixed by `INT_` are only accessible in system mode. Attempting to access them in user mode _must_ trigger a general protection fault.
 
 At startup, the `PRIV` CR must be set to 1.
 
