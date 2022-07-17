@@ -9,7 +9,7 @@
 
 This extension adds the concept of privileged execution which can be used to isolate an operating system from user code.
 
-While this extension by itself doesn't add much, it's a pre-requisite for more advanced extensions.
+While this extension by itself doesn't do much, it's a pre-requisite for more advanced extensions.
 
 # Added Control Registers
 
@@ -35,7 +35,7 @@ At startup, the `PRIV` CR must be set to 1.
 
 The interrupt flow is modified by adding the following additional requirements.
 
-In order to handle an interrupt, the CPU _must_ also do the following.
+In order to handle an interrupt, the CPU _must_ also do the following beforehand.
 
 1. Set the `INT_RET_PRIV` CR to the current `PRIV` CR.
 2. Set the `PRIV` CR to 1.
