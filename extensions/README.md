@@ -4,7 +4,7 @@
 |:----------:|-----------------------------------------------------------|:-------------:|-------------------|
 |     0      | [Full Immediate](./full-immediates)                       | VWI           | Under Development |
 |     1      | [Stack & Functions](./stack-and-functions)                | None          | Mostly Stable     |
-|     2      | Interrupts                                                | CP1.1         | Planned           |
+|     2      | [Interrupts](./interrupts)                                | CP1.1, FT.0   | Under Development |
 |     3      | [8 Bit Operations + Registers](./half-word-operations)    | None          | Mostly Stable     |
 |     4      | [Conditional Execution](./conditional-prefix)             | VWI           | Under Development |
 |     5      | [Expanded Registers](./expanded-registers)                | VWI           | Under Development |
