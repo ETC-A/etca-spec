@@ -45,12 +45,12 @@ Asynchronous interrupts are interrupts which are triggered by another piece of h
 
 The following opcodes are now defined. The bits which are normally reserved for specifying operation/operand size are repurposed here.
 
-| Name   | First byte    | Second Byte | Description                                                                                                                                          |
-|:-------|:--------------|:------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `INT`  | `00 00 1111`  | `????????`  | Causes a software interrupt. The second byte is not processed as normal and is only used as a way to specify an operation for the interrupt handler. |
-|        | `00 01 1111`  | `????????`  | Reserved for future extensions.                                                                                                                      |
-| `IRET` | `00 10 1111`  | `0000 0000` | Returns from the current interrupt. Executing this when not in an interrupt causes a General Protection Fault.                                       |
-|        | `00 1? 1111`  | `???? ????` | When `? ???? ????` is not `0 0000 0000`, reserved for future extensions.                                                                             |
+| Name   | First byte    | Second Byte | Description                                                                                                                                             |
+|:-------|:--------------|:------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `INT`  | `00 00 1111`  | `????????`  | Causes a system call interrupt. The second byte is not processed as normal and is only used as a way to specify an operation for the interrupt handler. |
+|        | `00 01 1111`  | `????????`  | Reserved for future extensions.                                                                                                                         |
+| `IRET` | `00 10 1111`  | `0000 0000` | Returns from the current interrupt. Executing this when not in an interrupt causes a General Protection Fault.                                          |
+|        | `00 1? 1111`  | `???? ????` | When `? ???? ????` is not `0 0000 0000`, reserved for future extensions.                                                                                |
 
 # Interrupt Flow
 
