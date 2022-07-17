@@ -57,7 +57,7 @@ The following opcodes are now defined. The bits which are normally reserved for 
 CPU interrupts from external hardware are rising edge triggered.
 
 If a synchronous interrupt occurs while the CPU is already handling another interrupt, the CPU _must_ reset or halt execution as there is no way for it to handle the interrupt. If the CPU is not handling an interrupt
-when a synchronous interrupt occurs, then the corresponding bit in the `INT_PENDING` CR will be set and the CPU will immediately transition to handling that interrupt without finishing it's current instruction. This
+when a synchronous interrupt occurs, then the corresponding bit in the `INT_PENDING` CR will be set and the CPU will immediately transition to handling that interrupt without finishing its current instruction. This
 means that the CPU _must_ be in the same effective state as before execution of the instruction was attempted aside from what is required to handle the interrupt caused by the exceptional instruction. One of the
 implied effects of this is that the `INT_RET_PC` CR points to the instruction which caused the interrupt.
 
