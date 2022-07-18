@@ -24,7 +24,7 @@
 |     0      | [Expanded Opcodes](./expanded-opcodes)                    | VWI           | Under Development |
 |     1      | [Memory Operands 1](./memory-operands-1) (MO1)            | VWI           | Under Development |
 |     2      | [Privileged Mode](./privileged-mode)                      | CP1.2         | Under Development |
-|     3      | Bit Manipulation 1                                        | CP2.0         | Planned           |
+|     3      | [Bit Manipulation 1](./bit-manipulation-1)                | CP2.0         | Under Development |
 |     4      | Bit Manipulation 2                                        | CP2.0         | Planned           |
 
 
