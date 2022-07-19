@@ -48,10 +48,11 @@ The following opcodes are now defined. The bits which are normally reserved for 
 
 | Name   | First byte    | Second Byte | Description                                                                                                                                             |
 |:-------|:--------------|:------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `INT`  | `00 00 1111`  | `????????`  | Causes a system call interrupt. The second byte is not processed as normal and is only used as a way to specify an operation for the interrupt handler. |
-|        | `00 01 1111`  | `????????`  | Reserved for future extensions.                                                                                                                         |
-| `IRET` | `00 10 1111`  | `0000 0000` | Returns from the current interrupt. Executing this when not in an interrupt causes a General Protection Fault.                                          |
-|        | `00 1? 1111`  | `???? ????` | When `? ???? ????` is not `0 0000 0000`, reserved for future extensions.                                                                                |
+| `INT`  | `00 0? 1111`  | `???? ??1?` | Causes a system call interrupt. The second byte is not processed as normal and is only used as a way to specify an operation for the interrupt handler. |
+| `IRET` | `00 10 1111`  | `0000 0010` | Returns from the current interrupt. Executing this when not in an interrupt causes a General Protection Fault.                                          |
+|        | `00 1? 1111`  | `???? ??1?` | When `???? ????` is not `0000 0000`, reserved for future extensions.                                                                                    |
+
+Note: the fixed bit in the second byte is to prevent a conflict with full immediate mode and the `WRITECR` instruction.
 
 # Interrupt Flow
 
@@ -69,8 +70,8 @@ In order to handle an interrupt, the CPU _must_ do the following.
 
 1. Set the `INT_CAUSE` CR to the bit index of the interrupt to be handled based on the table above.
 2. Set the `INT_DATA` CR based on the following:
-    - If the cause is a system call, use the second byte of the instruction.
-    - If the cause is a memory alignment error, use the address that caused the error
+    - If the cause is a system call, use the eight unspecified bits of the instruction.
+    - If the cause is a memory alignment error, use the address that caused the error.
     - If the cause is an external interrupt, use something the handler can use to identify the device which caused the interrupt (may be externally supplied). If nothing can be used to identify the device, use -1.
 3. Set the `INT_RET_PC` CR to the current `PC` register.
 4. Set the `INT_RET_SP` CR to the current `SP` register.
