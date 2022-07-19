@@ -14,13 +14,14 @@ This extension adds interrupts which allows for the separation of system managem
 | CRN    | Name          | Description                                                                                       | Comment |
 |:-------|:--------------|:--------------------------------------------------------------------------------------------------|:--------|
 | `0011` | `FLAGS`       | Stores the ALU flags and allows them to be set to specific values.                                |         |
-| `0100` | `INT_MASK`    | Specifies the mask for system interrupts.                                                         | (1)     |
-| `0101` | `INT_PC`      | Specifies where the system interrupt handler is located in memory.                                |         |
-| `0110` | `INT_SP`      | Specifies the stack pointer for the system interrupt handler.                                     |         |
-| `0111` | `INT_CAUSE`   | Stores the cause of the current system interrupt.                                                 | (2)     |
-| `1000` | `INT_PENDING` | Records which system interrupts are pending.                                                      | (1)     |
-| `1001` | `INT_RET_SP`  | Stores the stack pointer that the system interrupt should restore after the interrupt is handled. |         |
+| `0100` | `INT_PC`      | Specifies where the system interrupt handler is located in memory.                                |         |
+| `0101` | `INT_SP`      | Specifies the stack pointer for the system interrupt handler.                                     |         |
+| `0110` | `INT_MASK`    | Specifies the mask for system interrupts.                                                         | (1)     |
+| `0111` | `INT_PENDING` | Records which system interrupts are pending.                                                      | (1)     |
+| `1000` | `INT_CAUSE`   | Stores the cause of the current system interrupt.                                                 | (2)     |
+| `1001` | `INT_DATA`    | Stores data relevant to the interrupt.                                                            |         |
 | `1010` | `INT_RET_PC`  | Stores the address that the system interrupt should return to.                                    |         |
+| `1011` | `INT_RET_SP`  | Stores the stack pointer that the system interrupt should restore after the interrupt is handled. |         |
 
 When the CPU is first initialized, `INT_MASK` should be set to 0.
 
@@ -67,11 +68,15 @@ is set, the interrupt for the lowest set bit of that result will be handled.
 In order to handle an interrupt, the CPU _must_ do the following.
 
 1. Set the `INT_CAUSE` CR to the bit index of the interrupt to be handled based on the table above.
-2. Set the `INT_RET_SP` CR to the current `SP` register.
+2. Set the `INT_DATA` CR based on the following:
+    - If the cause is a system call, use the second byte of the instruction.
+    - If the cause is a memory alignment error, use the address that caused the error
+    - If the cause is an external interrupt, use something the handler can use to identify the device which caused the interrupt (may be externally supplied). If nothing can be used to identify the device, use -1.
 3. Set the `INT_RET_PC` CR to the current `PC` register.
-4. Set the `PC` register to the value in the `INT_PC` CR.
-5. Set the `SP` register to the value in the `INT_SP` CR.
-6. Mark that it is handling an interrupt. This is to prevent multiple interrupts from being handled at the same time.
+4. Set the `INT_RET_SP` CR to the current `SP` register.
+5. Set the `PC` register to the value in the `INT_PC` CR.
+6. Set the `SP` register to the value in the `INT_SP` CR.
+7. Mark that it is handling an interrupt. This is to prevent multiple interrupts from being handled at the same time.
 
 At this point, the CPU can now resume code execution. When the `IRET` instruction is encountered, the following _must_ occur.
 
