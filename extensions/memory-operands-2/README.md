@@ -57,7 +57,7 @@ In all other instruction formats, `REX.Q` remains reserved.
 | LEA r, m | `00SS1110` | `ABM` | Loads the address specified by the second operand into the register specified by the first. Note that the address _itself_ is stored in the register, not the contents of memory at that address. The result stored in the register must respect the operand size attribute. The computed address must respect the address mode.
 
 `LEA` means "load effective address." If the first operand is not a register, or the second is not a memory location, the instruction must be treated as an
-undefined instruction. Such cases are **not** reserved - they are explicitly undefined.
+undefined instruction. Such cases are **not** reserved - they are explicitly undefined. The exception to this is the full immediate mode of this instruction. That is a `READCR` instruction and NOT an `LEA` instruction.
 
 Note that LEA shares an opcode with `READCR` (aka `mfcr`). `LEA` has no immediate mode, and `READCR` has
 no register-to-register mode.

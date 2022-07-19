@@ -17,7 +17,7 @@ In Base ETCa, the second byte, or "ABM byte" takes this format:
 +-----+-----+----+
 ```
 
-Only `MM=00` is defined by base. This extension applies to any instruction which uses an ABM byte.
+Only `MM=00` is defined by base. This extension applies to any instruction which uses an ABM byte. This extension also allows the use of register-register mode for `SLO`, `READCR`, and `WRITECR` ONLY for full immediates.
 
 The following ABM byte values are added:
 
