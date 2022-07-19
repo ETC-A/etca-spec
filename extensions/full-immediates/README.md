@@ -17,8 +17,12 @@ In Base ETCa, the second byte, or "ABM byte" takes this format:
 +-----+-----+----+
 ```
 
-Only `MM=00` is defined by base. This extension applies to any instruction which uses an ABM byte. This extension also allows the use of register-register mode for the purpose of
+Only `MM=00` is defined by base. This extension applies to any instruction which uses an ABM byte. This extension also allows the use of register-register format for the purpose of
 full immediates on instructions which are immediate only. Examples of such instructions are `SLO`, `READCR`, and `WRITECR`.
+Note that the corresponding operations in the register-register format are `POP`, `LEA`, and `INT`/`IRET`, for which immediate operands do not make sense.
+
+When such an opcode appears in the register-register format, in a full immediate operand mode, it is treated
+by this spec exactly as if it were the register-immediate format opcode.
 
 The following ABM byte values are added:
 
