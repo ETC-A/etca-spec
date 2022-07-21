@@ -15,8 +15,8 @@ While this extension by itself doesn't do much, it's a pre-requisite for more ad
 
 | CRN    | Name           | Description                                                                                |
 |:-------|:---------------|:-------------------------------------------------------------------------------------------|
-| `1011` | `PRIV`         | Specifies the current privilege mode the CPU is running in.                                |
-| `1100` | `INT_RET_PRIV` | Stores the privilege mode that the system should return to after the interrupt is handled. |
+| `1100` | `PRIV`         | Specifies the current privilege mode the CPU is running in.                                |
+| `1101` | `INT_RET_PRIV` | Stores the privilege mode that the system should return to after the interrupt is handled. |
 
 # Added Privilege Modes
 
