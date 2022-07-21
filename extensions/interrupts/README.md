@@ -46,13 +46,12 @@ Asynchronous interrupts are interrupts which are triggered by another piece of h
 
 The following opcodes are now defined. The bits which are normally reserved for specifying operation/operand size are repurposed here.
 
-| Name   | First byte    | Second Byte | Description                                                                                                                                             |
-|:-------|:--------------|:------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `INT`  | `00 0? 1111`  | `???? ??1?` | Causes a system call interrupt. The second byte is not processed as normal and is only used as a way to specify an operation for the interrupt handler. |
-| `IRET` | `00 10 1111`  | `0000 0010` | Returns from the current interrupt. Executing this when not in an interrupt causes a General Protection Fault.                                          |
-|        | `00 1? 1111`  | `???? ??1?` | When `???? ????` is not `0000 0000`, reserved for future extensions.                                                                                    |
+| Name   | First byte    | Second Byte  | Description                                                                                                                                             |
+|:-------|:--------------|:-------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `IRET` | `00 00 1111`  | `000 000 00` | Returns from the current interrupt. Executing this when not in an interrupt causes a General Protection Fault.                                          |
+| `INT`  | `00 0? 1111`  | `??? ??? 1?` | Causes a system call interrupt. The second byte is not processed as normal and is only used as a way to specify an operation for the interrupt handler. |
 
-Note: the fixed bit in the second byte is to prevent a conflict with full immediate mode and the `WRITECR` instruction.
+Note: The fixed bit in the second byte of the `INT` instruction is to prevent a conflict with the full immediate extension and the `WRITECR` instruction.
 
 # Interrupt Flow
 
