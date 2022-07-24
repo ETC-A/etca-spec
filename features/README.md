@@ -6,4 +6,5 @@
 |     1     | [Unaligned Memory Access](./unaligned-memory)             | Mostly Stable     |
 
 
-Features are a second type of extension that __ONLY__ change behavior of the CPU without adding instructions, control registers, or any other similar aspect. They generally mandate a specific behavior when certain actions occur.
+Features are a second type of extension that __ONLY__ change behavior of the CPU without adding instructions, control registers, or any other similar aspect. They generally mandate a specific behavior when certain actions occur but do __NOT__
+change how instructions are decoded.
