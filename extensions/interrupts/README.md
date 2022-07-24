@@ -30,7 +30,7 @@ When the CPU is first initialized, `INT_MASK` should be set to 0.
 
 ## Flags CR
 
-The following table specifies which flag is associated with which bit in the `FLAGS` CR.
+The following table specifies which flag is associated with which bit in the `FLAGS` CR. Unused bits are reserved for future extensions
 
 | Bit | Flag     |
 |-----|----------|
@@ -52,6 +52,8 @@ The following table specifies which flag is associated with which bit in the `FL
 
 Synchronous interrupts are interrupts which are triggered directly by the currently running code and must be handled immediately before normal execution can resume.  
 Asynchronous interrupts are interrupts which are triggered by another piece of hardware or indirectly from code and do not need to be handled immediately.
+
+Unused mask/pending bits are reserved for future extensions
 
 # Added Instructions
 
