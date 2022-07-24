@@ -22,3 +22,11 @@ are present.
 | `ICACHE_INVALIDATE`    | `1001 1111` | `000 AAA 11` | Invalidates the instruciton cache entry for the address specified by the A register.                                    |
 
 Note that the last 4 instructions overlap with the never jump instruction. This is intentional since these instructions don't change a programs behavior.
+
+# Added Control Registers
+
+| CRN    | Name              |
+| `1110` | `CACHE_LINE_SIZE` |
+
+`CACHE_LINE_SIZE` is a read-only control register which specifies the number of bytes in a cache line for the data cache. It _must_ be a power of 2 unless no data cache is present
+in which case it _may_ be 0.
