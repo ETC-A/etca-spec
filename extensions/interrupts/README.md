@@ -28,6 +28,17 @@ When the CPU is first initialized, `INT_MASK` should be set to 0.
 1) This is a bitfield where each bit corresponds to a specific interrupt based on the table below.
 2) This stores the number which refers to the current interrupt. It's value is the bit number in the mask and pending control registers.
 
+## Flags CR
+
+The following table specifies which flag is associated with which bit in the `FLAGS` CR. Unused bits are reserved for future extensions
+
+| Bit | Flag     |
+|-----|----------|
+| 0   | Zero     |
+| 1   | Negative |
+| 2   | Carry    |
+| 3   | Overflow |
+
 # Added Interrupts
 
 | Name                     | Type         | Mask/Pending Bit | Description                                                                                                        |
@@ -41,6 +52,8 @@ When the CPU is first initialized, `INT_MASK` should be set to 0.
 
 Synchronous interrupts are interrupts which are triggered directly by the currently running code and must be handled immediately before normal execution can resume.  
 Asynchronous interrupts are interrupts which are triggered by another piece of hardware or indirectly from code and do not need to be handled immediately.
+
+Unused mask/pending bits are reserved for future extensions
 
 # Added Instructions
 
