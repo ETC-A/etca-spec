@@ -44,7 +44,7 @@ A `REX.Q` prefix can be used with instructions in this format if:
 
 Then the `iS` or `dP` will be an 8-byte value rather than a 4-byte value.
 
-The behavior when `REX.Q` is set is undefined for the above instructions when the above conditions are not satisfied.
+The behavior when `REX.Q` is set and the instruction has both an `iS` and `dP` while in `quad` addressing mode is reserved.
 
 # Added Instruction
 
