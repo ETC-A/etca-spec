@@ -16,13 +16,13 @@ are present.
 |------------------------|-------------|--------------|-------------------------------------------------------------------------------------------------------------------------|
 | `ALLOC_ZERO`           | `0000 1111` | `010 AAA 00` | Sets the data cache entry for the address specified by the A register to 0 without first reading the value from memory. |
 | `DCACHE_INVALIDATE`    | `0000 1111` | `011 AAA 00` | Invalidates the data cache entry for the address specified by the A register without flushing it.                       |
+| `CACHE_FLUSH_ALL`      | `1000 1111` | `000 000 01` | Flushes and invalidates ALL caches. Possibly useful for inter-process security.                                         |
 | `DATA_PREFETCH`        | `1001 1111` | `000 AAA 00` | Prefetches the memory at the address in the register specified by A into the data cache.                                |
 | `INSTRUCTION_PREFETCH` | `1001 1111` | `000 AAA 01` | Prefetches the memory at the address in the register specified by A into the instruction cache.                         |
 | `DCACHE_FLUSH`         | `1001 1111` | `000 AAA 10` | Flushes and invalidates the data cache entry for the address specified by the A register.                               |
 | `ICACHE_INVALIDATE`    | `1001 1111` | `000 AAA 11` | Invalidates the instruciton cache entry for the address specified by the A register.                                    |
-| `CACHE_FLUSH_ALL`      | `1001 1111` | `001 AAA 00` | Flushes and invalidates ALL caches. Possibly useful for inter-process security.                                         |
 
-Note that the last 4 instructions overlap with the never jump instruction. This is intentional since these instructions don't change a programs behavior.
+Note that the last 5 instructions overlap with the never jump instruction. This is intentional since these instructions don't change a programs behavior.
 
 # Added Control Registers
 
