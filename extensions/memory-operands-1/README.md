@@ -40,18 +40,11 @@ it is `doubleword`. With 64-bit addressing, it is `quadword`.
 A `dP` is the same size as a logical address in the current mode. However, similarly to [full-immediates](../full-immediates/README.md),
 this extension cannot encode an 8 byte displacement. In `quadword` address mode, a `dP` is 4 bytes.
 
-If the [register expansion](../expanded-registers/README.md) extension is available, then a `REX.Q` prefix may be used with instructions in these formats if
+If the [register expansion](../expanded-registers/README.md) extension is available, then `REX.Q` may be used with instructions in these formats if
   - The instruction contains a `dP`
   - The current Addressing Mode is `quadword`
 
 In this case, the `dP` is an 8-byte value rather than a 4-byte value.
-
-For other instructions in these formats, `REX.Q` is **illegal**, not reserved. This terminology means that
-if a `REX` prefix is present, the 8s bit must be 0 and that further extensions must not change this.
-
-`REX.Q` remains reserved in formats not specified by this extension.
-
-`REX.A`, `REX.B`, and `REX.X` prefixes are allowed with these instructions, but only if the register expansion prefix is enabled.
 
 # Added Instruction Formats
 
@@ -126,8 +119,8 @@ copy-and-add operations, in a single instruction and without affecting flags. Fo
 encode `rx2 ← r0 + 4 * r1 + 10` in one 4-byte instruction, as `1E 5A 88 0A`.
 
 This same specification of `LEA` is described in [memory-operands-2](../memory-operands-2/README.md), but these extensions
-are independent and can each coexist without the other. It is generally recommend, however, that a system supporting
-MO2 also support MO1.
+are independent and can each exist without the other. It is generally recommend, however, that a system supporting
+MO1 also support MO2.
 
 # AOE Table
 

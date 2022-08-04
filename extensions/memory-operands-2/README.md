@@ -39,16 +39,15 @@ A `REX.Q` prefix can be used with instructions in this format if:
   - The instruction has _exactly one_ of a displacement or immediate. It cannot have both.
   - either:
     - The instruction is an `iS` mode with Operand Size attribute `quad`
-    - OR the instruction is a `dP` mode and the current Addressing Mode is `quad`
+    - The instruction is a `dP` mode and the current Addressing Mode is `quad`
   - The [register expansion](../expanded-registers/README.md) extension is available
 
 Then the `iS` or `dP` will be an 8-byte value rather than a 4-byte value.
 
-The prefix remains illegal if any of the `REX.A`, `REX.B`, or `REX.X` bits are set and the register expansion extension is not enabled.
-`REX.Q` is **illegal**, not reserved, for instructions in these formats which do not satisfy the above conditions. This terminology means that
-if a `REX` prefix is present, the 8s bit must be 0 and that further extensions must not change this.
-
-In all other instruction formats, `REX.Q` remains reserved.
+The behavior when `REX.Q` is set while in `quad` addressing mode when _any_ of the following conditions is true is reserved and _must_ cause an illegal instruction exception unless explicitly relaxed by another extension or feature.
+  - The instruction has an `iS` and a `dP`
+  - The instruction has an `iS` and a `d8`
+  - The instruction has a `dP` and an `i8`
 
 # Added Instruction
 

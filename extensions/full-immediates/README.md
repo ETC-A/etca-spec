@@ -42,14 +42,13 @@ the following table:
 | 10 | 4 |
 | 11 | 4 |
 
-An 8-byte literal immediate cannot be encoded by this extension. However, any encoding
-which "modifies the meaning of `iS`" will affect the `iS` immediate defined here.
-
-If the [register expansion](../expanded-registers/README.md) extension is available, then the `REX.Q` prefix can be used with instructions from this
+If the [register expansion](../expanded-registers/README.md) extension is available, then `REX.Q` can be used with instructions from this
 extension. It has an effect only if both of the following conditions are met:
   - The instruction is an `iS` mode
   - The instruction's Operand Size attribute is `quad`
-Then the immediate is an 8-byte literal value instead of a 4-byte literal value. In other cases, `REX.Q` remains reserved.
+Then the immediate is an 8-byte literal value instead of a 4-byte literal value.
+
+Sign extension of the immediate follows the same rules as used for 5 bit immediates
 
 The added instructions can be seen in the complete Advanced Operand Extensions table, which encompasses the FI, MO1, and MO2 extensions. They are under `Mode=01`, `ABM.regB = 01x`.
 ![AOE Table](../etca_aoe_table.png)
