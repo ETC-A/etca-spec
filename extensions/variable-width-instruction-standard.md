@@ -21,6 +21,8 @@ Instruction prefixes are a sequence of one or more bytes which modify the instru
 1. Conditional Prefix
 2. Expanded Registers
 
+Unless specified otherwise, each prefix can only be used _at most_ once per instruction.
+
 ### Defined Prefix Sequences
 
 | Prefix      | Description                                                  |
