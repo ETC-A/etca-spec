@@ -34,9 +34,9 @@ The following table specifies which flag is associated with which bit in the `FL
 
 | Bit | Flag     |
 |-----|----------|
-| 0   | Zero     |
-| 1   | Negative |
-| 2   | Carry    |
+| 0   | Carry    |
+| 1   | Zero     |
+| 2   | Negative |
 | 3   | Overflow |
 
 # Added Interrupts
