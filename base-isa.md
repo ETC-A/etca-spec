@@ -1,7 +1,8 @@
 # General design
 
-- 16bit word size
-- 8 16bit registers
+- 16 bit word size
+- 16 bit address space
+- 8 16 bit registers
 - 4 flags set upon (some) ALU operations: Zero (`Z`), Negative (`N`), Carry (`C`), Overflow (`V`)
 - CPU Execution starts at address 0x8000
   - This is only relevant if one or more extension are implemented which expose the instruction pointer in some way.
