@@ -15,4 +15,4 @@
 
 # Assembly changes
 
-32bit register references/32bit operations are marked by the infix/prefix `d` (i.e. `%rd0`)
+32 bit register references/32 bit operations are marked by the infix/prefix `d` (i.e. `%rd0`)

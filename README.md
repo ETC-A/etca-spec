@@ -18,4 +18,5 @@ _Illegal_: Specifies that a specific behavior or instruction is **NOT** allowed 
 
 _Reserved_: Specifies that the behavior or instruction will be specified in a future extension or feature and should be treated as _illegal_ until it is both specified and implemented.
 
-_Unspecified_: Specifies that the behavior or instruction is intentionally unconstrained and may be freely handled any way an implementation chooses.
+_Unspecified_: Specifies that the behavior or instruction is intentionally unconstrained and may be freely handled any way an implementation chooses. Extensions and features can specify
+or restrict _unspecified_ behavior.

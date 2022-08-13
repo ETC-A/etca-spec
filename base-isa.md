@@ -9,7 +9,7 @@
 
 # Base Instructions
 
-This is a group of 16bit fixed width instructions. The motivation for the chosen instructions is to be both complete and easy to build in game.
+This is a group of 16 bit fixed width instructions. The motivation for the chosen instructions is to be both complete and easy to build in game.
 
 The highest two bits of the first byte are a format marker:
 
@@ -50,15 +50,15 @@ Execution of an _illegal_ or _reserved_ instruction is _unspecified_ behavior. A
 Both computation formats share a lot of similarities. For both, the first byte has the structure `0x SS CCCC`.
 
 - `SS` is a size marker and reserved for extensions. For the base instructions this _must_ always be `01`
-- `CCCC` is a 4bit opcode deciding which operation to execute.
+- `CCCC` is a 4 bit opcode deciding which operation to execute.
 
 ### 2 Register Computation
 
-The second byte has the format `AAA BBB MM` where `AAA` and `BBB` are references to registers. `AAA` is the destination register and left source register. `BBB` is the right source register. The only exception is the RSUB instruction where `AAA` and `BBB` are swapped for the purpose of being source registers. `MM` is the memory mode which will be defined in an extension and _must_ be `00`
+The second byte has the format `AAA BBB MM` where `AAA` and `BBB` are references to registers. `AAA` is the destination register and left source register. `BBB` is the right source register. There are 2 exceptions to this. The first is the RSUB instruction where `AAA` and `BBB` are swapped for the purpose of being source registers. The second exception is that the `B` argument specifies which memory address or control register to write to. `MM` is the memory mode which will be defined in an extension and is only defined for `00` in the base isa.
 
 ### Immediate Computation
 
-The second byte has the format `RRR IIIII`, where the 5bit immediate acts as operand `B`. The immediate is sign extended for operations 0-7 and operation 9. The immediate is zero extended for operation 8 and operations 10-15.
+The second byte has the format `RRR IIIII`, where the 5 bit immediate acts as operand `B`. The immediate is sign extended for operations 0-7 and operation 9. The immediate is zero extended for operation 8 and operations 10-15.
 
 ### Opcodes
 
@@ -123,7 +123,7 @@ Aside from program rom starting at address 0x8000, there are no requirements for
 
 ## Jump Instructions
 
-Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte of the displacement. `CCCC` is the condition to check. The second byte is a single 8bit immediate representing the low byte of the displacement. This combined 9 bit displacement (sign extended to the address width which is 16 bits in the base isa) is added to the base address of the current instruction and stored in the program counter.
+Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte of the displacement. `CCCC` is the condition to check. The second byte is a single 8 bit immediate representing the low byte of the displacement. This combined 9 bit displacement (sign extended to the address width which is 16 bits in the base isa) is added to the base address of the current instruction and stored in the program counter.
 
 ### Conditions
 

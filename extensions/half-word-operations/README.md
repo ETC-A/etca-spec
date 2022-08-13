@@ -14,4 +14,4 @@
 
 # Assembly changes
 
-8bit register references/8bit operations are marked by the infix/prefix `h` (i.e. `%rh0`)
+8 bit register references/8 bit operations are marked by the infix/prefix `h` (i.e. `%rh0`)
