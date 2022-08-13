@@ -45,7 +45,7 @@ The following table specifies which flag is associated with which bit in the `FL
 |:-------------------------|:-------------|:-----------------|:-------------------------------------------------------------------------------------------------------------------|
 | System Call              | Synchronous  | 0                | Used by programs to ask the operating system to do something.                                                      |
 | Timer                    | Asynchronous | 1                | Occurs when a timer causes an interrupt.                                                                           |
-| Illegal Instruction      | Synchronous  | 2                | Occurs when execution of an undefined, reserved, or illegal instruction is attempted.                              |
+| Illegal Instruction      | Synchronous  | 2                | Occurs when execution of a reserved, or illegal instruction is attempted.                                          |
 | Memory Alignment Error   | Synchronous  | 3                | Occurs when an attempt to read or write to memory at an unaligned address occurs and is not supported.             |
 | General Protection Fault | Synchronous  | 4                | Occurs when the CPU needs the operating system to handle an unexpected event for stability or consistency reasons. |
 | External Interrupt       | Asynchronous | 5                | Occurs when an external interrupt occurs (eg. keyboard, mouse, etc.).                                              |

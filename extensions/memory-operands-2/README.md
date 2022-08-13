@@ -51,12 +51,15 @@ The behavior when `REX.Q` is set while in `quad` addressing mode when _any_ of t
 
 # Added Instruction
 
+These instruction formats apply to any instruction which encodes operands using an `ABM` byte _unless_ that instruction already performs a memory
+read or write in which case it is _unspecified_ behavior.
+
 | Name | Encoding | Operands | Description |
 |------|----------|----------|-------------|
 | LEA r, m | `00SS1110` | `ABM` | Loads the address specified by the second operand into the register specified by the first. Note that the address _itself_ is stored in the register, not the contents of memory at that address. The result stored in the register must respect the operand size attribute. The computed address must respect the address mode.
 
 `LEA` means "load effective address." If the first operand is not a register, or the second is not a memory location, the instruction must be treated as an
-undefined instruction. Such cases are **not** reserved - they are explicitly undefined. Note that as per the
+_illegal_ instruction. Note that as per the
 [Full Immediates extension](../full-immediates/README.md) in the specific case of `MM=01, ABM.regB=01x`
 (the "full immediate" operand modes) this opcode corresponds to `READCR`, not `LEA`.
 

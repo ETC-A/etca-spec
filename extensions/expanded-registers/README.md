@@ -36,4 +36,4 @@ When used with an instruction that uses an `A` register, `REX.A` provides a 4th 
 When used with an instruction that uses a `B` register (including a `SIB.B` if [MO1](../memory-operands-1/README.md) or [MO2](../memory-operands-2/README.md) is available), `REX.B` provides a 4th bit for the specifier in the same way.
 When used with an instruction that uses an `SIB.X` register, `REX.X` provides a 4th bit for the specifier in the same way.
 
-Unused bits _should_ be set to 0. If unused bits are set for an instruction which does not use them, they _must_ be ignored or treated as an illegal instruction unless specified otherwise.
+Unused bits _should_ be set to 0. If unused bits are set for an instruction which does not use them, they _must_ be ignored or treated as _illegal_ unless specified otherwise.

@@ -8,7 +8,7 @@
 
 This extension adds a prefix for conditionally executing an instruction.
 
-This prefix is _not_ allowed on an instruction which already has a conditional in it.
+This prefix is _not_ allowed on an instruction which already has a conditional in it. Attempting to do so is _illegal_.
 
 # Added Instructions
 
