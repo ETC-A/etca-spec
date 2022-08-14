@@ -34,7 +34,7 @@ The highest two bits of the first byte are a format marker:
 | Symbol | Meaning         |
 |--------|-----------------|
 | C      | Opcode          |
-| R      | Register Id     |
+| R      | Register ID     |
 | I      | Immediate       |
 | D      | Displacement    |
 | S      | Operation Size  |
@@ -84,7 +84,9 @@ The second byte has the format `RRR IIIII`, where the 5 bit immediate acts as op
 | `1111` | `WRITECR`       | `CR[B] ← A`                        | None   | (2) (4) (6) |
 
 
-1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
+1) Enables `NEG` and `NOT` to be encoded as `RSUB r, imm`.
+ - `NEG` can be implemented as `RSUB r, 0`.
+ - `NOT` can be implemented as `RSUB r, -1`. Replacing `RSUB` with `XOR` would also work for this.
 2) Placed here to ease decoding; `xx11` => do not store result.
 3) Designed to allow for building a larger immediate value. To reach a full 16 bit immediate, a 4th `SLO` or an additional `NOT` may be required.
 4) Control registers can only be accessed with immediates.
@@ -110,7 +112,7 @@ Undefined control registers are _reserved_ and reading from or writing to them i
 
 Unaligned memory accesses are _unspecified_ behavior. A memory access is unaligned if the address modulus the read/write width is not equal to zero. The read/write width is defined by the SS bits, which for the base ISA corresponds to a read/write width of 2 bytes.
 
-All IO is memory mapped
+All IO is memory mapped. It's recommended to map IO at the bottom of memory so that it can be easily accessed with the `LOAD` and `STORE` instructions.
 
 ### Separation of Program ROM and RAM
 
