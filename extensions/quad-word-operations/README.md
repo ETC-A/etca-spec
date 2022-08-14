@@ -15,4 +15,4 @@
 
 # Assembly changes
 
-64 bit register references/64 bit operations are marked by the infix/prefix `q` (i.e. `%rq0`)
+64 bit register references/64 bit operations are marked by the infix/prefix `q` (i.e. `%rq0`).

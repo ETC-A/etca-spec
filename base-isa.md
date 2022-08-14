@@ -5,11 +5,11 @@
 - 8 16 bit registers
 - 4 flags set upon (some) ALU operations: Zero (`Z`), Negative (`N`), Carry (`C`), Overflow (`V`)
 - CPU Execution starts at address 0x8000
-  - This is only relevant if one or more extension are implemented which expose the instruction pointer in some way.
+  - This is not relevant for the ISA with no extensions.
 
 # Base Instructions
 
-This is a group of 16 bit fixed width instructions. The motivation for the chosen instructions is to be both complete and easy to build in game.
+This is a group of 16 bit fixed width instructions.
 
 The highest two bits of the first byte are a format marker:
 
@@ -28,7 +28,7 @@ The highest two bits of the first byte are a format marker:
 | `01 01 CCCC`  | `RRR IIIII`  | immediate and 1 register computation     |
 | `0? SS CCCC`  | `???? ????`  | when `SS != 01`, reserved for extensions |
 | `10 0 D CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction  |
-| `10 1 ?????`  | `?????????`  | reserved for extension                   |
+| `10 1 ?????`  | `?????????`  | reserved for extensions                  |
 | `11 ??????`   | `?????????`  | reserved for extensions                  |
 
 | Symbol | Meaning         |
@@ -38,8 +38,10 @@ The highest two bits of the first byte are a format marker:
 | I      | Immediate       |
 | D      | Displacement    |
 | S      | Operation Size  |
-| M      | Memory Mode     |
+| M      | Memory Addressing Mode     |
 | ?      | Arbitrary Value |
+
+Notice that whenever `MM` bits are present, it is reserved for their value to be anything other than `00`. Similarly, it is reserved for `SS` bits to have values other than `01`.
 
 ### Execution of Illegal and Reserved Instructions
 
@@ -49,7 +51,7 @@ Execution of an _illegal_ or _reserved_ instruction is _unspecified_ behavior. A
 
 Both computation formats share a lot of similarities. For both, the first byte has the structure `0x SS CCCC`.
 
-- `SS` is a size marker and reserved for extensions. For the base instructions this _must_ always be `01`
+- `SS` is a size marker and reserved for extensions. For the base instructions this is always `01`.
 - `CCCC` is a 4 bit opcode deciding which operation to execute.
 
 ### 2 Register Computation
@@ -85,7 +87,7 @@ The second byte has the format `RRR IIIII`, where the 5 bit immediate acts as op
 1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
 2) Placed here to ease decoding; `xx11` => do not store result.
 3) Designed to allow for building a larger immediate value. To reach a full 16 bit immediate, a 4th `SLO` or an additional `NOT` may be required.
-4) Control registers can only be accessed with immediates as a way to prevent potential security vulnerabilities.                                                                  
+4) Control registers can only be accessed with immediates.
 5) The C and V flags are in an _unspecified_ state after execution of these instructions. Extensions _may_ mandate a particular behavior, with good enough reason, but must **NOT** mandate that the value of these flags after the operation depends on their value before the operation.
 6) These instructions do not have a 2 register mode. The corresponding bit patterns (`00 SS 11??`) for the first byte are _reserved_. This can easily be detected by using a similar method to 2).
 7) This instruction zero extends argument B as if the value read is of the size specified by the SS bits in the instruction (assuming a relevant extension is present).
@@ -112,18 +114,18 @@ All IO is memory mapped
 
 ### Separation of Program ROM and RAM
 
-Aside from program rom starting at address 0x8000, there are no requirements for how the memory address space is layed out. For ease of implementation, this spec does **NOT** require program memory to be accessible with the load and store instructions nor does it require that RAM be executable. Loads and stores of program memory are _unspecified_ behavior. Executing from RAM is _unspecified_ behavior. Future extensions and/or features will change this behavior
+Aside from program rom starting at address 0x8000, there are no requirements for how the memory address space is layed out. For ease of implementation, this spec does **NOT** require program memory to be accessible with the load and store instructions nor does it require that RAM be executable. Loads and stores of program memory are _unspecified_ behavior. Executing from RAM is _unspecified_ behavior. Future extensions and/or features will change this behavior.
 
 ## Flag Semantics
 
 1) The `Z` flag indicates that the result was zero.
 2) The `N` flag indicates that the result, interpreted as a 2's complement number, was negative.
-3) The `C` flag describes whether an additive instruction caused a carry, or a subtractive computation caused a borrow. The concept of "borrow" is exactly the same as in long-hand decimal subtraction the way you might do it on paper. The flag is set if the subtraction would borrow out of the next most significant bit. A borrow happens precisely when the corresponding addition does _not_ carry. In other words, in order to subtract, you (a) complement the B input, (b) set the carry in, (c) set C to the inverse of the carryout.
+3) The `C` flag describes whether an additive instruction caused a carry, or a subtractive computation caused a borrow. The concept of "borrow" is exactly the same as in long-hand decimal subtraction the way you might do it on paper. The flag is set if the subtraction would borrow out of the next most significant bit. A borrow happens precisely when the corresponding 2's-complement addition does _not_ carry. In other words, in order to subtract, you (a) complement the B input, (b) set the carry-in, (c) set C to the inverse of the carryout.
 4) The `V` flag indicates that the operation caused overflow. This means that a loss of precision occurred for a signed integer calculation (eg. positive + positive = negative or negative + negative = positive).
 
 ## Jump Instructions
 
-Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte of the displacement. `CCCC` is the condition to check. The second byte is a single 8 bit immediate representing the low byte of the displacement. This combined 9 bit displacement (sign extended to the address width which is 16 bits in the base isa) is added to the base address of the current instruction and stored in the program counter.
+Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte of the displacement. `CCCC` is the condition to check. The second byte is a single 8 bit immediate representing the low byte of the displacement. This combined 9 bit displacement (sign extended to the address width, which is 16 bits in the base isa) is added to the base address of the current instruction and stored in the program counter.
 
 ### Conditions
 

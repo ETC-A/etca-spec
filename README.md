@@ -1,10 +1,10 @@
 # ETCa
 Extensible Turing Complete Architecture
 
-This repo is for designing an ISA that has a simple base and multiple extensions that can be added ontop. It's primary goal is to be easy to build in the game
+This repo is for designing an ISA that has a simple base and multiple extensions that can be added on top. Its primary goal is to be easy to build in the game
 [Turing Complete](https://turingcomplete.game) after the second architecture is completed. Several other goals include being educational and being practical for a real CPU.
 
-An extensible assembler built for this architecture is [here](https://github.com/ETC-A/etca-asm)
+An extensible assembler built for this ISA is [the etca-asm repository](https://github.com/ETC-A/etca-asm) in this organization.
 
 ## Terminology
 
