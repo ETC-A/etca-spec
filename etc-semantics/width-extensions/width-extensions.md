@@ -1,9 +1,9 @@
 # Width Extensions
 
 The width extensions comprise 3 extensions total:
-* bit 4: Byte Operations
-* bit 6: Doubleword Operations
-* bit 7: Quadword operations
+* bit CP1.3  : Byte Operations
+* bit CP1.14 : Doubleword Operations
+* bit CP1.15 : Quadword operations
 
 These extensions essentially behave identically, other than a single number.
 If any one of them is enabled, the `movz` instruction is available. Each of
@@ -56,8 +56,8 @@ bits are enabled in `EXTEN`. A hook for this is probably overkill.
     syntax Bool ::= checkMovzEnabled() [function, functional]
 
     rule [[ checkMovzEnabled() 
-      => bit(4,EXTEN) orBool bit(6,EXTEN) orBool bit(7,EXTEN) ]]
-      <exten> EXTEN </exten>
+      => bit(3,CPUID1) orBool bit(14,CPUID1) orBool bit(15,CPUID1) ]]
+      <cpuid1> CPUID1 </cpuid1>
 ```
 
 ```k
