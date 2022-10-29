@@ -1,10 +1,5 @@
 ;-mstrict
-;128
-    movx %rx0,%exten
-    movx %rx1,4
-    slox %rx1,0       ; 128
-    orx  %rx0,%rx1    ; set q-ops bit
-    movx %exten,%rx0  ; enable q-ops
+;32768
 .extension qword_operations
 ; now we want to test that q-ops work. Simple test is to set any bits
 ; that don't fit in a dword and look at the result. To do that here,
