@@ -45,7 +45,7 @@ Notice that whenever `MM` bits are present, it is reserved for their value to be
 
 ### Execution of Illegal and Reserved Instructions
 
-Execution of an _illegal_ or _reserved_ instruction is _unspecified_ behavior. A future extension will change this to require an interrupt to occur.
+Execution of an _illegal_ or _reserved_ instruction is handled through an implementation specific method.
 
 ## Computation Instructions
 
