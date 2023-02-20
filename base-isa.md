@@ -67,7 +67,7 @@ The second byte has the format `AAA IIIII`, where the 5 bit immediate acts as op
 There are several exceptions to how the operands work.
 
  - `RSUB`
-    - `BBB` is the left source register and `AAA` is the right source register.
+    - The `B` operand is the left source register and the `A` operand is the right source register.
  - `CMP` and `TEST`
     - These instructions do not have a destination register
  - `STORE`
