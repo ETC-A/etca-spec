@@ -15,4 +15,8 @@
 
 # Assembly changes
 
-32bit register references/32bit operations are marked by the infix/prefix `d` (i.e. `%rd0`)
+32 bit register references/32 bit operations are marked by the infix/prefix `d` (i.e. `%rd0`)
+
+# Memory semantics
+
+A memory access is unaligned when the `SS` bits are `10` AND the address is not a multiple of 4.

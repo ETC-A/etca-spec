@@ -43,7 +43,7 @@ This extension adds an expanded instruction format to allow for a larger number 
 
 
 1) Enables NEG and NOT to be encoded as `RSBB r, imm` for integers larger than supported by the ISA.
-2) C in the operation refers to the carry bit.
+2) C in the operation column refers to the carry flag.
 
 ## Jump and Call
 

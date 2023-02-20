@@ -15,4 +15,8 @@
 
 # Assembly changes
 
-64bit register references/64bit operations are marked by the infix/prefix `q` (i.e. `%rq0`)
+64 bit register references/64 bit operations are marked by the infix/prefix `q` (i.e. `%rq0`).
+
+# Memory semantics
+
+A memory access is unaligned when the `SS` bits are `11` AND the address is not a multiple of 8.

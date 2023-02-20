@@ -1,14 +1,15 @@
 # General design
 
-- 16bit word size
-- 8 16bit registers
+- 16 bit word size
+- 16 bit address space
+- 8 16 bit registers
 - 4 flags set upon (some) ALU operations: Zero (`Z`), Negative (`N`), Carry (`C`), Overflow (`V`)
 - CPU Execution starts at address 0x8000
+  - This is not relevant for the ISA with no extensions.
 
 # Base Instructions
 
-This is a group of 16bit fixed width instructions. The motivation for the chosen instructions is to be both complete and
-easy to build in game.
+This is a group of 16 bit fixed width instructions.
 
 The highest two bits of the first byte are a format marker:
 
@@ -19,50 +20,62 @@ The highest two bits of the first byte are a format marker:
 
 # Overview
 
-| First byte    | Second Byte  | Comment                                  |
-|:--------------|:-------------|:-----------------------------------------|
-| `00 01 CCCC`  | `RRR RRR 00` | 2 register computation                   |
-| `00 SS CCCC`  | `RRR RRR ??` | when `SS != 01`, reserved for extensions |
-| `00 01 CCCC`  | `RRR RRR ??` | when `?? != 00`, reserved for extensions |
-| `00 01 11??`  | `RRR RRR ??` | reserved for extensions                  |
-| `01 01 CCCC`  | `RRR IIIII`  | immediate and 1 register computation     |
-| `01 SS CCCC`  | `RRR IIIII`  | when `SS != 01`, reserved for extensions |
-| `10 0 D CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction  |
-| `10 1 ?????`  | `?????????`  | reserved for extension                   |
-| `11 ??????`   | `?????????`  | reserved for extensions                  |
+| First byte    | Second Byte  | Comment                                          |
+|:--------------|:-------------|:-------------------------------------------------|
+| `00 01 CCCC`  | `RRR RRR 00` | 2 register computation                           |
+| `00 SS CCCC`  | `RRR RRR MM` | when not matching above, reserved for extensions |
+| `00 01 11??`  | `???? ????`  | reserved for extensions                          |
+| `01 01 CCCC`  | `RRR IIIII`  | immediate and 1 register computation             |
+| `01 SS CCCC`  | `???? ????`  | when not matching above, reserved for extensions |
+| `10 0 D CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction          |
+| `10 1 ?????`  | `?????????`  | reserved for extensions                          |
+| `11 ??????`   | `?????????`  | reserved for extensions                          |
 
-| Symbol | Meaning                      |
-|--------|------------------------------|
-| C      | opcode bit                   |
-| R      | register id                  |
-| I      | immediate                    |
-| D      | displacement                 |
-| S      | size (res.d)                 |
-| ?      | reserved for unknown purpose |
+| Symbol | Meaning         |
+|--------|-----------------|
+| C      | Opcode          |
+| R      | Register ID     |
+| I      | Immediate       |
+| D      | Displacement    |
+| S      | Operation Size  |
+| M      | Memory Addressing Mode     |
+| ?      | Arbitrary Value |
 
-### Execution of Reserved Instructions
+Notice that whenever `MM` bits are present, it is reserved for their value to be anything other than `00`. Similarly, it is reserved for `SS` bits to have values other than `01`.
 
-Execution of a reserved instruction is undefined behavior. A future extension will change this to "the CPU must trigger a specific interrupt."
+### Execution of Illegal and Reserved Instructions
 
+Execution of an _illegal_ or _reserved_ instruction is handled through an implementation specific method.
 
 ## Computation Instructions
 
-Both computation formats share a lot of similarities. For both the first byte has the structure `0x SS CCCC`.
+Both computation formats share a lot of similarities. For both, the first byte has the structure `0x SS CCCC`.
 
-- `SS` is a size marker and reserved for extensions. For the base instructions this should always be `01`
-- `CCCC` is a 4bit opcode deciding which operation to execute. This can be an ALU or a memory load/store instruction
+- `SS` is a size marker and reserved for extensions. For the base instructions this is always `01`.
+- `CCCC` is a 4 bit opcode deciding which operation to execute.
 
 ### 2 Register Computation
 
-The second byte has the format `AAA BBB 00` where `AAA` and `BBB` are references to registers. `AAA` is the destination register and left source register. `BBB` is the right source register. The only exception is the RSUB instruction where `AAA` and `BBB` are swapped for the purpose of being source registers.
+The second byte has the format `AAA BBB MM` where `AAA` and `BBB` are references to registers. `AAA` is the destination register and left source register. `BBB` is the right source register.
 
 ### Immediate Computation
 
-The second byte has the format `RRR IIIII`, where the 5bit immediate acts as operand `B`. The immediate is sign extended for operations 0-7 and operation 9. The immediate is zero extended for operation 8 and operations 10-15. While interleaving of signed and unsigned immediate at the border of the 2 sections seems unusual at first glance, it's done to make decoding hardware simpler.
+The second byte has the format `AAA IIIII`, where the 5 bit immediate acts as operand `B`. The immediate is sign extended for operations 0-7 and operation 9. The immediate is zero extended for operation 8 and operations 10-15. `AAA` is treated the same as in the 2 Register Computation section above.
+
+### Exceptions
+
+There are several exceptions to how the operands work.
+
+ - `RSUB`
+    - The `B` operand is the left source register and the `A` operand is the right source register.
+ - `CMP` and `TEST`
+    - These instructions do not have a destination register
+ - `STORE`
+    - This instruction uses the `B` operand to specify which memory address is written to.
+ - `WRITECR`
+    - This instruction uses the `B` operand to specify which control register is written to.
 
 ### Opcodes
-
-TODO: This is a baseline, very much still floating
 
 | `CCCC` | NAME            | Operation                          | Flags  | Comment     |
 |--------|-----------------|------------------------------------|--------|-------------|
@@ -75,7 +88,7 @@ TODO: This is a baseline, very much still floating
 | `0110` | `AND`           | `A ← A & B`                        | `ZN`   | (5)         |
 | `0111` | `TEST`          | `_ ← A & B`                        | `ZN`   | (2) (5)     |
 | `1000` | `MOVZ`          | `A ← B`                            | None   | (7)         |
-| `1001` | `MOV` or `MOVS` | `A ← B`                            | None   | (8)         |
+| `1001` | `MOV` or `MOVS` | `A ← B`                            | None   | (7)         |
 | `1010` | `LOAD`          | `A ← MEM[B]`                       | None   |             |
 | `1011` | `STORE`         | `MEM[B] ← A`                       | None   | (2)         |
 | `1100` | `SLO`           | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
@@ -84,18 +97,19 @@ TODO: This is a baseline, very much still floating
 | `1111` | `WRITECR`       | `CR[B] ← A`                        | None   | (2) (4) (6) |
 
 
-1) Enables NEG and NOT to be encoded as `RSUB r, imm`.
-2) Placed here for now to ease decoding; `xx11` => do not store result.
+1) Enables `NEG` and `NOT` to be encoded as `RSUB r, imm`.
+ - `NEG` can be implemented as `RSUB r, 0`.
+ - `NOT` can be implemented as `RSUB r, -1`. Replacing `RSUB` with `XOR` would also work for this.
+2) Placed here to ease decoding; `xx11` => do not store result.
 3) Designed to allow for building a larger immediate value. To reach a full 16 bit immediate, a 4th `SLO` or an additional `NOT` may be required.
-4) Primary intent is that these are used with immediate. Exact assignment of control registers is still floating. At least the the CPU status/extension/feature control registers should be present.
-5) The C and V flags are in an undefined state after execution of these instructions. Implementations may do whatever is easiest. An extension may mandate a particular behavior, with good enough reason, but must *not* mandate that the value of these flags after the operation depends on their value before the operation.
-6) These instructions do not have a 2 register mode. The corresponding bit patterns (`00 SS 11??`) for the first byte are reserved. This can easily be detected by using similar to 2)
-7) This instruction zero extends argument B as if the value read is of the size specified by the SS bits in the instruction (assuming a relevant extension is present)
-8) This instruction sign extends argument B as if the value read is of the size specified by the SS bits in the instruction (assuming a relevant extension is present)
+4) Control registers can only be accessed with immediates.
+5) The C and V flags are in an _unspecified_ state after execution of these instructions. Extensions _may_ mandate a particular behavior, with good enough reason, but must **NOT** mandate that the value of these flags after the operation depends on their value before the operation.
+6) These instructions do not have a 2 register mode. The corresponding bit patterns (`00 SS 11??`) for the first byte are _reserved_. This can easily be detected by using a similar method to 2).
+7) These instructions are equivalent in the base ISA. Extensions which allow for `SS` values other than `01` make these instructions distinguishable. [1](https://github.com/ETC-A/etca-spec/tree/main/extensions/half-word-operations) [2](https://github.com/ETC-A/etca-spec/tree/main/extensions/double-word-operations) [3](https://github.com/ETC-A/etca-spec/tree/main/extensions/quad-word-operations)
 
 #### Control Register Read and Write Instructions
 
-Undefined control registers are reserved and reading from or writing to them is undefined behavior.
+Undefined control registers are _reserved_ and reading from or writing to them is _unspecified_ behavior.
 
 | `CRN`  | NAME       | Description                                                                                                                             | Comment |
 |--------|------------|-----------------------------------------------------------------------------------------------------------------------------------------|---------|
@@ -108,26 +122,24 @@ Undefined control registers are reserved and reading from or writing to them is 
 
 ## Memory Semantics
 
-Unaligned memory accesses are undefined behavior. A memory access is unaligned if the address modulus the read/write width is not equal to zero. The read/write width is defined by the SS bits, which for the base ISA corresponds to a read/write width of 2 bytes.
+Unaligned memory accesses are _unspecified_ behavior. A memory access is unaligned if the address is not a multiple of 2.
 
-All IO is memory mapped
+All IO is memory mapped. It's recommended to map IO at the bottom of memory so that it can be easily accessed with the `LOAD` and `STORE` instructions.
 
 ### Separation of Program ROM and RAM
 
-Aside from program rom starting at address 0x8000, there are no requirements for how the memory address space is layed out. For ease of implementation, this spec does NOT require program memory to be accessible with the load and store instructions nor does it require that RAM be executable. Loads and stores of program memory are undefined behavior. Executing from RAM is undefined behavior. Future extensions will change this behavior
+Aside from program rom starting at address 0x8000, there are no requirements for how the memory address space is layed out. For ease of implementation, this spec does **NOT** require program memory to be accessible with the load and store instructions nor does it require that RAM be executable. Loads and stores of program memory are _unspecified_ behavior. Executing from RAM is _unspecified_ behavior. Future extensions and/or features will change this behavior.
 
 ## Flag Semantics
 
-Flags conceptually maintain these values. A future, more rigorous specification of this standard will include a detailed description of affected flags for every instruction individually.
-
 1) The `Z` flag indicates that the result was zero.
 2) The `N` flag indicates that the result, interpreted as a 2's complement number, was negative.
-3) The `C` flag describes whether an additive instruction caused a carry, or a subtractive computation caused a borrow. The concept of "borrow" is exactly the same as in long-hand decimal subtraction the way you might do it on paper. The flag is set if the subtraction would borrow out of the next most significant bit. A borrow happens precisely when the corresponding addition does _not_ carry. In other words, in order to subtract, you (a) complement the B input, (b) set the carry in, (c) set C to the inverse of the carryout.
-4) The `V` flag indicates that the operation caused overflow. This means that storing the result in the destination register caused a loss of precision.
+3) The `C` flag describes whether an additive instruction caused a carry, or a subtractive computation caused a borrow. The concept of "borrow" is exactly the same as in long-hand decimal subtraction the way you might do it on paper. The flag is set if the subtraction would borrow out of the next most significant bit. A borrow happens precisely when the corresponding 2's-complement addition does _not_ carry. In other words, in order to subtract, you (a) complement the B input, (b) set the carry-in, (c) set C to the inverse of the carryout.
+4) The `V` flag indicates that the operation caused overflow. This means that a loss of precision occurred for a signed integer calculation (eg. positive + positive = negative or negative + negative = positive).
 
 ## Jump Instructions
 
-Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte of the displacement. `CCCC` is the condition to check. The second byte is a single 8bit immediate representing the low byte of the displacement. This combined 9 bit displacement (sign extended to 16 bits) is added to the base address of the current instruction and stored in the program counter.
+Here the first byte has the format `10 0 D CCCC` where `D` fills the high byte of the displacement. `CCCC` is the condition to check. The second byte is a single 8 bit immediate representing the low byte of the displacement. This combined 9 bit displacement (sign extended to the address width, which is 16 bits in the base isa) is added to the base address of the current instruction and stored in the program counter.
 
 ### Conditions
 

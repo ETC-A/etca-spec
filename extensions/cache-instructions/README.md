@@ -24,9 +24,13 @@ are present.
 
 Note that the last 5 instructions overlap with the never jump instruction. This is intentional since these instructions don't change a programs behavior.
 
+If this extension is present on a system without a data cache, `ALLOC_ZERO` must write 0 to memory as if it had a cache line size as specified by the `CACHE_LINE_SIZE` control register.
+If `CACHE_LINE_SIZE` is zero, then it _must_ be a NOP instruction.
+
 # Added Control Registers
 
 | CRN    | Name              |
+|--------|-------------------|
 | `1110` | `CACHE_LINE_SIZE` |
 
 `CACHE_LINE_SIZE` is a read-only control register which specifies the number of bytes in a cache line for the data cache. It _must_ be a power of 2 unless no data cache is present

@@ -48,11 +48,8 @@ In this case, the `dP` is an 8-byte value rather than a 4-byte value.
 
 # Added Instruction Formats
 
-These instruction formats apply to any instruction which encodes operands using an `ABM` byte, with
-some explicit exceptions (TODO: link to a more detailed instruction-by-instruction document describing
-exactly what modes/prefixes are valid for each instruction individually).
-  * These formats need not be supported for `ld` or `st` opcodes. If they are not supported, they must
-    behave as an undefined instruction.
+These instruction formats apply to any instruction which encodes operands using an `ABM` byte _unless_ that instruction already performs a memory
+read or write in which case it is _unspecified_ behavior.
 
 | `ABM` | Followed By 1 | Followed By 2 | Specified Address Format |
 |-------|---------------|---------------|-----------|
@@ -107,7 +104,7 @@ as though the operand values were the size specified by the instruction's Operan
 | LEA r, m | `00SS1110` | `ABM` | Loads the address specified by the second operand into the register specified by the first. Note that the address _itself_ is stored in the register, not the contents of memory at that address. The result stored in the register must respect the operand size attribute. The computed address must respect the address mode.
 
 `LEA` means "load effective address." If the first operand is not a register, or the second is not a memory location, the instruction must be treated as an
-undefined instruction. Such cases are **not** reserved - they are explicitly undefined. Note that as per the
+_illegal_ instruction. Note that as per the
 [Full Immediates extension](../full-immediates/README.md) in the specific case of `MM=01, ABM.regB=01x`
 (the "full immediate" operand modes) this opcode corresponds to `READCR`, not `LEA`.
 
