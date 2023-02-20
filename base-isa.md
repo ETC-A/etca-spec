@@ -109,7 +109,7 @@ Undefined control registers are _reserved_ and reading from or writing to them i
 
 ## Memory Semantics
 
-Unaligned memory accesses are _unspecified_ behavior. A memory access is unaligned if the address modulus the read/write width is not equal to zero. The read/write width is defined by the SS bits, which for the base ISA corresponds to a read/write width of 2 bytes.
+Unaligned memory accesses are _unspecified_ behavior. A memory access is unaligned if the address is not a multiple of 2.
 
 All IO is memory mapped. It's recommended to map IO at the bottom of memory so that it can be easily accessed with the `LOAD` and `STORE` instructions.
 
