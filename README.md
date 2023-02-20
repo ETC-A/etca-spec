@@ -8,11 +8,7 @@ An extensible assembler built for this ISA is [the etca-asm repository](https://
 
 ## Terminology
 
-_Must_: Specifies that a specific behavior is required by the specification.
-
-_Should_: Specifies that a specific behavior is recommended but not required.
-
-_May_: Specifies that a specific behavior is allowed and not encouraged or discouraged.
+See [RFC-2119](https://www.ietf.org/rfc/rfc2119.txt) for some of the terminology used in the documentation for ETCa.
 
 _Illegal_: Specifies that a specific behavior or instruction is **NOT** allowed in a compliant implementation and must be handled as specified by the ISA.
 
