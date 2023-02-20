@@ -56,11 +56,24 @@ Both computation formats share a lot of similarities. For both, the first byte h
 
 ### 2 Register Computation
 
-The second byte has the format `AAA BBB MM` where `AAA` and `BBB` are references to registers. `AAA` is the destination register and left source register. `BBB` is the right source register. There are 2 exceptions to this. The first is the RSUB instruction where `AAA` and `BBB` are swapped for the purpose of being source registers. The second exception is that the `B` argument specifies which memory address or control register to write to. `MM` is the memory mode which will be defined in an extension and is only defined for `00` in the base isa.
+The second byte has the format `AAA BBB MM` where `AAA` and `BBB` are references to registers. `AAA` is the destination register and left source register. `BBB` is the right source register.
 
 ### Immediate Computation
 
-The second byte has the format `RRR IIIII`, where the 5 bit immediate acts as operand `B`. The immediate is sign extended for operations 0-7 and operation 9. The immediate is zero extended for operation 8 and operations 10-15.
+The second byte has the format `AAA IIIII`, where the 5 bit immediate acts as operand `B`. The immediate is sign extended for operations 0-7 and operation 9. The immediate is zero extended for operation 8 and operations 10-15. `AAA` is treated the same as in the 2 Register Computation section above.
+
+### Exceptions
+
+There are several exceptions to how the operands work.
+
+ - `RSUB`
+    - `BBB` is the left source register and `AAA` is the right source register.
+ - `CMP` and `TEST`
+    - These instructions do not have a destination register
+ - `STORE`
+    - This instruction uses the `B` operand to specify which memory address is written to.
+ - `WRITECR`
+    - This instruction uses the `B` operand to specify which control register is written to.
 
 ### Opcodes
 
