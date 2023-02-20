@@ -20,16 +20,16 @@ The highest two bits of the first byte are a format marker:
 
 # Overview
 
-| First byte    | Second Byte  | Comment                                  |
-|:--------------|:-------------|:-----------------------------------------|
-| `00 01 CCCC`  | `RRR RRR 00` | 2 register computation                   |
-| `00 01 11??`  | `???? ????`  | reserved for extensions                  |
-| `00 SS CCCC`  | `RRR RRR MM` | when `MM != 00`, reserved for extensions |
-| `01 01 CCCC`  | `RRR IIIII`  | immediate and 1 register computation     |
-| `0? SS CCCC`  | `???? ????`  | when `SS != 01`, reserved for extensions |
-| `10 0 D CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction  |
-| `10 1 ?????`  | `?????????`  | reserved for extensions                  |
-| `11 ??????`   | `?????????`  | reserved for extensions                  |
+| First byte    | Second Byte  | Comment                                          |
+|:--------------|:-------------|:-------------------------------------------------|
+| `00 01 CCCC`  | `RRR RRR 00` | 2 register computation                           |
+| `00 SS CCCC`  | `RRR RRR MM` | when not matching above, reserved for extensions |
+| `00 01 11??`  | `???? ????`  | reserved for extensions                          |
+| `01 01 CCCC`  | `RRR IIIII`  | immediate and 1 register computation             |
+| `01 SS CCCC`  | `???? ????`  | when not matching above, reserved for extensions |
+| `10 0 D CCCC` | `DDDDDDDD`   | (conditional) relative jump instruction          |
+| `10 1 ?????`  | `?????????`  | reserved for extensions                          |
+| `11 ??????`   | `?????????`  | reserved for extensions                          |
 
 | Symbol | Meaning         |
 |--------|-----------------|
