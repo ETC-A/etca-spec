@@ -73,7 +73,7 @@ CPU interrupts from external hardware are rising edge triggered.
 If a synchronous interrupt occurs while the CPU is already handling another interrupt, the CPU _must_ reset or halt execution as there is no way for it to handle the interrupt. If the CPU is not handling an interrupt
 when a synchronous interrupt occurs, then the corresponding bit in the `INT_PENDING` CR will be set and the CPU will immediately transition to handling that interrupt without finishing its current instruction. This
 means that the CPU _must_ be in the same effective state as before execution of the instruction was attempted aside from what is required to handle the interrupt caused by the exceptional instruction. One of the
-implied effects of this is that the `INT_RET_PC` CR points to the instruction which caused the interrupt.
+implied effects of this is that the `INT_RET_PC` CR points to the instruction which caused the interrupt. Another implied effect is that synchronous interrupts _cannot_ be masked.
 
 When an asynchronous interrupt occurs, the relevant bit in the pending interrupt CR will be set. If the CPU is not handling an interrupt and any bit in the result of ANDing the `INT_PENDING` CR with the `INT_MASK` CR
 is set, the interrupt for the lowest set bit of that result will be handled.
