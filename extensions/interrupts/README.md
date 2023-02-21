@@ -59,7 +59,7 @@ Unused mask/pending bits are reserved for future extensions
 
 The following opcodes are now defined. The bits which are normally reserved for specifying operation/operand size are repurposed here.
 
-| Name   | First byte    | Second Byte  | Description                                                                                                                                             |
+| Name   | First Byte    | Second Byte  | Description                                                                                                                                             |
 |:-------|:--------------|:-------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `IRET` | `00 00 1111`  | `000 000 00` | Returns from the current interrupt. Executing this when not in an interrupt causes a General Protection Fault.                                          |
 | `INT`  | `00 0? 1111`  | `??? ??? 1?` | Causes a system call interrupt. The second byte is not processed as normal and is only used as a way to specify an operation for the interrupt handler. |
