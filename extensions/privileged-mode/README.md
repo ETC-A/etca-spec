@@ -31,6 +31,14 @@ All CRs prefixed by `INT_` are only accessible in system mode. Attempting to acc
 
 At startup, the `PRIV` CR must be set to 1.
 
+# Added Instructions
+
+The instruction `1000 1111 0000 0010`, referred to as `halt`, is now only usable in system mode. Attempting to use it in user mode _must_ trigger
+a general protection fault. When this instruction is executed in system mode, the CPU stops executing further instructions until an interrupt occurs.
+
+**Note:** The `halt` instruction is similar to the relative jump by 0 instruction, but the instruction pointer still advances to the next instruction
+with `halt` unlike the relative jump by 0 instruction.
+
 # Interrupt Flow
 
 The interrupt flow is modified by adding the following additional requirements.
