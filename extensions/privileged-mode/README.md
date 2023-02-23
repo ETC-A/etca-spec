@@ -29,7 +29,18 @@ The `PRIV` CR is only writable in system mode. Attempting to write to it in user
 
 All CRs prefixed by `INT_` are only accessible in system mode. Attempting to access them in user mode _must_ trigger a general protection fault.
 
+Executing an instruction which is not executable in the current privilege mode _must_ trigger a general protection fault.
+
 At startup, the `PRIV` CR must be set to 1.
+
+# Added Instructions
+
+| Name   | First Byte  | Second Byte | Description                                                                                                                         |
+|--------|-------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `halt` | `1000 1111` | `0000 0010` | The CPU stops executing instructions after this one is executed until an unmasked interrupt occurs. Only executable in system mode. |
+
+**Note:** The `halt` instruction is similar to the relative jump by 0 instruction, but the instruction pointer still advances to the next instruction
+with `halt` unlike the relative jump by 0 instruction.
 
 # Interrupt Flow
 

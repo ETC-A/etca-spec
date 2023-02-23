@@ -59,7 +59,7 @@ Unused mask/pending bits are reserved for future extensions
 
 The following opcodes are now defined. The bits which are normally reserved for specifying operation/operand size are repurposed here.
 
-| Name   | First byte    | Second Byte  | Description                                                                                                                                             |
+| Name   | First Byte    | Second Byte  | Description                                                                                                                                             |
 |:-------|:--------------|:-------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `IRET` | `00 00 1111`  | `000 000 00` | Returns from the current interrupt. Executing this when not in an interrupt causes a General Protection Fault.                                          |
 | `INT`  | `00 0? 1111`  | `??? ??? 1?` | Causes a system call interrupt. The second byte is not processed as normal and is only used as a way to specify an operation for the interrupt handler. |
@@ -73,7 +73,7 @@ CPU interrupts from external hardware are rising edge triggered.
 If a synchronous interrupt occurs while the CPU is already handling another interrupt, the CPU _must_ reset or halt execution as there is no way for it to handle the interrupt. If the CPU is not handling an interrupt
 when a synchronous interrupt occurs, then the corresponding bit in the `INT_PENDING` CR will be set and the CPU will immediately transition to handling that interrupt without finishing its current instruction. This
 means that the CPU _must_ be in the same effective state as before execution of the instruction was attempted aside from what is required to handle the interrupt caused by the exceptional instruction. One of the
-implied effects of this is that the `INT_RET_PC` CR points to the instruction which caused the interrupt.
+implied effects of this is that the `INT_RET_PC` CR points to the instruction which caused the interrupt. Another implied effect is that synchronous interrupts _cannot_ be masked.
 
 When an asynchronous interrupt occurs, the relevant bit in the pending interrupt CR will be set. If the CPU is not handling an interrupt and any bit in the result of ANDing the `INT_PENDING` CR with the `INT_MASK` CR
 is set, the interrupt for the lowest set bit of that result will be handled.
