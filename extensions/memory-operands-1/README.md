@@ -90,12 +90,16 @@ behavior applies likewise to memory operations; memory must not be (visibly) loa
 (e.g., as is the case for `mov m, r/i`). If the operation does not store its result, then memory must not be modified.
 
 The instruction's Operand Size (usually from the instruction `SS` bits, but NOT from the `SIB.S` bits) informs the size of the read or writes. These reads
-and writes must behave, with regards to how memory is read and modified, the same as `ld` or `st` instructions
+and writes must behave, with regards to how memory is read and modified, the same as the `load` and `store` instructions
 to the same address, with the same operand size.
 
 When computing an address, register contents must be treated as if they were the width of an
 address in the current address mode. When performing the operation, the operation must be performed
 as though the operand values were the size specified by the instruction's Operand Size attribute.
+
+## Exceptions
+
+Using this extension with any instruction that would normally access memory, including but not limited to `store`, `load`, `push`, and `pop`, is _unspecified_ behavior.
 
 # Added Instruction
 

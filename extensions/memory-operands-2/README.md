@@ -49,6 +49,10 @@ The behavior when `REX.Q` is set while in `quad` addressing mode when _any_ of t
   - The instruction has an `iS` and a `d8`
   - The instruction has a `dP` and an `i8`
 
+## Exceptions
+
+Using this extension with any instruction that would normally access memory, including but not limited to `store`, `load`, `push`, and `pop`, is _unspecified_ behavior.
+
 # Added Instruction
 
 These instruction formats apply to any instruction which encodes operands using an `ABM` byte _unless_ that instruction already performs a memory
