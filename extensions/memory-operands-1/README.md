@@ -99,9 +99,6 @@ as though the operand values were the size specified by the instruction's Operan
 
 # Added Instruction
 
-These instruction formats apply to any instruction which encodes operands using an `ABM` byte _unless_ that instruction already performs a memory
-read or write in which case it is _unspecified_ behavior.
-
 | Name | Encoding | Operands | Description |
 |------|----------|----------|-------------|
 | LEA r, m | `00SS1110` | `ABM` | Loads the address specified by the second operand into the register specified by the first. Note that the address _itself_ is stored in the register, not the contents of memory at that address. The result stored in the register must respect the operand size attribute. The computed address must respect the address mode.
