@@ -5,6 +5,7 @@
 
 * The memory instructions, including but not limited to `store`, `load`, `push`, and `pop`, _must_ accept memory operands as specified by the `MO1` and `MO2` extensions.
 * The `pop` instruction _must_ be treated as an _illegal_ instruction when the RMI byte follows the pattern `xxx 00x 01`.
+    * This prevents using an immediate as the stack pointer.
 
 ### Concept
 

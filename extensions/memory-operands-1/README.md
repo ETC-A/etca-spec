@@ -97,11 +97,10 @@ When computing an address, register contents must be treated as if they were the
 address in the current address mode. When performing the operation, the operation must be performed
 as though the operand values were the size specified by the instruction's Operand Size attribute.
 
-## Exceptions
-
-Using this extension with any instruction that would normally access memory, including but not limited to `store`, `load`, `push`, and `pop`, is _unspecified_ behavior.
-
 # Added Instruction
+
+These instruction formats apply to any instruction which encodes operands using an `ABM` byte _unless_ that instruction already performs a memory
+read or write in which case it is _unspecified_ behavior.
 
 | Name | Encoding | Operands | Description |
 |------|----------|----------|-------------|
