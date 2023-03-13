@@ -12,6 +12,9 @@ Familiarity with the full-immediates extension is encouraged likewise.
 
 # Added Instruction Formats
 
+These instruction formats apply to any instruction which encodes operands using an `ABM` byte _unless_ that instruction already performs a memory
+read or write in which case it is _unspecified_ behavior.
+
 | `ABM` | Followed By 1 | Followed By 2 | Followed By 3 |Specified First Operand | Specified Second Operand |
 |-------|---------------|---------------|-----------|--|--|
 |<pre>+-----+-----+----+<br>\| 001 \| 000 \| 01 \|<br>+-----+-----+----+</pre> | `dP` | `i8` | | `[dP]` | `i8`
@@ -50,9 +53,6 @@ The behavior when `REX.Q` is set while in `quad` addressing mode when _any_ of t
   - The instruction has a `dP` and an `i8`
 
 # Added Instruction
-
-These instruction formats apply to any instruction which encodes operands using an `ABM` byte _unless_ that instruction already performs a memory
-read or write in which case it is _unspecified_ behavior.
 
 | Name | Encoding | Operands | Description |
 |------|----------|----------|-------------|
