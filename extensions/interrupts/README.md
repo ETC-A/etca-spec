@@ -17,8 +17,8 @@ This extension adds interrupts which allows for the separation of system managem
 | `0100` | `INT_PC`      | Specifies where the system interrupt handler is located in memory.                                |         |
 | `0101` | `INT_SP`      | Specifies the stack pointer for the system interrupt handler.                                     |         |
 | `0110` | `INT_MASK`    | Specifies the mask for system interrupts.                                                         | (1)     |
-| `0111` | `INT_PENDING` | Records which system interrupts are pending.                                                      | (1)     |
-| `1000` | `INT_CAUSE`   | Stores the cause of the current system interrupt.                                                 | (2)     |
+| `0111` | `INT_PENDING` | Records which system interrupts are pending.                                                      | (1) (3) |
+| `1000` | `INT_CAUSE`   | Stores the cause of the current system interrupt.                                                 | (2) (3) |
 | `1001` | `INT_DATA`    | Stores data relevant to the interrupt.                                                            |         |
 | `1010` | `INT_RET_PC`  | Stores the address that the system interrupt should return to.                                    |         |
 | `1011` | `INT_RET_SP`  | Stores the stack pointer that the system interrupt should restore after the interrupt is handled. |         |
@@ -27,6 +27,7 @@ When the CPU is first initialized, `INT_MASK` should be set to 0.
 
 1) This is a bitfield where each bit corresponds to a specific interrupt based on the table below.
 2) This stores the number which refers to the current interrupt. It's value is the bit number in the mask and pending control registers.
+3) These control registers are not writable through the `writecr` instruction and are effectively read-only.
 
 ## Flags CR
 
