@@ -1,8 +1,8 @@
 # General Design
 
-**Extension State: Under Development**
-**Requires: CP1.14**
-**CP Bit: CP1.16**
+**Extension State: Under Development**  
+**Requires: CP1.14**  
+CPUID Bit: CP1.16**
 
 # Overview
 
