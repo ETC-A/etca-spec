@@ -31,7 +31,7 @@ In real 32-bit address mode, all addresses are treated as being 32 bits long. En
 address mode _must_ preserve the program counter. Returning to Bare mode from real 32-bit address
 mode must preserve the program counter _if possible_ - if the current program counter interpreted
 as a 16-bit address would not be the address of the current instruction, the behavior of the
-system is undefined.
+system is _unspecified_.
 
 # Interactions With Other Extensions
 
