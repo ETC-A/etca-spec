@@ -12,10 +12,6 @@ processor is actually in will almost certainly behave incorrectly.
 
 In particular, this extension focuses on the _Real 32-bit address mode_.
 
-# Added Instructions
-
-None!
-
 # Modes
 
 CR `1110`, equivalently `cr14` or "the MODE control register," holds a value indicating the current
