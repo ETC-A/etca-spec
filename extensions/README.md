@@ -13,7 +13,7 @@
 |     13     | [Memory Operands 2](./memory-operands-2) (MO2)            | VWI           | Under Development |
 |     14     | [32 Bit Operations + Registers](./double-word-operations) | None          | Mostly Stable     |
 |     15     | [64 Bit Operations + Registers](./quad-word-operations)   | None          | Mostly Stable     |
-|     16     | 32 Bit Address Space                                      | CP1.14        | Planned           |
+|     16     | [32 Bit Address Space](./32-bit-address-space)   | CP1.14        | Under Development           |
 |     17     | Virtual Memory + 32 Bit Paging                            | CP1.16, CP2.2 | Planned           |
 |     32     | 64 Bit Address Space                                      | CP1.15        | Planned           |
 |     33     | Virtual Memory + 64 Bit Paging                            | CP1.32, CP2.2 | Planned           |
