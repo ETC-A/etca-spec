@@ -34,7 +34,7 @@ These values are referred to as `SIB.S`, `SIB.X`, and `SIB.B` respectively. `SIB
 
 A `d8` is a 1-byte signed displacement value. A `dP` is a flexibly-sized signed displacement value.
 There is a notion of "current address mode," which refers to the logical address size currently selected by
-the `EXTEN` control register. By default, the address mode is `word`. With 32-bit addressing enabled,
+the `MODE` control register. By default, the address mode is `word`. With 32-bit addressing enabled,
 it is `doubleword`. With 64-bit addressing, it is `quadword`.
 
 A `dP` is the same size as a logical address in the current mode. However, similarly to [full-immediates](../full-immediates/README.md),
