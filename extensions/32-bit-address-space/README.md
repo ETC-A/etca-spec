@@ -26,11 +26,16 @@ Base mode is indicated by a value of 0 in `cr14`.
 ## Real 32-bit Address Mode
 
 A new mode known as _Real 32-bit address mode_ is added, indicated by a value of 2 in `cr14`.
-In real 32-bit address mode, all addresses are treated as being 32 bits long. Entering real 32-bit
+In real 32-bit address mode, all addresses are treated as being 32 bit long. Addresses in Base mode refer to the (real) address which is their sign extension to 32 bits.
+
+Entering real 32-bit
 address mode _must_ preserve the program counter. Returning to Base mode from real 32-bit address
 mode must preserve the program counter _if possible_ - if the current program counter interpreted
 as a 16-bit address would not be the address of the current instruction, the behavior of the
 system is _unspecified_.
+
+Program execution starts at (real) address `0xFFFF8000`. This happens naturally due to the Base requirement 
+of starting at `0x8000` and the fact that `0x8000` refers to its sign extension to 32-bits.
 
 # Interactions With Other Extensions
 
@@ -48,8 +53,6 @@ If the system supports [privilege levels](../privileged-mode/), then `cr14` is o
 This extension does not _require_ behaviors beyond what is specified. However, for compatibility with future
 extensions which will require more specifics, the following are recommended:
 
-* Addresses in Base mode refer to the (real) address which is their sign extension to 32 bits
-* Program execution should start at (real) address `0xFFFF8000`. This happens naturally due to the Base requirement and the suggestion above.
 * The program counter (or equivalent) in the processor itself should always store the sign-
   extended address when operating in Base mode. This way, nothing needs to be done when
   entering or leaving real 32-bit address mode from Base mode.
