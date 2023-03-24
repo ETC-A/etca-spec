@@ -14,18 +14,18 @@ In particular, this extension focuses on the _Real 32-bit address mode_.
 
 # Modes
 
-CR `1111`, equivalently `cr15` or "the MODE control register," holds a value indicating the current
+CR `1 0001`, equivalently `cr17` or "the MODE control register," holds a value indicating the current
 _mode_ of the processor.
 
 ## Base Mode
 
 The mode described by [the base isa](../../base-isa.md) is known as the
 Base mode. In that mode, pointers are 16 bits and there is no virtual memory, paging, or memory protection.
-Base mode is indicated by a value of 0 in `cr15`.
+Base mode is indicated by a value of 0 in `cr17`.
 
 ## Real 32-bit Address Mode
 
-A new mode known as _Real 32-bit address mode_ is added, indicated by a value of 2 in `cr15`.
+A new mode known as _Real 32-bit address mode_ is added, indicated by a value of 2 in `cr17`.
 In real 32-bit address mode, all addresses are treated as being 32 bit long. Addresses in Base mode refer to the (real) address which is their sign extension to 32 bits.
 
 Entering real 32-bit
@@ -46,7 +46,7 @@ is `doubleword`.
 (The above language is chosen because other values of the MODE register may also specify
 a `doubleword` address mode)
 
-If the system supports [privilege levels](../privileged-mode/), then `cr14` is only writable at the system level.
+If the system supports [privilege levels](../privileged-mode/), then `cr17` is only writable at the system level.
 
 # Recommendations
 
