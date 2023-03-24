@@ -29,9 +29,5 @@ Unless specified otherwise, each prefix can only be used _at most_ once per inst
 |:------------|:--------------------------------------------------------------|
 | `1010 xxxx` | When `xxxx` is neither `1110` nor `1111`, conditional prefix. |
 | `1100 xxxx` | Expanded registers prefix and large immediate bit.            |
-| `1101 0000` | Bypasses the data cache for memory operations.                |
-| `1101 0001` | Unused                                                        |
-| `1101 001x` | Unused                                                        |
-| `1101 01xx` | Unused                                                        |
-| `1101 1xxx` | Unused                                                        |
+| `1101 xxxx` | Unused                                                        |
 
