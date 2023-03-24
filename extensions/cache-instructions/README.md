@@ -29,17 +29,23 @@ If `CACHE_LINE_SIZE` is zero, then it _must_ be a NOP instruction.
 
 # Added Instruction Prefixes
 
-| Name       | Byte        | Description                                                                                     |
-|------------|-------------|-------------------------------------------------------------------------------------------------|
-| `NO_CACHE` | `1101 0000` | This prefix causes the following instruction to bypass the data cache for its memory access(es) |
+| Name           | Byte        | Description                                                                                     |
+|----------------|-------------|-------------------------------------------------------------------------------------------------|
+| `BYPASS_CACHE` | `1101 0000` | This prefix causes the following instruction to bypass the data cache for its memory access(es) |
 
 If this prefix is used with an instruction that does not access memory or there is no data cache, the prefix does nothing.
 
 # Added Control Registers
 
-| CRN    | Name              |
-|--------|-------------------|
-| `1110` | `CACHE_LINE_SIZE` |
+| CRN    | Name               |
+|--------|---------------------|
+| `0 1110` | `CACHE_LINE_SIZE` |
+| `0 1111` | `NO_CACHE_START`  |
+| `1 0000` | `NO_CACHE_END`    |
 
 `CACHE_LINE_SIZE` is a read-only control register which specifies the number of bytes in a cache line for the data cache. It _must_ be a power of 2 unless no data cache is present
 in which case it _may_ be 0.
+
+`NO_CACHE_START` is a cache-aligned address which represents the inclusive start of a contiguous range of memory addresses which will not be cached when accessed. If the privilege extension is present, this is only accessible in system mode.
+
+`NO_CACHE_END` is a cache-aligned address which represents the exclusive end of a contiguous range of memory addresses which will not be cached when accessed. If the privilege extension is present, this is only accessible in system mode.
