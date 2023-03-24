@@ -8,7 +8,7 @@
 |     3      | [8 Bit Operations + Registers](./half-word-operations)    | None          | Mostly Stable     |
 |     4      | [Conditional Execution](./conditional-prefix)             | VWI           | Under Development |
 |     5      | [Expanded Registers](./expanded-registers)                | VWI           | Under Development |
-|     6      | [Cache Instructions](./cache-instructions)                | None          | Under Development |
+|     6      | [Cache Instructions](./cache-instructions)                | VWI           | Under Development |
 |     7      | [Arbitrary Stack Pointer](./arbitrary-stack-pointer)      | CP1.1         | Under Development |
 |     13     | [Memory Operands 2](./memory-operands-2) (MO2)            | VWI           | Under Development |
 |     14     | [32 Bit Operations + Registers](./double-word-operations) | None          | Mostly Stable     |
