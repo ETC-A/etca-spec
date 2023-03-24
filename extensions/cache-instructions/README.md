@@ -47,5 +47,7 @@ If this prefix is used with an instruction that does not access memory or there 
 in which case it _may_ be 0.
 
 `NO_CACHE_START` is a cache-aligned address which represents the inclusive start of a contiguous range of memory addresses which will not be cached when accessed. If the privilege extension is present, this is only accessible in system mode.
+This control register is set to 0 on CPU initialization.
 
 `NO_CACHE_END` is a cache-aligned address which represents the exclusive end of a contiguous range of memory addresses which will not be cached when accessed. If the privilege extension is present, this is only accessible in system mode.
+This control register is set to the same value as `CACHE_LINE_SIZE` on CPU initialization.
