@@ -29,9 +29,24 @@ If `CACHE_LINE_SIZE` is zero, then it _must_ be a NOP instruction.
 
 # Added Control Registers
 
-| CRN    | Name              |
-|--------|-------------------|
-| `1110` | `CACHE_LINE_SIZE` |
+| CRN      | Name               |
+|----------|---------------------|
+| `0 1110` | `CACHE_LINE_SIZE` |
+| `0 1111` | `NO_CACHE_START`  |
+| `1 0000` | `NO_CACHE_END`    |
 
 `CACHE_LINE_SIZE` is a read-only control register which specifies the number of bytes in a cache line for the data cache. It _must_ be a power of 2 unless no data cache is present
 in which case it _may_ be 0.
+
+`NO_CACHE_START` is a cache-aligned address which represents the inclusive start of a contiguous range of physical memory addresses which will not be cached when accessed. If the privilege extension is present, this is only accessible in system mode.
+This control register is set to 0 on CPU initialization.
+
+`NO_CACHE_END` is a cache-aligned address which represents the inclusive end of a contiguous range of physical memory addresses which will not be cached when accessed. If the privilege extension is present, this is only accessible in system mode.
+This control register is set to `-CACHE_LINE_SIZE` on CPU initialization.
+
+## Notes on `NO_CACHE_START` and `NO_CACHE_END`
+
+- The purpose of the initial values for these control registers is to intially disable caching since the location of MMIO is unknown.
+- When writing to these control registers, the value will be sign extended from the write width to the maxiumum supported physical address width.
+- Writing a non-cache-aligned value is _unspecified_ behavior
+- If `NO_CACHE_START` is larger than `NO_CACHE_END`, the non-cacheable address range wraps past the end of the address space back to the beginning.
