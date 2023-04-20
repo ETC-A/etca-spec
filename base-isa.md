@@ -87,8 +87,8 @@ There are several exceptions to how the operands work.
 | `0101` | `XOR`           | `A ← A ^ B`                        | `ZN`   | (5)         |
 | `0110` | `AND`           | `A ← A & B`                        | `ZN`   | (5)         |
 | `0111` | `TEST`          | `_ ← A & B`                        | `ZN`   | (2) (5)     |
-| `1000` | `MOVZ`          | `A ← B`                            | None   | (7)         |
-| `1001` | `MOV` or `MOVS` | `A ← B`                            | None   | (7)         |
+| `1000` | `MOVZ`          | `A ← B`                            | None   |             |
+| `1001` | `MOV` or `MOVS` | `A ← B`                            | None   |             |
 | `1010` | `LOAD`          | `A ← MEM[B]`                       | None   |             |
 | `1011` | `STORE`         | `MEM[B] ← A`                       | None   | (2)         |
 | `1100` | `SLO`           | <code>A ← (A << 5) &#124; B</code> | None   | (3) (6)     |
@@ -105,7 +105,6 @@ There are several exceptions to how the operands work.
 4) Control registers can only be accessed with immediates.
 5) The C and V flags are in an _unspecified_ state after execution of these instructions. Extensions _may_ mandate a particular behavior, with good enough reason, but must **NOT** mandate that the value of these flags after the operation depends on their value before the operation.
 6) These instructions do not have a 2 register mode. The corresponding bit patterns (`00 SS 11??`) for the first byte are _reserved_. This can easily be detected by using a similar method to 2).
-7) These instructions are equivalent in the base ISA. Extensions which allow for `SS` values other than `01` make these instructions distinguishable. [1](https://github.com/ETC-A/etca-spec/tree/main/extensions/half-word-operations) [2](https://github.com/ETC-A/etca-spec/tree/main/extensions/double-word-operations) [3](https://github.com/ETC-A/etca-spec/tree/main/extensions/quad-word-operations)
 
 #### Control Register Read and Write Instructions
 
