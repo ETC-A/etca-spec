@@ -15,7 +15,7 @@ In particular, this extension focuses on the _Real 32-bit address mode_.
 # Modes
 
 CR `1 0001`, equivalently `cr17` or "the MODE control register," holds a value indicating the current
-_mode_ of the processor.
+_mode_ of the processor. This has an initial value of `0`.
 
 ## Base Mode
 

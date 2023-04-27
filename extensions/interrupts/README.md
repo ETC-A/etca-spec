@@ -101,3 +101,7 @@ At this point, the CPU can now resume code execution. When the `IRET` instructio
 At this point, the CPU can now resume code execution.
 
 Note: If another asynchronous interrupt would occur, you _may_ optimize away redundant steps that would occur when returning from an interrupt and then immediately entering an interrupt.
+
+# Reset Semantics
+
+When the CPU resets, it _must_ set all registers and control registers to their initial values if one is specified.
