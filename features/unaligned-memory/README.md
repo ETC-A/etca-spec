@@ -4,6 +4,7 @@
 **FEAT Bit: 1**
 
 * All memory accesses at arbitrary addresses work as if the backing memory had no alignment requirements. This does **NOT** mean they must perform the same, just that they must work as expected.
+* Memory Mapped IO does **NOT** need to support unaligned memory access.
 
 ### Concept / Intentionally vague
 
