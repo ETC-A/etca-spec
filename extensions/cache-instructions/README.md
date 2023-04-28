@@ -20,7 +20,7 @@ is present.
 | `CACHE_INVALIDATE_ALL` | `1000 1111` | `000 000 10` | Invalidates ALL caches. Useful for CPU resets and possibly for inter-process security.                                  |
 | `DATA_PREFETCH`        | `1001 1111` | `000 BBB 00` | Prefetches the memory at the address in the register specified by B into the data cache.                                |
 | `INSTRUCTION_PREFETCH` | `1001 1111` | `000 BBB 01` | Prefetches the memory at the address in the register specified by B into the instruction cache.                         |
-| `DCACHE_FLUSH`         | `1001 1111` | `000 BBB 10` | Flushes and invalidates the data cache entry for the address specified by the B register.                               |
+| `DCACHE_FLUSH`         | `1001 1111` | `000 BBB 10` | Flushes the data cache entry for the address specified by the B register.                                               |
 | `ICACHE_INVALIDATE`    | `1001 1111` | `000 BBB 11` | Invalidates the instruciton cache entry for the address specified by the B register.                                    |
 
 Note that the last 5 instructions overlap with the never jump instruction. This is intentional since these instructions don't change a programs behavior.
