@@ -2,7 +2,7 @@
 
 **Extension State: Under Development**  
 **Requires: CP1.14**  
-CPUID Bit: CP1.16**
+**CPUID Bit: CP1.16**
 
 # Overview
 
