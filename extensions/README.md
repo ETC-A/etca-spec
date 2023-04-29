@@ -15,8 +15,10 @@
 |     15     | [64 Bit Operations + Registers](./quad-word-operations)   | None          | Mostly Stable     |
 |     16     | [32 Bit Address Space](./32-bit-address-space)            | CP1.14        | Under Development |
 |     17     | Virtual Memory + 32 Bit Paging                            | CP1.16, CP2.2 | Planned           |
-|     32     | 64 Bit Address Space                                      | CP1.15        | Planned           |
-|     33     | Virtual Memory + 64 Bit Paging                            | CP1.32, CP2.2 | Planned           |
+|     32     | [64 Bit Address Space](./64-bit-address-space)            | CP1.15        | Under Development |
+|     33     | Virtual Memory + 64 Bit Paging (48 bit VA)                | CP1.32, CP2.2 | Planned           |
+|     34     | Virtual Memory + 64 Bit Paging (57 bit VA)                | CP1.32, CP2.2 | Planned           |
+|     35     | Virtual Memory + 64 Bit Paging (64 bit VA)                | CP1.32, CP2.2 | Planned           |
 
 
 | CPUID2 bit | Extension                                                 | Dependencies  | State             |
