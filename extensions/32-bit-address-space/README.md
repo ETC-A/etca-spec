@@ -46,7 +46,7 @@ is `doubleword`.
 (The above language is chosen because other values of the MODE register may also specify
 a `doubleword` address mode)
 
-If the system supports [privilege levels](../privileged-mode/), then `cr17` is only writable at the system level.
+If the system supports [privilege levels](../privileged-mode/), then `cr17` is only writable with the system privilege mode.
 
 # Recommendations
 
