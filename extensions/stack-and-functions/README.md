@@ -60,16 +60,16 @@ The following opcodes are now defined.
 | `CCCC` | NAME    | Operation                                 | Flags  | Comment |
 |--------|---------|-------------------------------------------|--------|---------|
 | `1100` | `POP`   | <code>SP ← SP + 2; A ← mem[SP]</code>     | None   | (1) (2) |
-| `1101` | `PUSH`  | <code>mem[SP] ← B; SP ← SP - 2</code>     | None   | (1)     |
+| `1101` | `PUSH`  | <code>SP ← SP - 2; mem[SP - 2] ← B</code> | None   | (1) (2) |
 
 ### Immediate mode
 
 | `CCCC` | NAME    | Operation                                 | Flags  | Comment |
 |--------|---------|-------------------------------------------|--------|---------|
-| `1101` | `PUSH`  | <code>mem[SP] ← B; SP ← SP - 2</code>     | None   | (1)     |
+| `1101` | `PUSH`  | <code>SP ← SP - 2; mem[SP - 2] ← B</code> | None   | (1) (2) |
 
 1) If the SS bits (as defined in the base specification) are 00, then instead of + or - 2, you'll do + or - 1. Similarly, if they're set to 10 or 11 it will be 4 or 8 respectively. This is only relevant if the 8 bit, 32 bit, or 64 bit operation extensions are enabled. Note that this can cause the stack pointer to become misaligned.
-2) Popping with `SP` as the destination register overwrites the value in `SP` with what was read from memory.
+2) All register reads for these instructions occur before any writes. Both instances of `SP - 2` in the PUSH instructions represent the same value. `push %sp` pushes the value of `%sp` as it existed _before_ the decrement. Additionally, `pop` stores the incremented `%sp` _before_ writing data to the destination, so `pop %sp` will not increment the popped data.
 
 ## Added Jump Instructions
 
