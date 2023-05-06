@@ -18,9 +18,10 @@ Such operations are not atomic by default.
 ### `SIB` Bytes
 
 Some memory operand modes are complex, and involve some combination of a _scale_, an _index_, and/or a _base_.
-These values are taken from a so-called `SIB` byte as shown below. If an `SIB` byte is present,
-but either the base or scaled index is unused, the unused fields are don't-cares. Their value
-must be ignored.
+These values are taken from a so-called `SIB` byte as shown below.
+
+For decoding simplicity, all MO1 instructions have an `SIB` byte immediately following the ABM byte.
+Any fields of the `SIB` byte which are not used are don't-cares. Their values must be ignored.
 
 ```
 +----+-----+-----+
@@ -54,7 +55,7 @@ read or write in which case it is _unspecified_ behavior.
 | `ABM` | Followed By 1 | Followed By 2 | Specified Address Format |
 |-------|---------------|---------------|-----------|
 |<pre>+-----+-----+----+<br>\| AAA \| 000 \| 1D \|<br>+-----+-----+----+</pre> | `SIB` | | `[SIB.B]`
-|<pre>+-----+-----+----+<br>\| AAA \| 001 \| 1D \|<br>+-----+-----+----+</pre> | `dP` | | `[dP]`
+|<pre>+-----+-----+----+<br>\| AAA \| 001 \| 1D \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `[dP]`
 |<pre>+-----+-----+----+<br>\| AAA \| 010 \| 1D \|<br>+-----+-----+----+</pre> | `SIB` | `d8` | `[SIB.B + d8]`
 |<pre>+-----+-----+----+<br>\| AAA \| 011 \| 1D \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `[SIB.B + dP]`
 |<pre>+-----+-----+----+<br>\| AAA \| 100 \| 1D \|<br>+-----+-----+----+</pre> | `SIB` | `d8` | `[2^SIB.S * SIB.X + d8]`
