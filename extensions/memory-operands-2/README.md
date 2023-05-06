@@ -17,20 +17,20 @@ read or write in which case it is _unspecified_ behavior.
 
 | `ABM` | Followed By 1 | Followed By 2 | Followed By 3 |Specified First Operand | Specified Second Operand |
 |-------|---------------|---------------|-----------|--|--|
-|<pre>+-----+-----+----+<br>\| 001 \| 000 \| 01 \|<br>+-----+-----+----+</pre> | `dP` | `i8` | | `[dP]` | `i8`
+|<pre>+-----+-----+----+<br>\| 001 \| 000 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `i8` | `[dP]` | `i8`
 |<pre>+-----+-----+----+<br>\| 010 \| 000 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `i8` | | `[SIB.B]` | `i8`
 |<pre>+-----+-----+----+<br>\| 011 \| 000 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `i8` | `[SIB.B + dP]` | `i8`
 |<pre>+-----+-----+----+<br>\| 101 \| 000 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `i8` | `[2^SIB.S * SIB.X + dP]` | `i8`
 |<pre>+-----+-----+----+<br>\| 110 \| 000 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `i8` | | `[2^SIB.S * SIB.X + SIB.B]` | `i8`
 |<pre>+-----+-----+----+<br>\| 111 \| 000 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `i8` | `[2^SIB.S * SIB.X + SIB.B + dP]` | `i8`
-|<pre>+-----+-----+----+<br>\| 001 \| 001 \| 01 \|<br>+-----+-----+----+</pre> | `dP` | `iS` | | `[dP]` | `iS`
+|<pre>+-----+-----+----+<br>\| 001 \| 001 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `iS` | `[dP]` | `iS`
 |<pre>+-----+-----+----+<br>\| 010 \| 001 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `iS` | | `[SIB.B]` | `iS`
 |<pre>+-----+-----+----+<br>\| 011 \| 001 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `iS` | `[SIB.B + dP]` | `iS`
 |<pre>+-----+-----+----+<br>\| 101 \| 001 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `iS` | `[2^SIB.S * SIB.X + dP]` | `iS`
 |<pre>+-----+-----+----+<br>\| 110 \| 001 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `iS` | | `[2^SIB.S * SIB.X + SIB.B]` | `iS`
 |<pre>+-----+-----+----+<br>\| 111 \| 001 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `iS` | `[2^SIB.S * SIB.X + SIB.B + dP]` | `iS`
-|<pre>+-----+-----+----+<br>\| AAA \| 100 \| 01 \|<br>+-----+-----+----+</pre> | `d8`  |      |      | `A` | `[ip + d8]`
-|<pre>+-----+-----+----+<br>\| AAA \| 101 \| 01 \|<br>+-----+-----+----+</pre> | `dP`  |      |      | `A` | `[ip + dP]`
+|<pre>+-----+-----+----+<br>\| AAA \| 100 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `d8` |      | `A` | `[ip + d8]`
+|<pre>+-----+-----+----+<br>\| AAA \| 101 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` |      | `A` | `[ip + dP]`
 |<pre>+-----+-----+----+<br>\| AAA \| 110 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | | | `A` | `[2^SIB.S * SIB.X + SIB.B]`
 |<pre>+-----+-----+----+<br>\| AAA \| 111 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | | | `[2^SIB.S * SIB.X + SIB.B]` | `A`
 
@@ -50,7 +50,7 @@ Then the `iS` or `dP` will be an 8-byte value rather than a 4-byte value.
 The behavior when `REX.Q` is set while in `quad` addressing mode when _any_ of the following conditions is true is reserved and _must_ cause an illegal instruction exception unless explicitly relaxed by another extension or feature.
   - The instruction has an `iS` and a `dP`
   - The instruction has an `iS` and a `d8`
-  - The instruction has a `dP` and an `i8`
+  - The instruction has an `i8` and a `dP`
 
 # Added Instruction
 
