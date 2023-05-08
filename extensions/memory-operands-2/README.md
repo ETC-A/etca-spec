@@ -61,7 +61,7 @@ The behavior when `REX.Q` is set while in `quad` addressing mode when _any_ of t
 `LEA` means "load effective address." If the first operand is not a register, or the second is not a memory location, the instruction must be treated as an
 _illegal_ instruction. Note that as per the
 [Full Immediates extension](../full-immediates/README.md) in the specific case of `MM=01, ABM.regB=01x`
-(the "full immediate" operand modes) this opcode corresponds to `READCR`, not `LEA`.
+(the "full immediate" operand modes) this opcode corresponds to `READCR`, not `LEA`. Similarly, the specific case of `MM=01, ABM.regB=00x` also refers to `READCR` and `WRITECR` instead of `LEA` and `POP`.
 
 Note that LEA shares an opcode with `READCR` (aka `mfcr`). `LEA` has no immediate mode, and `READCR` has
 no register-to-register mode.
