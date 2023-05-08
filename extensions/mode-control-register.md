@@ -26,6 +26,7 @@ the system is _unspecified_.
 # Address Extension Table
 
 | Mode CR Value | Address Size | Extension                                                   |
+|---------------|--------------|-------------------------------------------------------------|
 | 0             | 16 bit       | [Base ISA](../base-isa.md)                                  |
 | 2             | 32 bit       | [Real 32-bit Address Space](32-bit-address-space/README.md) |
 | 4             | 64 bit       | [Real 64-bit Address Space](64-bit-address-space/README.md) |
