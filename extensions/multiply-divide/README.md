@@ -38,7 +38,7 @@ An `S` indicates that the operands are treated as signed.
     The result is zero extended for `UMUL` and sign extended for `SMUL`.
     This extension provides no way to get both halves at the same time,
     but we expect that a future extension will do so.
-    If you require both halves of the result, the recommended sequences is
+    If you require both halves of the result, the recommended sequence is
     `mov hidst, src1` / `mul src1, src2` / `hmul hidst, src2`.
     Very high-performance hardware may recognize such sequences and
     "fuse" them into a single multiplication.
