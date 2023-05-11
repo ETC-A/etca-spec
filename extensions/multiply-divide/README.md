@@ -25,8 +25,8 @@ An `S` indicates that the operands are treated as signed.
 | `0 0001 0011` | `SREM`   | `A ← A % B`                                | None   | (1) (2) |
 | `0 0001 0100` | `UMUL`   | `A ← A × B`                                | `CV`   | (3) (5) |
 | `0 0001 0101` | `SMUL`   | `A ← A × B`                                | `CV`   | (3) (6) |                                          
-| `0 0001 0110` | `UMULH`  | `A ← high(A × B)`                          | None   | (4)     |
-| `0 0001 0111` | `SMULH`  | `A ← high(A × B)`                          | None   | (4)     |                                          
+| `0 0001 0110` | `UHMUL`  | `A ← high(A × B)`                          | None   | (4)     |
+| `0 0001 0111` | `SHMUL`  | `A ← high(A × B)`                          | None   | (4)     |                                          
 
 1) Non-integral results of divisions are truncated towards zero. Therefore 10 / 3 is 3,
     and -10 / 3 is -3. The result (quotient or remainder) is zero extended for the unsigned
