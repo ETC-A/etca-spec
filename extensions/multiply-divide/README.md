@@ -23,8 +23,8 @@ An `S` indicates that the operands are treated as signed.
 | `0 0001 0001` | `SDIV`   | `A ← A / B`                                | None   | (1)     |
 | `0 0001 0010` | `UREM`   | `A ← A % B`                                | None   | (1) (2) |
 | `0 0001 0011` | `SREM`   | `A ← A % B`                                | None   | (1) (2) |
-| `0 0001 0100` | `UMUL`   | `A ← A × B`                                | `CV`   | (3) (5) |
-| `0 0001 0101` | `SMUL`   | `A ← A × B`                                | `CV`   | (3) (6) |                                          
+| `0 0001 0100` | `UMUL`   | `A ← low(A × B)`                           | `CV`   | (3) (5) |
+| `0 0001 0101` | `SMUL`   | `A ← low(A × B)`                           | `CV`   | (3) (6) |                                          
 | `0 0001 0110` | `UHMUL`  | `A ← high(A × B)`                          | None   | (4)     |
 | `0 0001 0111` | `SHMUL`  | `A ← high(A × B)`                          | None   | (4)     |                                          
 
@@ -33,16 +33,17 @@ An `S` indicates that the operands are treated as signed.
     operations, and sign extended for the signed operations.
 2) The remainder of a division is always smaller in magnitude than
     the divisor, and has the sign of the dividend.
-3) The multiplication operands are treated as having the operation size (as from the `SS` bits).
-    The complete result will have the next size up. If the destination is a register, and it is
-    possible to store the complete result, then the complete result is stored.
-    If the destination is memory, or if the result cannot be stored in the destination register
-    (for example, the operand size
-    is `word` and the system does not support [doubleword operations](../double-word-operations)),
-    then the truncation to the operation size is stored. The result of `UMUL` is always zero-extended,
-    and the result of `SMUL` is always sign-extended.
-4) The multiplication operands are treated as having the operation size (as from the `SS` bits).
-    The result will have the next size up; these instructions store only the **upper** half.
+3) The result of a multiplication at size `SS` is at most twice as large.
+    These instructions store only the **lower** half.
+    The result is zero extended for `UMUL` and sign extended for `SMUL`.
+    This extension provides no way to get both halves at the same time,
+    but we expect that a future extension will do so.
+    If you require both halves of the result, the recommended sequences is
+    `mov hidst, src1` / `mul src1, src2` / `hmul hidst, src2`.
+    Very high-performance hardware may recognize such sequences and
+    "fuse" them into a single multiplication.
+4) The result of a multiplication at size `SS` is at most twice as large.
+    These instructions store only the **upper** half.
     The result (that is, the upper half of the product) is zero extended for `UMULH` and sign
     extended for `SMULH`.
 5) The `C` and `V` flags are both set to 0 if the upper half of the multiplication is 0,
