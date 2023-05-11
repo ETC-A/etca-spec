@@ -41,7 +41,6 @@ This extension adds an expanded instruction format to allow for a larger number 
 | `0 0000 1001` | `SHR`           | `A ← A >> B`                       | `C`   | (3)         |
 | `0 0000 101x` |                 |                                    |        | reserved    |
 | `0 0000 11xx` |                 |                                    |        | reserved    |
-| `0 0000 1xxx` |                 |                                    |        | reserved    |
 | `0 0001 xxxx` |                 |                                    |        | reserved    |
 | `0 001x xxxx` |                 |                                    |        | reserved    |
 | `0 01xx xxxx` |                 |                                    |        | reserved    |
@@ -53,7 +52,8 @@ This extension adds an expanded instruction format to allow for a larger number 
 2) C in the operation column refers to the carry flag.
 3) Only the `M` least significant bits of `B` (or `-B` where applicable) are used for a shift amount.
     `M` is equal to 3, 4, 5, or 6 for SS values of 00, 01, 10, or 11 respectively.
-    After these operations, the carry flag contains the last bit shifted out of `A`.
+    After these operations, the carry flag contains the last bit shifted out of `A`. For example,
+    if `rh0` is `0x80`, then after `rolh rh0,1`, the carry flag will be set and `rh0` will be 1.
     The other flags are undefined.
 4) This is an arithmetic right shift, which shifts in the most significant bit of A instead of always
     shifting in 0.

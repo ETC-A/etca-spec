@@ -34,7 +34,10 @@ An `S` indicates that the operands are treated as signed.
 2) The remainder of a division is always smaller in magnitude than
     the divisor, and has the sign of the dividend.
 3) The multiplication operands are treated as having the operation size (as from the `SS` bits).
-    The result will have the next size up. If it cannot be stored (for example, the operand size
+    The complete result will have the next size up. If the destination is a register, and it is
+    possible to store the complete result, then the complete result is stored.
+    If the destination is memory, or if the result cannot be stored in the destination register
+    (for example, the operand size
     is `word` and the system does not support [doubleword operations](../double-word-operations)),
     then the truncation to the operation size is stored. The result of `UMUL` is always zero-extended,
     and the result of `SMUL` is always sign-extended.
@@ -48,3 +51,10 @@ An `S` indicates that the operands are treated as signed.
 6) The `C` and `V` flags are set to 1 if the actual signed value of the product is not equal
     to the signed truncated result. Otherwise they are set to 0.
     The values of the `Z` and `N` flags are undefined afterwards.
+
+# Division By Zero
+
+If the [interrupts](../interrupts/README.md) extension is available, then an attempted
+`udiv`, `sdiv`, `urem`, or `srem` with a divisor of 0 causes a synchronous Divide Error.
+
+If the interrupts extension is not available, then the behavior is explicitly _unspecified_.
