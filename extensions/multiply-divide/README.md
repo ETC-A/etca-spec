@@ -31,6 +31,7 @@ An `S` indicates that the operands are treated as signed.
 1) Non-integral results of divisions are truncated towards zero. Therefore 10 / 3 is 3,
     and -10 / 3 is -3. The result (quotient or remainder) is zero extended for the unsigned
     operations, and sign extended for the signed operations.
+    Also, see section [Division by zero](division-by-zero).
 2) The remainder of a division is always smaller in magnitude than
     the divisor, and has the sign of the dividend.
 3) The result of a multiplication at size `SS` is at most twice as large.
