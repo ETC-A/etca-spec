@@ -46,7 +46,7 @@ If the system supports [privilege levels](../privileged-mode/), then `cr17` is o
 
 # Recommendations
 
-This extension does not _require_ behaviors beyond what is specified. However, for compatibility with future
+These extensions do not _require_ behaviors beyond what is specified. However, for compatibility with future
 extensions which will require more specifics, the following are recommended:
 
 * The program counter (or equivalent) in the processor itself should always store the sign-extended address.
