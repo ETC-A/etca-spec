@@ -19,7 +19,7 @@ Base mode is indicated by a value of 0 in `cr17`.
 ## Real n-bit Address Mode
 
 In this mode, all addresses are treated as being `n` bits long. Addresses always refer to their sign extension to the highest supported address size.
-Entering this mode from a lower n-bit address mode _must_ preserve the program counter. Returning to a lower n-bit address mode must preserve the program
+Entering this mode from a smaller n-bit address mode _must_ preserve the program counter. Returning to a smaller n-bit address mode must preserve the program
 counter _if possible_ - if the current program counter interpreted as the lower n-bit Address would not refer to the same location, then the behavior of
 the system is _unspecified_.
 
