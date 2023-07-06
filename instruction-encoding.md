@@ -95,7 +95,7 @@ sets Z,N,C,V
 
 Syntax: `sub rA, rB`
 
-Description: Performs 32-bit two's complement subtraction of two registers.
+Description: Performs 16-bit two's complement subtraction of two registers.
 
 Precise operation:
 ```
