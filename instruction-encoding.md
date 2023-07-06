@@ -63,7 +63,7 @@ be set to 1, be set to 0, or even be set randomly or unpredictably.
 
 Syntax: `add rA, rB`
 
-Description: Performs 32-bit two's complement addition of two registers.
+Description: Performs 16-bit two's complement addition of two registers.
 
 Precise operation:
 ```
