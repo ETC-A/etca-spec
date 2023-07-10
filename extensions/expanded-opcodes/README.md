@@ -32,13 +32,13 @@ This extension adds an expanded instruction format to allow for a larger number 
 | `0 0000 0000` | `ADC`           | `A ← A + B + C`                    | `ZNCV` | (2)         |
 | `0 0000 0001` | `SBB`           | `A ← A - B - C`                    | `ZNCV` | (2)         |
 | `0 0000 0010` | `RSBB`          | `A ← B - A - C`                    | `ZNCV` | (1) (2)     |
-| `0 0000 0011` | `ASR`           | `A ← A >>> B`                      | `C`    | (3) (4)     |
-| `0 0000 0100` | `ROL`           | <code>A ← (A << B) &#124; (A >> -B)</code> | `C` | (3)   |
-| `0 0000 0101` | `ROR`           | <code>A ← (A >> B) &#124; (A << -B)</code> | `C` | (3)   |
-| `0 0000 0110` | `RCL`           | <code>C:A ← (C:A << B) &#124; (C:A >> -B)</code> | `C` | (2) (3) (5) |
-| `0 0000 0111` | `RCR`           | <code>A:C ← (A:C >> B) &#124; (A:C << -B)</code> | `C` | (2) (3) (5) |
-| `0 0000 1000` | `SHL`           | `A ← A << B`                       | `C`   | (3)         |
-| `0 0000 1001` | `SHR`           | `A ← A >> B`                       | `C`   | (3)         |
+| `0 0000 0011` | `ASR`           | `A ← A >>> B`                      | `CZN`    | (3) (4)     |
+| `0 0000 0100` | `ROL`           | <code>A ← (A << B) &#124; (A >> -B)</code> | `CZN` | (3)   |
+| `0 0000 0101` | `ROR`           | <code>A ← (A >> B) &#124; (A << -B)</code> | `CZN` | (3)   |
+| `0 0000 0110` | `RCL`           | <code>C:A ← (C:A << B) &#124; (C:A >> -B)</code> | `CZN` | (2) (3) (5) |
+| `0 0000 0111` | `RCR`           | <code>A:C ← (A:C >> B) &#124; (A:C << -B)</code> | `CZN` | (2) (3) (5) |
+| `0 0000 1000` | `SHL`           | `A ← A << B`                       | `CZN`   | (3)         |
+| `0 0000 1001` | `SHR`           | `A ← A >> B`                       | `CZN`   | (3)         |
 | `0 0000 101x` |                 |                                    |        | reserved    |
 | `0 0000 11xx` |                 |                                    |        | reserved    |
 | `0 0001 xxxx` |                 |                                    |        | reserved    |
