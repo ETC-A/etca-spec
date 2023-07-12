@@ -27,8 +27,8 @@
 |     0      | [Expanded Opcodes](./expanded-opcodes)                    | VWI           | Under Development |
 |     1      | [Memory Operands 1](./memory-operands-1) (MO1)            | VWI           | Under Development |
 |     2      | [Privileged Mode](./privileged-mode)                      | CP1.2         | Under Development |
-|     3      | [Bit Manipulation 1](./bit-manipulation-1)                | CP2.0         | Under Development |
-|     4      | Bit Manipulation 2                                        | CP2.0         | Planned           |
+|     3      | [Multiply Divide](./multiply-divide)                      | CP2.0         | Under Development |
+|     4      | Bit Manipulation 1                                        | CP2.0         | Planned           |
 
 
 The column Dependencies gives the CPUIDs of the required other extensions (base and recursive requirements are implied). For example, the Interrupts extension, with bit ID 2, depends on "Stack and Functions", with bit ID 1.  Note that only required dependencies are listed. Optional dependencies/interactions with other extensions are not listed here. For example, many extensions will have some interactions with VWI or the byte operations extensions, but those are not visible in the above table.

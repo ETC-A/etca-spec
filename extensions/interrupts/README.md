@@ -49,12 +49,13 @@ The following table specifies which flag is associated with which bit in the `FL
 | Illegal Instruction      | Synchronous  | 2                | Occurs when execution of a reserved, or illegal instruction is attempted.                                          |
 | Memory Alignment Error   | Synchronous  | 3                | Occurs when an attempt to read or write to memory at an unaligned address occurs and is not supported.             |
 | General Protection Fault | Synchronous  | 4                | Occurs when the CPU needs the operating system to handle an unexpected event for stability or consistency reasons. |
-| External Interrupt       | Asynchronous | 5                | Occurs when an external interrupt occurs (eg. keyboard, mouse, etc.).                                              |
+| Divide Error             | Synchronous  | 5                | Occurs when a division by zero is attempted.                                                                       |
+| External Interrupt       | Asynchronous | 8                | Occurs when an external interrupt occurs (eg. keyboard, mouse, etc.).                                              |
 
 Synchronous interrupts are interrupts which are triggered directly by the currently running code and must be handled immediately before normal execution can resume.  
 Asynchronous interrupts are interrupts which are triggered by another piece of hardware or indirectly from code and do not need to be handled immediately.
 
-Unused mask/pending bits are reserved for future extensions
+Unused mask/pending bits are reserved for future extensions. External interrupt is at bit 8 to leave a bit of space for other internal exceptions.
 
 # Added Instructions
 
