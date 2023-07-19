@@ -14,12 +14,12 @@
 |     14     | [32 Bit Operations + Registers](./double-word-operations) |  DW  |     None      | Mostly Stable     |
 |     15     | [64 Bit Operations + Registers](./quad-word-operations)   |  QW  |     None      | Mostly Stable     |
 |     16     | [32 Bit Address Space](./32-bit-address-space)            | DWAS |    CP1.14     | Under Development |
-|     17     | Virtual Memory + 16 Bit Paging                            | VM16 | CP1.16, CP2.2 | Planned           |
-|     18     | Virtual Memory + 32 Bit Paging                            | VM32 | CP1.16, CP2.2 | Planned           |
+|     17     | Virtual Memory + 16 Bit Paging                            | PG16 | CP1.16, CP2.2 | Planned           |
+|     18     | Virtual Memory + 32 Bit Paging                            | PG32 | CP1.16, CP2.2 | Planned           |
 |     32     | [64 Bit Address Space](./64-bit-address-space)            | QWAS |    CP1.15     | Under Development |
-|     33     | Virtual Memory + 64 Bit Paging (48 bit VA)                | VM48 | CP1.32, CP2.2 | Planned           |
-|     34     | Virtual Memory + 64 Bit Paging (57 bit VA)                | VM57 | CP1.32, CP2.2 | Planned           |
-|     35     | Virtual Memory + 64 Bit Paging (64 bit VA)                | VM64 | CP1.32, CP2.2 | Planned           |
+|     33     | Virtual Memory + 64 Bit Paging (48 bit VA)                | PG48 | CP1.32, CP2.2 | Planned           |
+|     34     | Virtual Memory + 64 Bit Paging (57 bit VA)                | PG57 | CP1.32, CP2.2 | Planned           |
+|     35     | Virtual Memory + 64 Bit Paging (64 bit VA)                | PG64 | CP1.32, CP2.2 | Planned           |
 
 
 | CPUID2 bit | Extension                                    | Abbr | Dependencies  | State             |
@@ -31,4 +31,6 @@
 |     4      | Bit Manipulation 1                           | BM1  |     CP2.0     | Planned           |
 
 
-The column Dependencies gives the CPUIDs of the required other extensions (base and recursive requirements are implied). For example, the Interrupts extension, with bit ID 2, depends on "Stack and Functions", with bit ID 1.  Note that only required dependencies are listed. Optional dependencies/interactions with other extensions are not listed here. For example, many extensions will have some interactions with VWI or the byte operations extensions, but those are not visible in the above table.
+The column `Dependencies` gives the CPUIDs of the required other extensions (base and recursive requirements are implied). For example, the Interrupts extension, with bit ID 2, depends on "Stack and Functions", with bit ID 1.  Note that only required dependencies are listed. Optional dependencies/interactions with other extensions are not listed here. For example, many extensions will have some interactions with VWI or the byte operations extensions, but those are not visible in the above table.
+
+The column `Abbr` list Abbreviations for all extensions. These are used internally in gnu toolchains, but are also quite common in chat discussions and will potentially be used as a UI for defining machine descriptions to pass to a C compiler.
