@@ -32,13 +32,13 @@ This extension adds an expanded instruction format to allow for a larger number 
 | `0 0000 0000` | `ADC`           | `A ← A + B + C`                    | `ZNCV` | (2)         |
 | `0 0000 0001` | `SBB`           | `A ← A - B - C`                    | `ZNCV` | (2)         |
 | `0 0000 0010` | `RSBB`          | `A ← B - A - C`                    | `ZNCV` | (1) (2)     |
-| `0 0000 0011` | `ASR`           | `A ← A >>> B`                      | `CZN`    | (3) (4)     |
-| `0 0000 0100` | `ROL`           | <code>A ← (A << B) &#124; (A >> -B)</code> | `CZN` | (3)   |
-| `0 0000 0101` | `ROR`           | <code>A ← (A >> B) &#124; (A << -B)</code> | `CZN` | (3)   |
-| `0 0000 0110` | `RCL`           | <code>C:A ← (C:A << B) &#124; (C:A >> -B)</code> | `CZN` | (2) (3) (5) |
-| `0 0000 0111` | `RCR`           | <code>A:C ← (A:C >> B) &#124; (A:C << -B)</code> | `CZN` | (2) (3) (5) |
-| `0 0000 1000` | `SHL`           | `A ← A << B`                       | `CZN`   | (3)         |
-| `0 0000 1001` | `SHR`           | `A ← A >> B`                       | `CZN`   | (3)         |
+| `0 0000 0011` | `ASR`           | `A ← A >>> B`                      | `ZNC`    | (3) (4)     |
+| `0 0000 0100` | `ROL`           | <code>A ← (A << B) &#124; (A >> -B)</code> | `ZNC` | (3)   |
+| `0 0000 0101` | `ROR`           | <code>A ← (A >> B) &#124; (A << -B)</code> | `ZNC` | (3)   |
+| `0 0000 0110` | `RCL`           | <code>C:A ← (C:A << B) &#124; (C:A >> -B)</code> | `ZNC` | (2) (3) (5) |
+| `0 0000 0111` | `RCR`           | <code>A:C ← (A:C >> B) &#124; (A:C << -B)</code> | `ZNC` | (2) (3) (5) |
+| `0 0000 1000` | `SHL`           | `A ← A << B`                       | `ZNC`   | (3)         |
+| `0 0000 1001` | `SHR`           | `A ← A >> B`                       | `ZNC`   | (3)         |
 | `0 0000 101x` |                 |                                    |        | reserved    |
 | `0 0000 11xx` |                 |                                    |        | reserved    |
 | `0 0001 xxxx` |                 |                                    |        | reserved    |
@@ -54,13 +54,26 @@ This extension adds an expanded instruction format to allow for a larger number 
     `M` is equal to 3, 4, 5, or 6 for SS values of 00, 01, 10, or 11 respectively.
     After these operations, the carry flag contains the last bit shifted out of `A`. For example,
     if `rh0` is `0x80`, then after `rolh rh0,1`, the carry flag will be set and `rh0` will be 1.
-    The other flags are undefined.
+    If the shift amount is 0, the carry flag is undefined.
+    In all cases, the Z and N flags are set according to the result written.
+    For example, if `rh0` is `0x80`, then after `rclh rh0,1`, the carry flag will be set,
+    `rh0` will be 0, the negative flag will be cleared, and the zero flag will be set.
 4) This is an arithmetic right shift, which shifts in the most significant bit of A instead of always
     shifting in 0.
 5) The notation C:A represents combining the carry flag with the value in register `A`. If the operation
     size is `half`, the value is `C AAAA AAAA`, a 9-bit value. The `RCL` instruction rotates this 9-bit
     value left. The `RCR` instruction rotates the value `AAAA AAAA C` to the right. The operation
     is analogous for other operation sizes.
+
+Consider the `rclh` operation. Since only the 3 least significant bits
+of `B` are used to determine shift amounts,
+`rclh _,8` is identical to `rclh _,0`, even though the results would be
+different if a count of 8 were allowed! To achieve the result that a count
+of 8 _would_ obtain, instead perform `rcrh _,1`.
+
+### Implementor's Notice:
+
+There is a tentative plan to move the `rcl` and `rcr` instructions to the BM1 extension, when it receives its initial specification. This is due to their increased implementation complexity. For now, a compliant implementation of this extension _must_ provide them.
 
 ## Jump and Call
 
