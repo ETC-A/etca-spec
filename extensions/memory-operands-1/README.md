@@ -21,7 +21,11 @@ Some memory operand modes are complex, and involve some combination of a _scale_
 These values are taken from a so-called `SIB` byte as shown below.
 
 For decoding simplicity, all MO1 instructions have an `SIB` byte immediately following the ABM byte.
-Any fields of the `SIB` byte which are not used are don't-cares. Their values must be ignored.
+
+Implementations _may_ treat unused SIB fields with values other than zero as illegal.
+However, we don't expect future extensions to describe a use for such fields,
+so implementations are permitted to simply ignore them.
+
 
 ```
 +----+-----+-----+
@@ -97,6 +101,13 @@ to the same address, with the same operand size.
 When computing an address, register contents must be treated as if they were the width of an
 address in the current address mode. When performing the operation, the operation must be performed
 as though the operand values were the size specified by the instruction's Operand Size attribute.
+
+Note that the `[d]` operand modes include an unused SIB byte. 
+This appears to help simplify decoding the size of an instruction,
+and we expect that the space waste is not significant.
+However, this point is why the extension is not listed as Mostly Stable,
+and may change in the future when we are better able to evaluate the waste.
+
 
 # Added Instruction
 
