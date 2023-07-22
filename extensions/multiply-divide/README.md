@@ -28,15 +28,13 @@ An `S` indicates that the operands are treated as signed.
 | `0 0001 0110` | `UHMUL`  | `A ← high(A × B)`                          | `ZN`   | (4)     |
 | `0 0001 0111` | `SHMUL`  | `A ← high(A × B)`                          | `ZN`   | (4)     |                                          
 
-1) Non-integral results of divisions are truncated towards zero. Therefore 10 / 3 is 3,
-    and -10 / 3 is -3. The result (quotient or remainder) is zero extended for the unsigned
-    operations, and sign extended for the signed operations.
+1) Non-integral results of divisions are truncated towards zero.
+    Therefore 10 / 3 is 3, and -10 / 3 is -3.
     Also, see section [Division by zero](#division-by-zero).
 2) The remainder of a division is always smaller in magnitude than
     the divisor, and has the sign of the dividend.
 3) The result of a multiplication at size `SS` is at most twice as large.
     These instructions store only the **lower** half.
-    The result is zero extended for `UMUL` and sign extended for `SMUL`.
     This extension provides no way to get both halves at the same time,
     but we expect that a future extension will do so.
     If you require both halves of the result, the recommended sequence is
@@ -45,14 +43,17 @@ An `S` indicates that the operands are treated as signed.
     "fuse" them into a single multiplication.
 4) The result of a multiplication at size `SS` is at most twice as large.
     These instructions store only the **upper** half.
-    The result (that is, the upper half of the product) is zero extended for `UMULH` and sign
-    extended for `SMULH`.
-5) The `C` and `V` flags are both set to 0 if the upper half of the multiplication is 0,
-    even if that half would be discarded by the instruction. Otherwise they are set to 1.
-    The values of the `Z` and `N` flags are undefined afterwards.
-6) The `C` and `V` flags are set to 1 if the actual signed value of the product is not equal
-    to the signed truncated result. Otherwise they are set to 0.
-    The values of the `Z` and `N` flags are undefined afterwards.
+5) The `C` flag is set to 0 if the upper half of the multiplication is 0,
+    even if that half would be discarded by the instruction. Otherwise it is set to 1.
+    The values of the `Z` and `N` flags are set according to the value of the result written.
+6) The `C` flag is set to 1 if the actual signed value of the product is not equal
+    to the signed truncated result. Otherwise it is set to 0.
+    The values of the `Z` and `N` flags are set according to the value of the result written.
+
+Note that for operand sizes smaller than the width of registers
+(for example, word operands on a doubleword system),
+the results are always sign-extended, even for the
+unsigned operations. See [Doubleword Operations](../double-word-operations/) for example.
 
 # Division By Zero
 
