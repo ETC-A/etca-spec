@@ -10,6 +10,12 @@ This extension adds additional memory operand modes, which are independent from 
 Familiarity with MO1 is encouraged for reading this document. However, MO1 and MO2 are independent. MO2 does not require MO1.
 Familiarity with the full-immediates extension is encouraged likewise.
 
+# SIB Bytes
+
+Refer to [this section in MO1](../memory-operands-1/README.md#sib-bytes).
+The treatment of SIB bytes is the same.
+However, note that a system supporting MO2 is not required to support MO1.
+
 # Added Instruction Formats
 
 These instruction formats apply to any instruction which encodes operands using an `ABM` byte _unless_ that instruction already performs a memory
@@ -29,12 +35,18 @@ read or write in which case it is _unspecified_ behavior.
 |<pre>+-----+-----+----+<br>\| 101 \| 001 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `iS` | `[2^SIB.S * SIB.X + dP]` | `iS`
 |<pre>+-----+-----+----+<br>\| 110 \| 001 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `iS` | | `[2^SIB.S * SIB.X + SIB.B]` | `iS`
 |<pre>+-----+-----+----+<br>\| 111 \| 001 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` | `iS` | `[2^SIB.S * SIB.X + SIB.B + dP]` | `iS`
-|<pre>+-----+-----+----+<br>\| AAA \| 100 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `d8` |      | `A` | `[ip + d8]`
-|<pre>+-----+-----+----+<br>\| AAA \| 101 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | `dP` |      | `A` | `[ip + dP]`
+|<pre>+-----+-----+----+<br>\| AAA \| 100 \| 01 \|<br>+-----+-----+----+</pre> | `d8` |  |    | `A` | `[ip + d8]`
+|<pre>+-----+-----+----+<br>\| AAA \| 101 \| 01 \|<br>+-----+-----+----+</pre> | `dP` |  |   | `A` | `[ip + dP]`
 |<pre>+-----+-----+----+<br>\| AAA \| 110 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | | | `A` | `[2^SIB.S * SIB.X + SIB.B]`
 |<pre>+-----+-----+----+<br>\| AAA \| 111 \| 01 \|<br>+-----+-----+----+</pre> | `SIB` | | | `[2^SIB.S * SIB.X + SIB.B]` | `A`
 
 The value `ip` is the address in memory of the current instruction.
+
+Note that the `[ip + d]` modes do not include an SIB byte. However, the plain `[d]` modes do.
+This appears to help simplify decoding the size of an instruction,
+and we expect that the space waste is not significant.
+However, this point is why the extension is not listed as Mostly Stable,
+and may change in the future when we are better able to evaluate the waste.
 
 ## `REX.Q`
 
