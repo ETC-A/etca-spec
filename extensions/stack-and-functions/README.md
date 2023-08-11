@@ -47,7 +47,7 @@ The following opcodes are now defined.
 | Symbol | Meaning                                    |
 |--------|--------------------------------------------|
 | C      | condition code bit                         |
-| R      | register id                                |
+| R,A,B  | register id                                |
 | I      | immediate                                  |
 | D      | signed displacement                        |
 | S      | size                                       |
@@ -75,31 +75,37 @@ The following opcodes are now defined.
 
 | First Byte    | Second Byte  | Operation                   | Comment|
 |---------------|--------------|-----------------------------|--------|
-| `10 1 0 1111` | `RRR 0 CCCC` | <pre>IF CCCC:<br>  IP ← reg[RRR]<br>FI</pre> | (2) |
+| `10 1 0 1111` | `AAA 0 CCCC` | <pre>IF CCCC:<br>  IP ← reg[A]<br>FI</pre> | (3) |
 
-2) The conditional absolute register jump instruction will conditionally jump to the address stored inside `RRR`. Function returns can be performed by jumping to the address in the link register.
+3) The conditional absolute register jump instruction will conditionally jump to the address stored inside `AAA`. Note [interaction with address modes](../mode-control-register.md#recommendations). For clarity, if [REX](../expanded-registers/README.md) is available, `REX.A` can be used to access r8-r15.
+
+Function returns can be performed by jumping to the address in the link register.
 
 ## Added Call Instructions
 
 | First Byte    | Second Byte  | Operation | Comment |      
 |--|--|--|--|
-| `10 1 0 1111` | `RRR 1 CCCC` | <pre>IF CCCC:<br>  temp ← IP<br>  IP ← reg[RRR]<br>  reg[7] ← temp + 2<br>FI</pre> | (3) |
-| `10 1 1 DDDD` | `DDDDDDDD`   | <pre>reg[7] ← IP + 2<br>IP ← IP + sign_extend(DDDDDDDDDDDD)</pre>                  | (4) |
+| `10 1 0 1111` | `AAA 1 CCCC` | <pre>IF CCCC:<br>  temp ← IP<br>  IP ← reg[A]<br>  reg[7] ← temp + 2<br>FI</pre> | (4) |
+| `10 1 1 DDDD` | `DDDDDDDD`   | <pre>reg[7] ← IP + 2<br>IP ← IP + sign_extend(DDDDDDDDDDDD)</pre>                | (5) |
 
 
-3) The conditional absolute register function call will conditionally store the next instruction's address in the link register and jump to the address stored inside `RRR`.
-4) The relative unconditional functional call will store the next instruction's address in the link register and jump to the address `{IP + DDDD DDDD DDDD}`. That is, the 12 bit displacement will be sign extended and added to the current instruction's address.
+4) The conditional absolute register function call will conditionally store the next instruction's address in the link register and jump to the address stored inside `AAA`. Note [interaction with address modes](../mode-control-register.md#recommendations). For clarity, if [REX](../expanded-registers/README.md) is available, `REX.A` can be used to access r8-r15.
+5) The relative unconditional functional call will store the next instruction's address in the link register and jump to the address `{IP + DDDD DDDD DDDD}`. That is, the 12 bit displacement will be sign extended and added to the current instruction's address.
+
+Note that the specification is to store the next instruction's address in the link register. The operation is shown as `IP + 2`, but this may not be correct in the presence of VLI extensions.
+
+# Suggested ABI
 
 ## Stack Semantics
 
 - The stack grows down towards address 0.
 - Before executing the call instruction, it is the callers job to ensure that SP is properly aligned to register width on systems that do not support unaligned memory access.
 
-# Example Function Call Snippets
+## Example Function Call Snippets
 
 Here is an example of how a function call, header, and tail could look when only saving the `ln`, `bp`, and `sp` registers.
 
-## Call Site
+### Call Site
 
 ```
 push ln
@@ -107,14 +113,14 @@ call fun_addr
 pop ln
 ```
 
-## Function Prologue
+### Function Prologue
 
 ```
 push bp
 bp = sp
 ```
 
-## Function Epilogue
+### Function Epilogue
 
 ```
 sp = bp
