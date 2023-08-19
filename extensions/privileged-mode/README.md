@@ -37,10 +37,10 @@ At startup, the `PRIV` CR must be set to 1.
 
 | Name   | First Byte  | Second Byte | Description                                                                                                                         |
 |--------|-------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| `halt` | `0010 1111` | `0001 0001` | The CPU stops executing instructions after this one is executed until an unmasked interrupt occurs. Only executable in system mode. |
+| `WAIT` | `0010 1111` | `0001 0001` | The CPU stops executing instructions after this one is executed until an unmasked interrupt occurs. Only executable in system mode. |
 
-**Note:** The `halt` instruction is similar to the relative jump by 0 instruction, but the instruction pointer still advances to the next instruction
-with `halt` unlike the relative jump by 0 instruction.
+**Note:** The `WAIT` instruction is similar to the relative jump by 0 instruction, but the instruction pointer still advances to the next instruction
+with `halt` unlike the relative jump by 0 instruction. This means that after the wait is over, execution will proceed normally.
 
 # Interrupt Flow
 
