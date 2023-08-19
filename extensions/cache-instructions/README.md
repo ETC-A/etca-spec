@@ -28,6 +28,8 @@ Note that the last 5 instructions overlap with the never jump instruction. This 
 If this extension is present on a system without a data cache, `ALLOC_ZERO` must write 0 to memory as if it had a cache line size as specified by the `CACHE_LINE_SIZE` control register.
 If `CACHE_LINE_SIZE` is zero, then it _must_ be a NOP instruction.
 
+`ALLOC_ZERO` and `DCACHE_INVALIDATE` ignore the `SS` bits and the value in the `A` register is treated as address-sized
+
 # Added Control Registers
 
 | CRN      | Name               |
