@@ -11,17 +11,17 @@ This extension adds interrupts which allows for the separation of system managem
 
 # Added Control Registers
 
-| CRN    | Name          | Description                                                                                       | Comment |
-|:-------|:--------------|:--------------------------------------------------------------------------------------------------|:--------|
-| `0011` | `FLAGS`       | Stores the ALU flags and allows them to be set to specific values.                                |         |
-| `0100` | `INT_PC`      | Specifies where the system interrupt handler is located in memory.                                |         |
-| `0101` | `INT_SP`      | Specifies the stack pointer for the system interrupt handler.                                     |         |
-| `0110` | `INT_MASK`    | Specifies the mask for system interrupts.                                                         | (1)     |
-| `0111` | `INT_PENDING` | Records which system interrupts are pending.                                                      | (1) (3) |
-| `1000` | `INT_CAUSE`   | Stores the cause of the current system interrupt.                                                 | (2) (3) |
-| `1001` | `INT_DATA`    | Stores data relevant to the interrupt.                                                            | (3)     |
-| `1010` | `INT_RET_PC`  | Stores the address that the system interrupt should return to.                                    |         |
-| `1011` | `INT_RET_SP`  | Stores the stack pointer that the system interrupt should restore after the interrupt is handled. |         |
+| CRN    | Name            | Description                                                                                            | Comment |
+|:-------|:----------------|:-------------------------------------------------------------------------------------------------------|:--------|
+| `0011` | `FLAGS`         | Stores the ALU flags and allows them to be set to specific values.                                     |         |
+| `0100` | `INT_PC`        | Specifies where the system interrupt handler is located in memory.                                     |         |
+| `0101` | `INT_MASK`      | Specifies the mask for system interrupts.                                                              | (1)     |
+| `0110` | `INT_PENDING`   | Records which system interrupts are pending.                                                           | (1) (3) |
+| `0111` | `INT_CAUSE`     | Stores the cause of the current system interrupt.                                                      | (2) (3) |
+| `1000` | `INT_DATA`      | Stores data relevant to the interrupt.                                                                 | (3)     |
+| `1001` | `INT_RET_PC`    | Stores the address that the system interrupt should return to.                                         |         |
+| `1010` | `INT_SCRATCH_0` | Stores arbitrary data that the interrupt handler wants to preserve during interrupt handler execution. |         |
+| `1011` | `INT_SCRATCH_1` | Stores arbitrary data that the interrupt handler wants to preserve during interrupt handler execution. |         |
 
 When the CPU is first initialized, `INT_MASK` should be set to 0.
 
@@ -61,21 +61,19 @@ Unused mask/pending bits are reserved for future extensions. External interrupt 
 
 The following opcodes are now defined. The bits which are normally reserved for specifying operation/operand size are repurposed here.
 
-| Name   | First Byte    | Second Byte  | Description                                                                                                                                                                                                                                |
-|:-------|:--------------|:-------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `IRET` | `00 00 1111`  | `000 000 00` | Returns from the current interrupt. Executing this when not in an interrupt causes a General Protection Fault.                                                                                                                             |
-| `INT`  | `00 0X 1111`  | `XXX XXX 1X` | Causes a system call interrupt. The second byte is not processed as a normal RMI bit. The `X` bits are stored in `INT_DATA`. The second byte contains the first 7 bits of the value and the first byte contains the 8th byte of the value. |
-
-Note: The fixed bit in the second byte of the `INT` instruction is to prevent a conflict with the full immediate extension and the `WRITECR` instruction.
+| Name      | First Byte    | Second Byte  | Description                                                                                                    |
+|:----------|:--------------|:-------------|:---------------------------------------------------------------------------------------------------------------|
+| `SYSCALL` | `00 00 1111`  | `000 100 01` | Causes a system call interrupt.                                                                                |
+| `IRET`    | `00 01 1111`  | `000 100 01` | Returns from the current interrupt. Executing this when not in an interrupt causes a General Protection Fault. |
 
 # Interrupt Flow
 
 CPU interrupts from external hardware are rising edge triggered.
 
 If a synchronous interrupt occurs while the CPU is already handling another interrupt, the CPU _must_ reset or halt execution as there is no way for it to handle the interrupt. If the CPU is not handling an interrupt
-when a synchronous interrupt occurs, then the corresponding bit in the `INT_PENDING` CR will be set and the CPU will immediately transition to handling that interrupt without finishing its current instruction. This
-means that the CPU _must_ be in the same effective state as before execution of the instruction was attempted aside from what is required to handle the interrupt caused by the exceptional instruction. One of the
-implied effects of this is that the `INT_RET_PC` CR points to the instruction which caused the interrupt. Another implied effect is that synchronous interrupts _cannot_ be masked.
+when a synchronous interrupt occurs, then the corresponding bit in the `INT_PENDING` CR will be set and the CPU will immediately transition to handling that interrupt and execution of the current instruction will be
+aborted. This means that the CPU _must_ be in the same effective state as before execution of the instruction was attempted aside from what is required to handle the interrupt caused by the exceptional instruction.
+One of the implied effects of this is that the `INT_RET_PC` CR points to the instruction which caused the interrupt. Another implied effect is that synchronous interrupts _cannot_ be masked.
 
 When an asynchronous interrupt occurs, the relevant bit in the pending interrupt CR will be set. If the CPU is not handling an interrupt and any bit in the result of ANDing the `INT_PENDING` CR with the `INT_MASK` CR
 is set, the interrupt for the lowest set bit of that result will be handled.
@@ -84,20 +82,17 @@ In order to handle an interrupt, the CPU _must_ do the following.
 
 1. Set the `INT_CAUSE` CR to the bit index of the interrupt to be handled based on the table above.
 2. Set the `INT_DATA` CR based on the following:
-    - If the cause is a system call, use the eight unspecified bits of the instruction.
     - If the cause is a memory alignment error, use the address that caused the error.
-    - If the cause is an external interrupt, use something the handler can use to identify the device which caused the interrupt (may be externally supplied). If nothing can be used to identify the device, use -1.
+    - If the cause is an external interrupt, use something the handler can use to identify the device which caused the interrupt (may be externally supplied).
+    - Otherwise the value is _unspecified_.
 3. Set the `INT_RET_PC` CR to the current `PC` register.
-4. Set the `INT_RET_SP` CR to the current `SP` register.
-5. Set the `PC` register to the value in the `INT_PC` CR.
-6. Set the `SP` register to the value in the `INT_SP` CR.
-7. Mark that it is handling an interrupt. This is to prevent multiple interrupts from being handled at the same time.
+4. Set the `PC` register to the value in the `INT_PC` CR.
+5. Mark that it is handling an interrupt. This is to prevent multiple interrupts from being handled at the same time.
 
 At this point, the CPU can now resume code execution. When the `IRET` instruction is encountered, the following _must_ occur.
 
 1. Set the `PC` register to the value in `INT_RET_PC`.
-2. Set the `SP` register to the value in `INT_RET_SP`.
-3. Mark that it is no longer handling an interrupt.
+2. Mark that it is no longer handling an interrupt.
 
 At this point, the CPU can now resume code execution.
 
