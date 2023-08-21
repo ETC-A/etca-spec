@@ -7,14 +7,14 @@ processor is actually in will almost certainly behave incorrectly.
 
 # Modes
 
-CR `1 0001`, equivalently `cr17` or "the MODE control register," holds a value indicating the current
+CR `1111`, equivalently `cr15` or "the MODE control register," holds a value indicating the current
 _mode_ of the processor. This has an initial value of `0`.
 
 ## Base Mode (Real 16-bit Address Mode)
 
 The mode described by [the base isa](../../base-isa.md) is known as the
 Base mode. In that mode, pointers are 16 bits and there is no virtual memory, paging, or memory protection.
-Base mode is indicated by a value of 0 in `cr17`.
+Base mode is indicated by a value of 0 in `cr15`.
 
 ## Real n-bit Address Mode
 
@@ -42,7 +42,7 @@ should mean or how many bytes an immediate should be.
 | 32 bit       | doubleword   |
 | 64 bit       | quadword     |
 
-If the system supports [privilege levels](../privileged-mode/), then `cr17` is only writable when in system privilege mode.
+If the system supports [privilege levels](../privileged-mode/), then `cr15` is only writable when in system privilege mode.
 
 # Recommendations
 
