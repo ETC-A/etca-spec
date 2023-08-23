@@ -69,34 +69,42 @@ read or write in which case it is _unspecified_ behavior.
 
 The `D` bit is the less significant `MM` bit, and refers to the "direction" of the operation.
 
-Let `A` refer to the value of the register specified by `AAA`. Let `M` refer to the value in the memory
-location denoted by the address as described above. Then all operations using this format have the following operation:
+Let `A` refer to the value of the register specified by `AAA`. Let `M` refer to the address encoded
+as described above, and let `[M]` be the value at that location. 
+Then all operations using this format have the following operation:
 ```
 if D == 0:
   OP_L ← A
-  OP_R ← M
+  if operation == LEA:
+    OP_R ← M
+  else:
+    OP_R ← [M]
 else:
   if dst_is_input(operation):
-    OP_L ← M
+    OP_L ← [M]
   OP_R ← A
 RES ← operation(OP_L, OP_R)
 if stores_result(operation):
   if D == 0:
     A ← RES
   else:
-    M ← RES
+    [M] ← RES
 ```
 In plain language; when `D` is 0, the `dst` operand is a register and the `src` operand is a memory location.
-When `D` is 1, these are swapped. In all cases, the value in the memory location must be loaded from memory.
-When the `dst` operation is a memory location, the result of the operation must also be stored there.
+When `D` is 1, these are swapped. Usually, the value in the memory location must be loaded from memory.
+When the `dst` operation is a memory location, the result of the operation must also usually be stored there. However:
 
-If an operation uses an `ABM` byte to encode two operands, but only treats one of them as an input, then this
-behavior applies likewise to memory operations; memory must not be (visibly) loaded if the memory operand is not an input
-(e.g., as is the case for `mov m, r/i`). If the operation does not store its result, then memory must not be modified.
+- If an operation uses an `ABM` byte to encode two operands, but does not treat the memory one as input,
+    memory must not be (visibly) loaded. Note that this means MMIO address cannot be read from, even
+    if the result of the read is immediately discarded.
+- If the operation is `LEA`, memory must likewise not be (visibly) loaded. `LEA` is interested in the address itself.
+- If the operation does not store its result (e.g. `cmp m,r`), then memory must not be (visibly) written to.
+    This also includes MMIO addresses.
 
 The instruction's Operand Size (usually from the instruction `SS` bits, but NOT from the `SIB.S` bits) informs the size of the read or writes. These reads
 and writes must behave, with regards to how memory is read and modified, the same as the `load` and `store` instructions
-to the same address, with the same operand size.
+to the same address, with the same operand size. When [multiple memory access instructions](../../features/multiple-memory-access-instructions/README.md)
+is available, the size of a nested read or write therefore matches the current Address Size attribute.
 
 When computing an address, register contents must be treated as if they were the width of an
 address in the current address mode. When performing the operation, the operation must be performed
@@ -113,15 +121,19 @@ and may change in the future when we are better able to evaluate the waste.
 
 | Name | Encoding | Operands | Description |
 |------|----------|----------|-------------|
-| LEA r, m | `00SS1110` | `ABM` | Loads the address specified by the second operand into the register specified by the first. Note that the address _itself_ is stored in the register, not the contents of memory at that address. The result stored in the register must respect the operand size attribute. The computed address must respect the address mode.
+| LEA r, m | `00SS1110` | `ABM` | Loads the address specified by the second operand into the register specified by the first. Note that the address _itself_ is stored in the register, not the contents of memory at that address. The result stored in the register must respect the operand size attribute (and is sign extended). The computed address must respect the address mode.
 
 `LEA` means "load effective address." If the first operand is not a register, or the second is not a memory location, the instruction must be treated as an
 _illegal_ instruction. Note that as per the
 [Full Immediates extension](../full-immediates/README.md) in the specific case of `MM=01, ABM.regB=01x`
 (the "full immediate" operand modes) this opcode corresponds to `READCR`, not `LEA`.
 
-Note that LEA shares an opcode with `READCR` (aka `mfcr`). `LEA` has no immediate mode, and `READCR` has
+Note also that LEA shares an opcode with `READCR` (aka `mfcr`). `LEA` has no immediate mode, and `READCR` has
 no register-to-register mode.
+
+As always for instructions which manipulate pointers, the values of any bits beyond the Address Size attribute are unspecified
+when the address is computed. So `LEAQ %rq0, [%rx0]`, with an address size attribute of `word`, leaves unspecified the top
+48 bits of `%rq0`. However, `LEAX %rx0, [%rx0]` guarantees that they are the sign extension of `%rx0`.
 
 `LEA` does not affect any CPU flags. In addition to its stated purpose, it can be used to perform some "complex" arithmetic such as
 copy-and-add operations, in a single instruction and without affecting flags. For example, `LEA` can be used to
