@@ -14,7 +14,7 @@
 - Memory address alignment in this mode is 4 bytes.
 
 Note that instructions which write a register but do _not_ use SS bits, such as `call`, are not subject to the sign extension rule.
-Instead, see the [Mode Control Register](../mode-control-register.md) specification.
+They may instead make their own specification. See also the [Mode Control Register](../mode-control-register.md) specification.
 
 # Assembly changes
 
