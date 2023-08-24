@@ -22,16 +22,16 @@
 |     35     | Virtual Memory + 64 Bit Paging (64 bit VA)                | PG64 | CP1.32, CP2.2 | Planned           |
 
 
-| CPUID2 bit | Extension                                       | Abbr | Dependencies  | State             |
-|:----------:|-------------------------------------------------|------|:-------------:|-------------------|
-|     0      | [Expanded Opcodes](./expanded-opcodes)          | EXOP |      VWI      | Under Development |
-|     1      | [Memory Operands 1](./memory-operands-1)        | MO1  |      VWI      | Under Development |
-|     2      | [Privileged Mode](./privileged-mode)            | PM   |     CP1.2     | Under Development |
-|     3      | [Multiply Divide](./multiply-divide)            | MD   |     CP2.0     | Under Development |
-|     4      | Bit Manipulation 1                              | BM1  |     CP2.0     | Planned           |
-|    8-15    | Reserved for implementation specific extensions |      |               | Stable            |
-|   24-31    | Reserved for implementation specific extensions |      |               | Stable            |
-|   48-63    | Reserved for implementation specific extensions |      |               | Stable            |
+| CPUID2 bit | Extension                                | Abbr | Dependencies  | State             |
+|:----------:|------------------------------------------|------|:-------------:|-------------------|
+|     0      | [Expanded Opcodes](./expanded-opcodes)   | EXOP |      VWI      | Under Development |
+|     1      | [Memory Operands 1](./memory-operands-1) | MO1  |      VWI      | Under Development |
+|     2      | [Privileged Mode](./privileged-mode)     | PM   |     CP1.2     | Under Development |
+|     3      | [Multiply Divide](./multiply-divide)     | MD   |     CP2.0     | Under Development |
+|     4      | Bit Manipulation 1                       | BM1  |     CP2.0     | Planned           |
+|    8-15    | Reserved for vendor specific extensions  |      |               | Stable            |
+|   24-31    | Reserved for vendor specific extensions  |      |               | Stable            |
+|   48-63    | Reserved for vendor specific extensions  |      |               | Stable            |
 
 
 The column `Dependencies` gives the CPUIDs of the required other extensions (base and recursive requirements are implied). For example, the Interrupts extension, with bit ID 2, depends on "Stack and Functions", with bit ID 1.  Note that only required dependencies are listed. Optional dependencies/interactions with other extensions are not listed here. For example, many extensions will have some interactions with VWI or the byte operations extensions, but those are not visible in the above table.
