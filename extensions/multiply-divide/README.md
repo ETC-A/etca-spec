@@ -19,13 +19,13 @@ An `S` indicates that the operands are treated as signed.
 
 | `C CCCC CCCC` | NAME     | Operation                                  | Flags  | Comment |
 |---------------|----------|--------------------------------------------|--------|---------|
-| `0 0001 0000` | `UDIV`   | `A ← A / B`                                | `ZN`   | (1)     |
+| `0 0001 0000` | `UDIV`   | `A ← A / B`                                | `Z`    | (1)     |
 | `0 0001 0001` | `SDIV`   | `A ← A / B`                                | `ZN`   | (1)     |
-| `0 0001 0010` | `UREM`   | `A ← A % B`                                | `ZN`   | (1) (2) |
+| `0 0001 0010` | `UREM`   | `A ← A % B`                                | `Z`    | (1) (2) |
 | `0 0001 0011` | `SREM`   | `A ← A % B`                                | `ZN`   | (1) (2) |
-| `0 0001 0100` | `UMUL`   | `A ← low(A × B)`                           | `CZN`  | (3) (5) |
+| `0 0001 0100` | `UMUL`   | `A ← low(A × B)`                           | `CZ`   | (3) (5) |
 | `0 0001 0101` | `SMUL`   | `A ← low(A × B)`                           | `CZN`  | (3) (6) |                                          
-| `0 0001 0110` | `UHMUL`  | `A ← high(A × B)`                          | `ZN`   | (4)     |
+| `0 0001 0110` | `UHMUL`  | `A ← high(A × B)`                          | `Z`    | (4)     |
 | `0 0001 0111` | `SHMUL`  | `A ← high(A × B)`                          | `ZN`   | (4)     |                                          
 
 1) Non-integral results of divisions are truncated towards zero.
