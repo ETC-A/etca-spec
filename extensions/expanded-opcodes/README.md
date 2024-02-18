@@ -35,12 +35,9 @@ This extension adds an expanded instruction format to allow for a larger number 
 | `0 0000 0011` | `ASR`           | `A ← A >>> B`                      | `ZNC`    | (3) (4)     |
 | `0 0000 0100` | `ROL`           | <code>A ← (A << B) &#124; (A >> -B)</code> | `ZNC` | (3)   |
 | `0 0000 0101` | `ROR`           | <code>A ← (A >> B) &#124; (A << -B)</code> | `ZNC` | (3)   |
-| `0 0000 0110` | `RCL`           | <code>C:A ← (C:A << B) &#124; (C:A >> -B)</code> | `ZNC` | (2) (3) (5) |
-| `0 0000 0111` | `RCR`           | <code>A:C ← (A:C >> B) &#124; (A:C << -B)</code> | `ZNC` | (2) (3) (5) |
-| `0 0000 1000` | `SHL`           | `A ← A << B`                       | `ZNC`   | (3)         |
-| `0 0000 1001` | `SHR`           | `A ← A >> B`                       | `ZNC`   | (3)         |
-| `0 0000 101x` |                 |                                    |        | reserved    |
-| `0 0000 11xx` |                 |                                    |        | reserved    |
+| `0 0000 0110` | `SHL`           | `A ← A << B`                       | `ZNC`   | (3)         |
+| `0 0000 0111` | `SHR`           | `A ← A >> B`                       | `ZNC`   | (3)         |
+| `0 0000 1xxx` |                 |                                    |        | reserved    |
 | `0 0001 xxxx` |                 |                                    |        | reserved    |
 | `0 001x xxxx` |                 |                                    |        | reserved    |
 | `0 01xx xxxx` |                 |                                    |        | reserved    |
@@ -60,10 +57,6 @@ This extension adds an expanded instruction format to allow for a larger number 
     `rh0` will be 0, the negative flag will be cleared, and the zero flag will be set.
 4) This is an arithmetic right shift, which shifts in the most significant bit of A instead of always
     shifting in 0.
-5) The notation C:A represents combining the carry flag with the value in register `A`. If the operation
-    size is `half`, the value is `C AAAA AAAA`, a 9-bit value. The `RCL` instruction rotates this 9-bit
-    value left. The `RCR` instruction rotates the value `AAAA AAAA C` to the right. The operation
-    is analogous for other operation sizes.
 
 Consider the `rclh` operation. Since only the 3 least significant bits
 of `B` are used to determine shift amounts,
