@@ -108,7 +108,7 @@ There are several exceptions to how the operands work.
 
 #### Control Register Read and Write Instructions
 
-Undefined control registers are _reserved_ and reading from or writing to them is _unspecified_ behavior.
+Reading from or writing to undefined control registers is _unspecified_ behavior.
 
 | `CRN`  | NAME       | Description                                                                                                                             | Comment |
 |--------|------------|-----------------------------------------------------------------------------------------------------------------------------------------|---------|
