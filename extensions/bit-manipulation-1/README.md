@@ -26,8 +26,8 @@ These instructions are in the expanded calculation opcode section of instruction
 | `0 0000 1111` | `ANDN`    | <code>A ← ~A &#38 B</code>                             | `ZN`  |             |
 | `0 0001 1000` | `LSB`     | <code>A ← B &#38 -B</code>                             | `ZN`  |             |
 | `0 0001 1001` | `LSMSK`   | <code>A ← B ^ (B - 1)</code>                           | `ZN`  |             |
-| `0 0001 1010` | `RLSB`    | <code>A ← B &#38 (B - 1)</code>                        | `ZN`  |             |
-| `0 0001 1011` | `ZHIB`    | <code>A ← A &#38 ((1 << B) - 1)</code>                 | `ZN`  |             |
+| `0 0001 1010` | `RLSB`    | <code>A ← B ;&#38 (B - 1)</code>                       | `ZN`  |             |
+| `0 0001 1011` | `ZHIB`    | <code>A ← A ;&#38 ((1 << B) - 1)</code>                | `ZN`  |             |
 
 1) C in the operation column refers to the carry flag.
 2) Only the `M` least significant bits of `B` (or `-B` where applicable) are used for a shift amount.
