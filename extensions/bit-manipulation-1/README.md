@@ -42,7 +42,7 @@ These instructions are in the expanded calculation opcode section of instruction
     size is `half`, the value is `C AAAA AAAA`, a 9-bit value. The `RCL` instruction rotates this 9-bit
     value left. The `RCR` instruction rotates the value `AAAA AAAA C` to the right. The operation
     is analogous for other operation sizes.
-4) Counts the number of set bits in `B` as if it was zero extended based on the `SS` bits.
+4) Counts the number of set bits in `B` as if it were zero extended based on the `SS` bits.
 5) Performs the generalized swap operation on `A` based on the value in `B`. It acts as follows
 ```
 int64_t grev(int64_t a, int b, int ss)
