@@ -59,7 +59,7 @@ int64_t grev(int64_t a, int b, int ss)
 ```
 
 - Byte swap can be formulated in terms of GREV where B=24 (for `SS = 10`).
-- Bit Reverse can be formulated in terms of GREV where B=31 (for `SS = 11`).
+- Bit Reverse can be formulated in terms of GREV where B=31 (for `SS = 10`).
 
 6) Counts the number of `0` bits before the first `1` bit
 7) Counts the number of `0` bits after the last `1` bit
