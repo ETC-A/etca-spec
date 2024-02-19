@@ -18,10 +18,10 @@ These instructions are in the expanded calculation opcode section of instruction
 |---------------|-----------|--------------------------------------------------------|-------|-------------|
 | `0 0000 1000` | `RCL`     | <code>C:A ← (C:A << B) &#124; (C:A >> -B)</code>       | `ZNC` | (1) (2) (3) |
 | `0 0000 1001` | `RCR`     | <code>A:C ← (A:C >> B) &#124; (A:C << -B)</code>       | `ZNC` | (1) (2) (3) |
-| `0 0000 1010` | `POPCNT`  | Counts the number of set bits in the `B` input         | `ZN`  | (4)         |
-| `0 0000 1011` | `BITSWAP` | Swaps all the bits based on the `SS` bits              | `ZN`  | (5)         |
-| `0 0000 1100` | `CTZ`     | Counts the number of `0` bits before the first `1` bit | `ZN`  |             |
-| `0 0000 1101` | `CLZ`     | Counts the number of `0` bits after the last `1` bit   | `ZN`  |             |
+| `0 0000 1010` | `POPCNT`  | <code>A ← POPCNT(B)</code>                             | `ZN`  | (4)         |
+| `0 0000 1011` | `GREV`    | <code>A ← GREV(A, B)</code>                            | `ZN`  | (5)         |
+| `0 0000 1100` | `CTZ`     | <code>A ← CTZ(B)</code>                                | `ZN`  | (6)         |
+| `0 0000 1101` | `CLZ`     | <code>A ← CLZ(B)</code>                                | `ZN`  | (7)         |
 | `0 0000 1110` | `NOT`     | <code>A ← ~B</code>                                    | `ZN`  |             |
 | `0 0000 1111` | `ANDN`    | <code>A ← ~A &#38 B</code>                             | `ZN`  |             |
 | `0 0001 1000` | `LSB`     | <code>A ← B &#38 -B</code>                             | `ZN`  |             |
@@ -42,7 +42,24 @@ These instructions are in the expanded calculation opcode section of instruction
     size is `half`, the value is `C AAAA AAAA`, a 9-bit value. The `RCL` instruction rotates this 9-bit
     value left. The `RCR` instruction rotates the value `AAAA AAAA C` to the right. The operation
     is analogous for other operation sizes.
-4) The input is effectively zero extended based on the `SS` bits to ensure irrelevant bits are ignored
-5) All the bits are swapped so that the highest bits are the lowest and vice-a-versa. For `SS = 11` it
-    would act like this: `r[63] <-> r[0], r[62] <-> r[1], ..., r[32] <-> r[31]`. For `SS = 00` it would
-    act like this: `r[7] <-> r[0], r[6] <-> r[1], r[5] <-> r[2], r[4] <-> r[3]`.
+4) Counts the number of set bits in `B` as if it was zero extended based on the `SS` bits.
+5) Performs the generalized swap operation on `A` based on the value in `B`. It acts as follows
+```
+int64_t grev(int64_t a, int b, int ss)
+{
+    if (b &  1)           a = ((a & 0x55555555) <<  1) | ((a & 0xAAAAAAAA) >>  1);
+    if (b &  2)           a = ((a & 0x33333333) <<  2) | ((a & 0xCCCCCCCC) >>  2);
+    if (b &  4)           a = ((a & 0x0F0F0F0F) <<  4) | ((a & 0xF0F0F0F0) >>  4);
+    if (b &  8 && ss > 0) a = ((a & 0x00FF00FF) <<  8) | ((a & 0xFF00FF00) >>  8);
+    if (b & 16 && ss > 1) a = ((a & 0x0000FFFF) << 16) | ((a & 0xFFFF0000) >> 16);
+    if (b & 32 && ss > 2) a = ((a & 0x0000FFFF) << 32) | ((a & 0xFFFF0000) >> 32);
+
+    return sign_extend(a, ss);
+}
+```
+
+- Byte swap can be formulated in terms of GREV where B=24 (for `SS = 10`).
+- Bit Reverse can be formulated in terms of GREV where B=31 (for `SS = 11`).
+
+6) Counts the number of `0` bits before the first `1` bit
+7) Counts the number of `0` bits after the last `1` bit
