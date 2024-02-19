@@ -47,12 +47,12 @@ These instructions are in the expanded calculation opcode section of instruction
 ```
 int64_t grev(int64_t a, int b, int ss)
 {
-    if (b &  1)           a = ((a & 0x55555555) <<  1) | ((a & 0xAAAAAAAA) >>  1);
-    if (b &  2)           a = ((a & 0x33333333) <<  2) | ((a & 0xCCCCCCCC) >>  2);
-    if (b &  4)           a = ((a & 0x0F0F0F0F) <<  4) | ((a & 0xF0F0F0F0) >>  4);
-    if (b &  8 && ss > 0) a = ((a & 0x00FF00FF) <<  8) | ((a & 0xFF00FF00) >>  8);
-    if (b & 16 && ss > 1) a = ((a & 0x0000FFFF) << 16) | ((a & 0xFFFF0000) >> 16);
-    if (b & 32 && ss > 2) a = ((a & 0x0000FFFF) << 32) | ((a & 0xFFFF0000) >> 32);
+    if (b &  1)           a = ((a & 0x5555_5555_5555_5555) <<  1) | ((a & 0xAAAA_AAAA_AAAA_AAAA) >>  1);
+    if (b &  2)           a = ((a & 0x3333_3333_3333_3333) <<  2) | ((a & 0xCCCC_CCCC_CCCC_CCCC) >>  2);
+    if (b &  4)           a = ((a & 0x0F0F_0F0F_0F0F_0F0F) <<  4) | ((a & 0xF0F0_F0F0_F0F0_F0F0) >>  4);
+    if (b &  8 && ss > 0) a = ((a & 0x00FF_00FF_00FF_00FF) <<  8) | ((a & 0xFF00_FF00_FF00_FF00) >>  8);
+    if (b & 16 && ss > 1) a = ((a & 0x0000_FFFF_0000_FFFF) << 16) | ((a & 0xFFFF_0000_FFFF_0000) >> 16);
+    if (b & 32 && ss > 2) a = ((a & 0x0000_0000_FFFF_FFFF) << 32) | ((a & 0xFFFF_FFFF_0000_0000) >> 32);
 
     return sign_extend(a, ss);
 }
