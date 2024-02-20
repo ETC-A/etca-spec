@@ -18,15 +18,15 @@ These instructions are in the expanded calculation opcode section of instruction
 |---------------|-----------|--------------------------------------------------------|-------|-------------|
 | `0 0000 1000` | `RCL`     | <code>C:A ← (C:A << B) &#124; (C:A >> -B)</code>       | `ZNC` | (1) (2) (3) |
 | `0 0000 1001` | `RCR`     | <code>A:C ← (A:C >> B) &#124; (A:C << -B)</code>       | `ZNC` | (1) (2) (3) |
-| `0 0000 1010` | `POPCNT`  | <code>A ← POPCNT(B)</code>                             | `ZN`  | (4)         |
+| `0 0000 1010` | `POPCNT`  | <code>A ← POPCNT(B)</code>                             | `Z`   | (4)         |
 | `0 0000 1011` | `GREV`    | <code>A ← GREV(A, B)</code>                            | `ZN`  | (5)         |
-| `0 0000 1100` | `CTZ`     | <code>A ← CTZ(B)</code>                                | `ZN`  | (6)         |
-| `0 0000 1101` | `CLZ`     | <code>A ← CLZ(B)</code>                                | `ZN`  | (7)         |
+| `0 0000 1100` | `CTZ`     | <code>A ← CTZ(B)</code>                                | `ZC`  | (6)         |
+| `0 0000 1101` | `CLZ`     | <code>A ← CLZ(B)</code>                                | `ZC`  | (7)         |
 | `0 0000 1110` | `NOT`     | <code>A ← ~B</code>                                    | `ZN`  |             |
 | `0 0000 1111` | `ANDN`    | <code>A ← ~A &#38; B</code>                            | `ZN`  |             |
-| `0 0001 1000` | `LSB`     | <code>A ← B &#38; -B</code>                            | `ZN`  |             |
-| `0 0001 1001` | `LSMSK`   | <code>A ← B ^ (B - 1)</code>                           | `ZN`  |             |
-| `0 0001 1010` | `RLSB`    | <code>A ← B &#38; (B - 1)</code>                       | `ZN`  |             |
+| `0 0001 1000` | `LSB`     | <code>A ← B &#38; -B</code>                            | `ZNC` |             |
+| `0 0001 1001` | `LSMSK`   | <code>A ← B ^ (B - 1)</code>                           | `ZNC` |             |
+| `0 0001 1010` | `RLSB`    | <code>A ← B &#38; (B - 1)</code>                       | `ZNC` |             |
 | `0 0001 1011` | `ZHIB`    | <code>A ← A &#38; ((1 << B) - 1)</code>                | `ZN`  |             |
 
 1) C in the operation column refers to the carry flag.
