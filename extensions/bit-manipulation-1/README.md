@@ -27,7 +27,7 @@ These instructions are in the expanded calculation opcode section of instruction
 | `0 0001 1000` | `LSB`     | <code>A ← B &#38; -B</code>                            | `ZN`  | (9)         |
 | `0 0001 1001` | `LSMSK`   | <code>A ← B ^ (B - 1)</code>                           | `ZNC` | (6) (10)    |
 | `0 0001 1010` | `RLSB`    | <code>A ← B &#38; (B - 1)</code>                       | `ZNC` | (6) (11)    |
-| `0 0001 1011` | `ZHIB`    | <code>A ← A &#38; ((1 << B) - 1)</code>                | `ZN`  | (12)        |
+| `0 0001 1011` | `ZHIB`    | <code>A ← A &#38; ((1 << B[7:0]) - 1)</code>           | `ZNC` | (12)        |
 
 1) C in the operation column refers to the carry flag.
 2) The `-1` in the operation equivalently indicates a shift amount of one less than the operation size.
@@ -70,14 +70,16 @@ int64_t grev(int64_t a, int b, int ss)
         grev   A,-1
         clz    A,A
 ```
-9) Notes 9, 10, 11, and 12 give examples of the remaining operations; however the behavior
+9) Notes 9, 10, and 11 give examples of the remaining operations; however the behavior
     of these operations is fully specified in the table and comment (6).
    `lsb` isolates the least significant `1` bit of `B`. For example, `lsbx r0, 0xFFA0`
     will result in `0x0020` in `rx0`.
-11) Get a mask of all bits up to and including the least significant `1` bit of `B`.
+10) Get a mask of all bits up to and including the least significant `1` bit of `B`.
     If there is no such bit, the mask is `-1`. For example, `lsmskx r0, 0xFFA0`
     will result in `0x003F` in `rx0`.
-12) Reset (set to `0`) the least significant `1` bit of `B`. For example,
+11) Reset (set to `0`) the least significant `1` bit of `B`. For example,
     `rlsbx r0, 0xFFA0` will result in `0xFF80` in `rx0`.
-13) Zero out the bits of `A` at higher bit indices at least `B`. For example,
-    if `0xABCD` is in `rx0`, then `zhibx r0, 7` results in `0x004D` in `rx0`.
+12) Zero out the bits of `A` at bit indices which are at least `B`. Only the bottom byte
+    of `B` is considered. If `B` exceeds the operation width minus 1, then `A` is unchanged
+    and the `C` flag is set.
+    For example, if `0xABCD` is in `rx0`, then `zhibx r0, 7` results in `0x004D` in `rx0`.
