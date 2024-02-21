@@ -16,8 +16,8 @@ These instructions are in the expanded calculation opcode section of instruction
 
 | `C CCCC CCCC` | NAME      | Operation                                              | Flags | Comment     |
 |---------------|-----------|--------------------------------------------------------|-------|-------------|
-| `0 0000 1000` | `RCL`     | <code>C:A ← (C:B << 1) &#124; (C:B >> -1)</code>       | `ZNC` | (1) (2) (3) |
-| `0 0000 1001` | `RCR`     | <code>A:C ← (B:C >> 1) &#124; (B:C << -1)</code>       | `ZNC` | (1) (2) (3) |
+| `0 0000 1000` | `RCL`     | <code>C:A ← (C:B << 1) &#124; C</code>                 | `ZNC` | (1) (2) (3) |
+| `0 0000 1001` | `RCR`     | <code>A:C ← (B:C >> 1) &#124; (C << -1)</code>         | `ZNC` | (1) (2) (3) |
 | `0 0000 1010` | `POPCNT`  | <code>A ← POPCNT(B)</code>                             | `Z`   | (4)         |
 | `0 0000 1011` | `GREV`    | <code>A ← GREV(A, B)</code>                            | `ZN`  | (5)         |
 | `0 0000 1100` | `CTZ`     | <code>A ← CTZ(B)</code>                                | `ZC`  | (6) (7)     |
