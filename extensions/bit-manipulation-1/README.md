@@ -16,8 +16,8 @@ These instructions are in the expanded calculation opcode section of instruction
 
 | `C CCCC CCCC` | NAME      | Operation                                              | Flags | Comment     |
 |---------------|-----------|--------------------------------------------------------|-------|-------------|
-| `0 0000 1000` | `RCL`     | <code>C:A ← (C:B << 1) &#124; C</code>                 | `ZNC` | (1) (2) (3) |
-| `0 0000 1001` | `RCR`     | <code>A:C ← (B:C >> 1) &#124; (C << -1)</code>         | `ZNC` | (1) (2) (3) |
+| `0 0000 1000` | `RCL`     | <code>A ← (B << 1) &#124; C</code>                     | `ZNC` | (1) (2) (3) |
+| `0 0000 1001` | `RCR`     | <code>A ← (B >> 1) &#124; (C << -1)</code>             | `ZNC` | (1) (2) (3) |
 | `0 0000 1010` | `POPCNT`  | <code>A ← POPCNT(B)</code>                             | `Z`   | (4)         |
 | `0 0000 1011` | `GREV`    | <code>A ← GREV(A, B)</code>                            | `ZN`  | (5)         |
 | `0 0000 1100` | `CTZ`     | <code>A ← CTZ(B)</code>                                | `ZC`  | (6) (7)     |
@@ -33,11 +33,10 @@ These instructions are in the expanded calculation opcode section of instruction
 2) The `-1` in the operation equivalently indicates a shift amount of one less than the operation size.
    `rcl A, B` is nearly equivalent to `adc B, B`, except that the result is stored in operand `A`
    and the `V` flag is undefined after the operation.
-3) The notation C:A represents combining the carry flag with the value in register `A`. If the operation
-    size is `half`, the value is `C AAAA AAAA`, a 9-bit value. The `RCL` instruction rotates this 9-bit
-    value left. The `RCR` instruction rotates the value `AAAA AAAA C` to the right. Therefore, for
-    `rcl`, the `C` flag will be set to the most significant bit of the input, and for `rcl` it will be
-    set to the least significant bit of the input.
+3) The `C` flag is set to the value of the bit shifted out of `B`. Conceptually, these operations perform
+   rotations of the `B` operand extended with the `C` flag as an extra bit. For example, `rcrh r0, 0x02`
+   will result in `0x01` in `rh0` if `C` was clear before, and `0x81` if `C` was not. In both cases, the output `C`
+   will be clear because a `0` was shifted out of `0x02`.
    The operation is analogous for other operation sizes.
 5) Counts the number of set bits in `B` as if it were zero extended based on the `SS` bits.
 6) Performs the generalized swap operation on `A` based on the value in `B`. It acts as follows
