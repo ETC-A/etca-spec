@@ -18,11 +18,11 @@ choose a descriptive name :)
     syntax EtcExtension ::= "ByteOperations"
 ```
 
-This extension gets bit 4.
+This extension gets bit `CP1.3`.
 
 ```k
-    rule bit2Extension(4) => ByteOperations
-    rule extension2Bit(ByteOperations) => 4
+    rule bit2Extension(CP1.3) => ByteOperations
+    rule extension2Bit(ByteOperations) => CP1.3
 ```
 
 This extension does not depend on any other extensions.
@@ -31,15 +31,7 @@ This extension does not depend on any other extensions.
     rule extensionDependsOn(ByteOperations) => .List
 ```
 
-This extension cannot be disabled and is on by default.
-
-```k
-    rule extensionCanToggle(ByteOperations) => false
-    rule extensionDefault  (ByteOperations) => true
-```
-
-Nothing happens when this extension is initialized or enabled.
-
+Nothing happens when this extension is initialized.
 
 # Base Hooks
 

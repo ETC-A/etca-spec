@@ -17,11 +17,11 @@ Firstly, specify the extension name.
     syntax EtcExtension ::= "QuadwordOperations"
 ```
 
-This extension gets bit 6.
+This extension gets bit `CP1.15`.
 
 ```k
-    rule bit2Extension(7) => QuadwordOperations
-    rule extension2Bit(QuadwordOperations) => 7
+    rule bit2Extension(CP1.15) => QuadwordOperations
+    rule extension2Bit(QuadwordOperations) => CP1.15
 ```
 
 This extension does not depend on any other extensions.
@@ -30,40 +30,12 @@ This extension does not depend on any other extensions.
     rule extensionDependsOn(QuadwordOperations) => .List
 ```
 
-This extension can be toggled but is off by default.
-
-```k
-    rule extensionCanToggle(QuadwordOperations) => true
-    rule extensionDefault  (QuadwordOperations) => false
-```
-
 When we detect this extension during initialization, we set the register
 width to `quadword`.
 
 ```k
     rule <k> #initializeExtension(QuadwordOperations) => . ...</k>
          <reg-width> _ => quadword </reg-width>
-```
-
-When we enable this extension, we must switch the `<reg-mode>` to `quadword`
-if it is currently less than `quadword`. If this change is made, we must sign
-extend the program counter to maintain the memory address mapping.
-
-Note that `quadword` is almost certainly the largest register width that will
-be supported for base operations and even more certainly the largest that will
-be supported for the program counter. However, there is no cost to
-future-proofing here.
-
-```k
-    rule <k> #enableExtension(QuadwordOperations) => . ...</k>
-         <reg-mode> OLD => quadword </reg-mode>
-         <reg-width> _RWIDTH </reg-width>
-         <pc> PC => zextFrom(quadword, sextFrom(OLD, PC)) </pc>
-      requires OLD <ByteSize quadword
-
-    rule <k> #enableExtension(QuadwordOperations) => . ...</k>
-         <reg-mode> OLD </reg-mode>
-      requires quadword <=ByteSize OLD
 ```
 
 # Base Hooks

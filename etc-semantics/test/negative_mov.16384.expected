@@ -23,10 +23,10 @@
     <overflow> false </overflow>
   </flags>
   <machine-details>
-    <cpuid1> 0 </cpuid1>
+    <cpuid1> 16384 </cpuid1>
     <cpuid2> 0 </cpuid2>
     <feat>   0 </feat>
-    <reg-width> word </reg-width>
+    <reg-width> doubleword </reg-width>
     <reg-count> 8 </reg-count>
     <evil-mode> false </evil-mode>
   </machine-details>

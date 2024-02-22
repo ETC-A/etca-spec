@@ -399,10 +399,9 @@ more or less the same idea.
 The base data moves are either simple memory loads/stores or basic `mov`.
 
 When `load` gets its address from a register, we have to ensure that we
-take the full-width register even when the operand size is smaller. This
-special case is very isolated in the ETC.A semantics, as it is isolated
-to base+sizes. The general case of memory access happens via memory modes,
-and the process of evaluating address operands will use the full-width
+take the pointer-width register even when the operand size is different.
+The general case of memory access happens via pointer modes,
+and the process of evaluating address operands will use the pointer-width
 registers in general.
 
 ```k
@@ -412,7 +411,7 @@ registers in general.
   //-------------------------------------------------------------
 
     rule <k> #operands[LV,_] ~> store SIZE _OPL RegOperand(_,RID)
-          => Mem[Reg[RID] : SIZE] = LV
+          => Mem[chopTo(word, Reg[RID]) : SIZE] = LV
          ...</k> [priority(25)]
 
     rule <k> #operands[LV,ADDR] ~> store SIZE _OPL _
@@ -421,7 +420,7 @@ registers in general.
 
   //-------------------------------------------------------------
     rule <k> #operands[_,_] ~> load SIZE OPL RegOperand(_,RID)
-          => #writeWOperand(OPL, Mem[Reg[RID] : SIZE])
+          => #writeWOperand(OPL, Mem[chopTo(word, Reg[RID]) : SIZE])
          ...</k> [priority(25)]
 
     rule <k> #operands[_,ADDR] ~> load SIZE OPL _
@@ -492,7 +491,7 @@ The exception is iff the offset is 0, in which case this is the encoding of a ha
          <pc> PC => PC +Int sextFrom(WIDTH, OFF) </pc>        [owise]
 ```
 
-To implement an uncondition never-jump, we bump the program counter by its size.
+To implement an unconditional never-jump, we bump the program counter by its size.
 
 ```k
     rule <k> jmp_never _ ISize(N) => . ...</k>

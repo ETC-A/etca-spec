@@ -233,7 +233,7 @@ loss of precision is a carry, and in signed, it is an overflow!
          (LSign ==Bool RSign) andBool (LSign =/=Bool isNegative(SIZE, RES))
 ```
 
-We also have numeric values in the `cpuid` and `exten` control registers.
+We also have numeric values in the `cpuid` registers.
 We want to be able to check these on a bit-by-bit basis.
 
 ```k
@@ -318,7 +318,7 @@ module PAGED-MEMORY
 
 ### Writing
 
-The function `M [ A := BS]` overwrites the memory starting at address `A`
+The function `M [ A := BS ]` overwrites the memory starting at address `A`
 with the byte array `BS`. As many bytes as the length of `BS` are overwritten.
 
 There is no alignment restriction.
@@ -455,7 +455,7 @@ module ETC-EXCEPTIONS
 
     syntax Exception
         ::= "#EUnknownInstr"
-          | "#EIncoherentEXTEN"
+          | "#EIncoherentExtensions"
           | "#EUndefinedBehavior"
 
 endmodule
