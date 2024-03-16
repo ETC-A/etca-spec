@@ -59,7 +59,7 @@ The following opcodes are now defined. The bits which are normally reserved for 
 
 | Name      | First Byte    | Second Byte  | Description                                                                                                                    |
 |:----------|:--------------|:-------------|:-------------------------------------------------------------------------------------------------------------------------------|
-| `SYSCALL` | `00 00 1111`  | `000 100 01` | Causes a system call interrupt.                                                                                                |
+| `SYSCALL` | `00 00 1111`  | `000 100 01` | Causes a system call interrupt to occur immediately after this instruction is executed.                                        |
 | `ERET`    | `00 01 1111`  | `000 100 01` | Returns from the current exception handler. Executing this when not in an exception handler causes a General Protection Fault. |
 
 The operating system or kernel ABI must specify how to pass service numbers and service arguments when using `syscall`. Our expectation is that they be passed in general-purpose registers specified by the ABI, but we set no requirements.
