@@ -27,23 +27,44 @@ This extension adds an expanded instruction format to allow for a larger number 
 
 ### Opcode table
 
-| `C CCCC CCCC` | NAME            | Operation                          | Flags  | Comment     |
-|---------------|-----------------|------------------------------------|--------|-------------|
-| `0 0000 0000` | `ADC`           | `A ← A + B + C`                    | `ZNCV` | (2)         |
-| `0 0000 0001` | `SBB`           | `A ← A - B - C`                    | `ZNCV` | (2)         |
-| `0 0000 0010` | `RSBB`          | `A ← B - A - C`                    | `ZNCV` | (1) (2)     |
-| `0 0000 0011` | `ASR`           | `A ← A >>> B`                      | `ZNC`    | (3) (4)     |
-| `0 0000 0100` | `ROL`           | <code>A ← (A << B) &#124; (A >> -B)</code> | `ZNC` | (3)   |
-| `0 0000 0101` | `ROR`           | <code>A ← (A >> B) &#124; (A << -B)</code> | `ZNC` | (3)   |
-| `0 0000 0110` | `SHL`           | `A ← A << B`                       | `ZNC`   | (3)         |
-| `0 0000 0111` | `SHR`           | `A ← A >> B`                       | `ZNC`   | (3)         |
-| `0 0000 1xxx` |                 |                                    |        | reserved    |
-| `0 0001 xxxx` |                 |                                    |        | reserved    |
-| `0 001x xxxx` |                 |                                    |        | reserved    |
-| `0 01xx xxxx` |                 |                                    |        | reserved    |
-| `0 1xxx xxxx` |                 |                                    |        | reserved    |
-| `1 xxxx xxxx` |                 |                                    |        | reserved    |
+| `CCCC C CCCC` | NAME            | Operation                                  | Flags  | Comment  |
+|---------------|-----------------|--------------------------------------------|--------|----------|
+| `0000 0 0000` | `ADC`           | `A ← A + B + C`                            | `ZNCV` | (2)      |
+| `0000 0 0001` | `SBB`           | `A ← A - B - C`                            | `ZNCV` | (2)      |
+| `0000 0 0010` | `RSBB`          | `A ← B - A - C`                            | `ZNCV` | (1) (2)  |
+| `0000 0 0011` | `ASR`           | `A ← A >>> B`                              | `ZNC`  | (3) (4)  |
+| `0000 0 0100` | `ROL`           | <code>A ← (A << B) &#124; (A >> -B)</code> | `ZNC`  | (3)      |
+| `0000 0 0101` | `ROR`           | <code>A ← (A >> B) &#124; (A << -B)</code> | `ZNC`  | (3)      |
+| `0000 0 0110` | `SHL`           | `A ← A << B`                               | `ZNC`  | (3)      |
+| `0000 0 0111` | `SHR`           | `A ← A >> B`                               | `ZNC`  | (3)      |
+| `0000 0 1xxx` |                 |                                            |        | reserved |
+| `0000 1 xxxx` |                 |                                            |        | reserved |
+| `0001 x xxxx` |                 |                                            |        | reserved |
+| `001x x xxxx` |                 |                                            |        | reserved |
+| `01xx x xxxx` |                 |                                            |        | reserved |
+| `1xxx x xxxx` |                 |                                            |        | reserved |
 
+<details>
+<summary>Alternative table layout</summary>
+
+| `C CCCC CCCC` | NAME            | Operation                                  | Flags  | Comment  |
+|---------------|-----------------|--------------------------------------------|--------|----------|
+| `0 0000 0000` | `ADC`           | `A ← A + B + C`                            | `ZNCV` | (2)      |
+| `0 0000 0001` | `SBB`           | `A ← A - B - C`                            | `ZNCV` | (2)      |
+| `0 0000 0010` | `RSBB`          | `A ← B - A - C`                            | `ZNCV` | (1) (2)  |
+| `0 0000 0011` | `ASR`           | `A ← A >>> B`                              | `ZNC`  | (3) (4)  |
+| `0 0000 0100` | `ROL`           | <code>A ← (A << B) &#124; (A >> -B)</code> | `ZNC`  | (3)      |
+| `0 0000 0101` | `ROR`           | <code>A ← (A >> B) &#124; (A << -B)</code> | `ZNC`  | (3)      |
+| `0 0000 0110` | `SHL`           | `A ← A << B`                               | `ZNC`  | (3)      |
+| `0 0000 0111` | `SHR`           | `A ← A >> B`                               | `ZNC`  | (3)      |
+| `0 0000 1xxx` |                 |                                            |        | reserved |
+| `0 0001 xxxx` |                 |                                            |        | reserved |
+| `0 001x xxxx` |                 |                                            |        | reserved |
+| `0 01xx xxxx` |                 |                                            |        | reserved |
+| `0 1xxx xxxx` |                 |                                            |        | reserved |
+| `1 xxxx xxxx` |                 |                                            |        | reserved |
+
+</details>
 
 1) Enables NEG and NOT to be encoded as `RSBB r, imm` for integers larger than supported by the ISA.
 2) C in the operation column refers to the carry flag.
