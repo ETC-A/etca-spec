@@ -17,16 +17,34 @@ An `S` indicates that the operands are treated as signed.
 
 ### Opcode table
 
-| `C CCCC CCCC` | NAME     | Operation                                  | Flags  | Comment |
-|---------------|----------|--------------------------------------------|--------|---------|
-| `0 0001 0000` | `UDIV`   | `A ← A / B`                                | `ZN`   | (1)     |
-| `0 0001 0001` | `SDIV`   | `A ← A / B`                                | `ZN`   | (1)     |
-| `0 0001 0010` | `UREM`   | `A ← A % B`                                | `ZN`   | (1) (2) |
-| `0 0001 0011` | `SREM`   | `A ← A % B`                                | `ZN`   | (1) (2) |
-| `0 0001 0100` | `UMUL`   | `A ← low(A × B)`                           | `CZN`  | (3) (5) |
-| `0 0001 0101` | `SMUL`   | `A ← low(A × B)`                           | `CZN`  | (3) (6) |                                          
-| `0 0001 0110` | `UHMUL`  | `A ← high(A × B)`                          | `ZN`   | (4)     |
-| `0 0001 0111` | `SHMUL`  | `A ← high(A × B)`                          | `ZN`   | (4)     |                                          
+| `CCCC C CCCC` | NAME     | Operation         | Flags  | Comment |
+|---------------|----------|-------------------|--------|---------|
+| `0000 1 0000` | `UDIV`   | `A ← A / B`       | `ZN`   | (1)     |
+| `0000 1 0001` | `SDIV`   | `A ← A / B`       | `ZN`   | (1)     |
+| `0000 1 0010` | `UREM`   | `A ← A % B`       | `ZN`   | (1) (2) |
+| `0000 1 0011` | `SREM`   | `A ← A % B`       | `ZN`   | (1) (2) |
+| `0000 1 0100` | `UMUL`   | `A ← low(A × B)`  | `CZN`  | (3) (5) |
+| `0000 1 0101` | `SMUL`   | `A ← low(A × B)`  | `CZN`  | (3) (6) |
+| `0000 1 0110` | `UHMUL`  | `A ← high(A × B)` | `ZN`   | (4)     |
+| `0000 1 0111` | `SHMUL`  | `A ← high(A × B)` | `ZN`   | (4)     |
+
+<details>
+<summary>Alternative table layout</summary>
+
+This table is identical to the one above except that the spacing for the `C` bits are grouped differently. The order is still the same.
+
+| `C CCCC CCCC` | NAME     | Operation         | Flags  | Comment |
+|---------------|----------|-------------------|--------|---------|
+| `0 0001 0000` | `UDIV`   | `A ← A / B`       | `ZN`   | (1)     |
+| `0 0001 0001` | `SDIV`   | `A ← A / B`       | `ZN`   | (1)     |
+| `0 0001 0010` | `UREM`   | `A ← A % B`       | `ZN`   | (1) (2) |
+| `0 0001 0011` | `SREM`   | `A ← A % B`       | `ZN`   | (1) (2) |
+| `0 0001 0100` | `UMUL`   | `A ← low(A × B)`  | `CZN`  | (3) (5) |
+| `0 0001 0101` | `SMUL`   | `A ← low(A × B)`  | `CZN`  | (3) (6) |
+| `0 0001 0110` | `UHMUL`  | `A ← high(A × B)` | `ZN`   | (4)     |
+| `0 0001 0111` | `SHMUL`  | `A ← high(A × B)` | `ZN`   | (4)     |
+
+</details>
 
 1) Non-integral results of divisions are truncated towards zero.
     Therefore 10 / 3 is 3, and -10 / 3 is -3.

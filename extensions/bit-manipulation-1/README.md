@@ -14,20 +14,42 @@ These instructions are in the expanded calculation opcode section of instruction
 
 ### Opcode table
 
-| `C CCCC CCCC` | NAME      | Operation                                              | Flags | Comment     |
-|---------------|-----------|--------------------------------------------------------|-------|-------------|
-| `0 0000 1000` | `RCL`     | <code>A ← (B << 1) &#124; C</code>                     | `ZNC` | (1) (2) (3) |
-| `0 0000 1001` | `RCR`     | <code>A ← (B >> 1) &#124; (C << -1)</code>             | `ZNC` | (1) (2) (3) |
-| `0 0000 1010` | `POPCNT`  | <code>A ← POPCNT(B)</code>                             | `Z`   | (4)         |
-| `0 0000 1011` | `GREV`    | <code>A ← GREV(A, B)</code>                            | `ZN`  | (5)         |
-| `0 0000 1100` | `CTZ`     | <code>A ← CTZ(B)</code>                                | `ZC`  | (6) (7)     |
-| `0 0000 1101` | `CLZ`     | <code>A ← CLZ(B)</code>                                | `ZC`  | (6) (8)     |
-| `0 0000 1110` | `NOT`     | <code>A ← ~B</code>                                    | `ZN`  |             |
-| `0 0000 1111` | `ANDN`    | <code>A ← ~A &#38; B</code>                            | `ZN`  |             |
-| `0 0001 1000` | `LSB`     | <code>A ← B &#38; -B</code>                            | `ZN`  | (9)         |
-| `0 0001 1001` | `LSMSK`   | <code>A ← B ^ (B - 1)</code>                           | `ZNC` | (6) (10)    |
-| `0 0001 1010` | `RLSB`    | <code>A ← B &#38; (B - 1)</code>                       | `ZNC` | (6) (11)    |
-| `0 0001 1011` | `ZHIB`    | <code>A ← A &#38; ((1 << B[7:0]) - 1)</code>           | `ZNC` | (12)        |
+| `CCCC C CCCC` | NAME     | Operation                                    | Flags | Comment     |
+|---------------|----------|----------------------------------------------|-------|-------------|
+| `0000 0 1000` | `RCL`    | <code>A ← (B << 1) &#124; C</code>           | `ZNC` | (1) (2) (3) |
+| `0000 0 1001` | `RCR`    | <code>A ← (B >> 1) &#124; (C << -1)</code>   | `ZNC` | (1) (2) (3) |
+| `0000 0 1010` | `POPCNT` | <code>A ← POPCNT(B)</code>                   | `Z`   | (4)         |
+| `0000 0 1011` | `GREV`   | <code>A ← GREV(A, B)</code>                  | `ZN`  | (5)         |
+| `0000 0 1100` | `CTZ`    | <code>A ← CTZ(B)</code>                      | `ZC`  | (6) (7)     |
+| `0000 0 1101` | `CLZ`    | <code>A ← CLZ(B)</code>                      | `ZC`  | (6) (8)     |
+| `0000 0 1110` | `NOT`    | <code>A ← ~B</code>                          | `ZN`  |             |
+| `0000 0 1111` | `ANDN`   | <code>A ← ~A &#38; B</code>                  | `ZN`  |             |
+| `0000 1 1000` | `LSB`    | <code>A ← B &#38; -B</code>                  | `ZN`  | (9)         |
+| `0000 1 1001` | `LSMSK`  | <code>A ← B ^ (B - 1)</code>                 | `ZNC` | (6) (10)    |
+| `0000 1 1010` | `RLSB`   | <code>A ← B &#38; (B - 1)</code>             | `ZNC` | (6) (11)    |
+| `0000 1 1011` | `ZHIB`   | <code>A ← A &#38; ((1 << B[7:0]) - 1)</code> | `ZNC` | (12)        |
+
+<details>
+<summary>Alternative table layout</summary>
+
+This table is identical to the one above except that the spacing for the `C` bits are grouped differently. The order is still the same.
+
+| `C CCCC CCCC` | NAME     | Operation                                    | Flags | Comment     |
+|---------------|----------|----------------------------------------------|-------|-------------|
+| `0 0000 1000` | `RCL`    | <code>A ← (B << 1) &#124; C</code>           | `ZNC` | (1) (2) (3) |
+| `0 0000 1001` | `RCR`    | <code>A ← (B >> 1) &#124; (C << -1)</code>   | `ZNC` | (1) (2) (3) |
+| `0 0000 1010` | `POPCNT` | <code>A ← POPCNT(B)</code>                   | `Z`   | (4)         |
+| `0 0000 1011` | `GREV`   | <code>A ← GREV(A, B)</code>                  | `ZN`  | (5)         |
+| `0 0000 1100` | `CTZ`    | <code>A ← CTZ(B)</code>                      | `ZC`  | (6) (7)     |
+| `0 0000 1101` | `CLZ`    | <code>A ← CLZ(B)</code>                      | `ZC`  | (6) (8)     |
+| `0 0000 1110` | `NOT`    | <code>A ← ~B</code>                          | `ZN`  |             |
+| `0 0000 1111` | `ANDN`   | <code>A ← ~A &#38; B</code>                  | `ZN`  |             |
+| `0 0001 1000` | `LSB`    | <code>A ← B &#38; -B</code>                  | `ZN`  | (9)         |
+| `0 0001 1001` | `LSMSK`  | <code>A ← B ^ (B - 1)</code>                 | `ZNC` | (6) (10)    |
+| `0 0001 1010` | `RLSB`   | <code>A ← B &#38; (B - 1)</code>             | `ZNC` | (6) (11)    |
+| `0 0001 1011` | `ZHIB`   | <code>A ← A &#38; ((1 << B[7:0]) - 1)</code> | `ZNC` | (12)        |
+
+</details>
 
 1) C in the operation column refers to the carry flag.
 2) The `-1` in the operation equivalently indicates a shift amount of one less than the operation size.
