@@ -32,6 +32,8 @@ These instructions are in the expanded calculation opcode section of instruction
 <details>
 <summary>Alternative table layout</summary>
 
+This table is identical to the one above except that the spacing for the `C` bits are grouped differently. The order is still the same.
+
 | `C CCCC CCCC` | NAME     | Operation                                    | Flags | Comment     |
 |---------------|----------|----------------------------------------------|-------|-------------|
 | `0 0000 1000` | `RCL`    | <code>A ← (B << 1) &#124; C</code>           | `ZNC` | (1) (2) (3) |
