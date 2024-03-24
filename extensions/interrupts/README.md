@@ -29,7 +29,7 @@ As a reminder, if [Privileged Mode](../privileged-mode/README.md) is supported, 
 must trigger a #GP fault.
 
 1) This is a bitfield where each bit corresponds to a specific interrupt based on the table below.
-2) Writing to this control register acknowledges the external interrupts corresponding to the set bits in the value being written. Interrupts hidden by the mask will not be acknowledged.
+2) Writing to this control register acknowledges the external interrupts corresponding to the set bits in the value being written.
 3) This stores the number which refers to the current interrupt.
 4) These control registers are not writable through the `writecr` instruction and are effectively read-only. Writing to them is a NOP.
 5) The intent of these registers is to provide a space to save general-purpose registers at the start of an interrupt handler to get the scratch (general-purpose) registers necessary to set up a stack. This is necessary on systems not supporting [FI](../full-immediates/README.md) nor [MO1](../memory-operands-1/README.md). Regardless, they are available for any (privileged) purpose.
