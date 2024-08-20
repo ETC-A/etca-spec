@@ -29,6 +29,11 @@ If this extension is present on a system without a data cache, `ALLOC_ZERO` _mus
 
 `ALLOC_ZERO` and `DCACHE_INVALIDATE` ignore the `SS` bits and the value in the `A` register is treated as address-sized.
 
+# Added Instruction Prefixes
+
+This extension adds the prefix `BYPASS_CACHE` with binary value `1101 0000`. This prefix causes the instruction it prefixes to bypass the cache when reading from or writing to memory.
+If the interrupt extension is present and this prefix is used with a cache instruction or an instruction that does not access memory, an `Illegal Instruction` exception should occur.
+
 # Added Control Registers
 
 | CRN      | Name               |
