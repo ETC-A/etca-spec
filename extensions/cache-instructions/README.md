@@ -23,11 +23,15 @@ cache or data cache is present.
 | `DCACHE_FLUSH`         | `1001 1111`  | `AAA 000 10` | Flushes the data cache entry for the address specified by the A register.                                               |
 | `ICACHE_INVALIDATE`    | `1001 1111`  | `AAA 000 11` | Invalidates the instruciton cache entry for the address specified by the A register.                                    |
 
-Note that the last 5 instructions overlap with the never jump instruction. This is intentional since these instructions shouldn't change the behavior of a program.
-
-If this extension is present on a system without a data cache, `ALLOC_ZERO` _must_ be a NOP instruction.
+Note that the last 5 instructions overlap with the never jump instruction. This is intentional since these instructions shouldn't change the behavior of a program in most cases.
 
 `ALLOC_ZERO` and `DCACHE_INVALIDATE` ignore the `SS` bits and the value in the `A` register is treated as address-sized.
+
+### Special cases for implementations
+
+- On a system without a data cache, `ALLOC_ZERO` _must_ be a NOP instruction.
+- On a system with an instruction cache which is not fully synchronized with the data cache (or memory when a data cache is not present), `ICACHE_INVALIDATE` _must_ not be a NOP instruction.
+- On a system with an instruction cache which is not fully synchronized with the data cache (or memory when a data cache is not present), `CACHE_INVALIDATE_ALL` _must_ not be a NOP instruction.
 
 # Added Instruction Prefixes
 
