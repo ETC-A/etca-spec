@@ -7,7 +7,7 @@
 # Overview
 
 This extension adds several instructions which can be used to control the data and instruction cache if they are present. While the `ALLOC_ZERO` instruction _must_ appear like
-a write of 0 to the cache line specified by the address, the other 7 instructions _may_ be implemented as NOP instructions. This extension does __NOT__ require that an instruction
+a write of 0 to the cache line specified by the address, the other 7 instructions _may_ be implemented as NOP instructions (see exceptions below). This extension does __NOT__ require that an instruction
 cache or data cache is present.
 
 # Added Instructions
