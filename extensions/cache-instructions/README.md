@@ -33,11 +33,6 @@ Note that the last 5 instructions overlap with the never jump instruction. This 
 - On a system with an instruction cache which is not fully synchronized with the data cache (or memory when a data cache is not present), `ICACHE_INVALIDATE` _must_ not be a NOP instruction.
 - On a system with an instruction cache which is not fully synchronized with the data cache (or memory when a data cache is not present), `CACHE_INVALIDATE_ALL` _must_ not be a NOP instruction.
 
-# Added Instruction Prefixes
-
-This extension adds the prefix `BYPASS_CACHE` with binary value `1101 0000`. This prefix causes the instruction it prefixes to bypass the cache when reading from or writing to memory.
-If the interrupt extension is present and this prefix is used with a cache instruction or an instruction that does not access memory, an `Illegal Instruction` exception should occur.
-
 # Added Control Registers
 
 | CRN      | Name               |
