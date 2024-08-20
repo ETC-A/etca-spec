@@ -7,8 +7,8 @@
 # Overview
 
 This extension adds several instructions which can be used to control the data and instruction cache if they are present. While the `ALLOC_ZERO` instruction _must_ appear like
-a write of 0 to the specified address, the other 7 instructions _may_ be implemented as NOP instructions. This extension does __NOT__ require that an instruction or data cache
-is present.
+a write of 0 to the cache line specified by the address, the other 7 instructions _may_ be implemented as NOP instructions. This extension does __NOT__ require that an instruction
+cache or data cache is present.
 
 # Added Instructions
 
@@ -23,10 +23,9 @@ is present.
 | `DCACHE_FLUSH`         | `1001 1111`  | `AAA 000 10` | Flushes the data cache entry for the address specified by the A register.                                               |
 | `ICACHE_INVALIDATE`    | `1001 1111`  | `AAA 000 11` | Invalidates the instruciton cache entry for the address specified by the A register.                                    |
 
-Note that the last 5 instructions overlap with the never jump instruction. This is intentional since these instructions don't change a programs behavior.
+Note that the last 5 instructions overlap with the never jump instruction. This is intentional since these instructions shouldn't change the behavior of a program.
 
-If this extension is present on a system without a data cache, `ALLOC_ZERO` must write 0 to memory as if it had a cache line size as specified by the `CACHE_LINE_SIZE` control register.
-If `CACHE_LINE_SIZE` is zero, then it _must_ be a NOP instruction.
+If this extension is present on a system without a data cache, `ALLOC_ZERO` _must_ be a NOP instruction.
 
 `ALLOC_ZERO` and `DCACHE_INVALIDATE` ignore the `SS` bits and the value in the `A` register is treated as address-sized.
 
