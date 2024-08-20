@@ -7,8 +7,8 @@
 # Overview
 
 This extension adds several instructions which can be used to control the data and instruction cache if they are present. While the `ALLOC_ZERO` instruction _must_ appear like
-a write of 0 to the specified address, the other 7 instructions _may_ be implemented as NOP instructions. This extension does __NOT__ require that an instruction or data cache
-is present.
+a write of 0 to the cache line specified by the address, the other 7 instructions _may_ be implemented as NOP instructions (see special cases below). This extension does __NOT__ require that an instruction
+cache or data cache is present.
 
 # Added Instructions
 
@@ -23,12 +23,15 @@ is present.
 | `DCACHE_FLUSH`         | `1001 1111`  | `AAA 000 10` | Flushes the data cache entry for the address specified by the A register.                                               |
 | `ICACHE_INVALIDATE`    | `1001 1111`  | `AAA 000 11` | Invalidates the instruciton cache entry for the address specified by the A register.                                    |
 
-Note that the last 5 instructions overlap with the never jump instruction. This is intentional since these instructions don't change a programs behavior.
-
-If this extension is present on a system without a data cache, `ALLOC_ZERO` must write 0 to memory as if it had a cache line size as specified by the `CACHE_LINE_SIZE` control register.
-If `CACHE_LINE_SIZE` is zero, then it _must_ be a NOP instruction.
+Note that the last 5 instructions overlap with the never jump instruction. This is intentional since these instructions shouldn't change the behavior of a program in most cases.
 
 `ALLOC_ZERO` and `DCACHE_INVALIDATE` ignore the `SS` bits and the value in the `A` register is treated as address-sized.
+
+### Special cases for implementations
+
+- On a system without a data cache, `ALLOC_ZERO` _must_ be a NOP instruction.
+- On a system with an instruction cache which is not fully synchronized with the data cache (or memory when a data cache is not present), `ICACHE_INVALIDATE` _must_ not be a NOP instruction.
+- On a system with an instruction cache which is not fully synchronized with the data cache (or memory when a data cache is not present), `CACHE_INVALIDATE_ALL` _must_ not be a NOP instruction.
 
 # Added Control Registers
 
@@ -39,7 +42,7 @@ If `CACHE_LINE_SIZE` is zero, then it _must_ be a NOP instruction.
 | `1 0000` | `NO_CACHE_END`    |
 
 `CACHE_LINE_SIZE` is a read-only control register which specifies the number of bytes in a cache line for the data cache. It _must_ be a power of 2 unless no data cache is present
-in which case it _may_ be 0.
+in which case it _must_ be 0.
 
 `NO_CACHE_START` is a cache-aligned address which represents the inclusive start of a contiguous range of physical memory addresses which will not be cached when accessed. If the privilege extension is present, this is only accessible in system mode.
 This control register is set to 0 on CPU initialization.
