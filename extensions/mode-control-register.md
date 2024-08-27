@@ -42,6 +42,19 @@ should mean or how many bytes an immediate should be.
 | 32 bit       | doubleword   |
 | 64 bit       | quadword     |
 
+When an instruction "reads an address" from a register, bits beyond those specified by the current Address Size attribute are ignored.
+Similarly, when an instruction "stores an address" (or "writes") to a register, bits in the result
+beyond those specified by the curernt Address Size attribute are unspecified.
+For example, if the address size is `word`, after a `call` only the lower 16 bits of the link register are specified.
+The higher bits may be anything, though we offer recommendations.
+
+If the current addressing mode is a virtual mode, be aware that the addressing mode will be a power-of-two number of
+bits even if the virtual pointer widths are not (e.g. virtual 48-bit pointers are used with a `quadword` addressing mode).
+In this case, the bits between the pointer width and the addressing mode **must** be specified by the extension
+introducing the addressing mode. In particular, when storing an address to a register, those bits must be the sign
+extension of the virtual address. We leave the semantics of reading such an address from a register to the relevant
+extensions.
+
 If the system supports [privilege levels](../privileged-mode/), then `cr17` is only writable when in system privilege mode.
 
 # Recommendations
@@ -51,3 +64,8 @@ extensions which will require more specifics, the following are recommended:
 
 * The program counter (or equivalent) in the processor itself should always store the sign-extended address.
   This way, nothing special needs to be done when entering or leaving address modes with larger or smaller address sizes
+
+* When storing addresses to registers, the values stored _should_ be their sign-extension to the full width of the
+  register. Barring that, the values _should_ be their sign extension to the widest supported address width, and
+  be zero-extended from there. We strongly recommend that the choice be consistent across all relevant instructions
+  and that documentation about processor describe what is done.
