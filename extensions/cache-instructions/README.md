@@ -16,7 +16,7 @@ cache or data cache is present.
 |------------------------|--------------|--------------|-------------------------------------------------------------------------------------------------------------------------|
 | `ALLOC_ZERO`           | `00 SS 1111` | `AAA 000 00` | Sets the data cache entry for the address specified by the A register to 0 without first reading the value from memory. |
 | `DCACHE_INVALIDATE`    | `00 SS 1111` | `AAA 001 00` | Invalidates the data cache entry for the address specified by the A register without flushing it.                       |
-| `CACHE_INVALIDATE_ALL` | `00 11 1111` | `000 100 01` | Invalidates ALL caches. Useful for CPU resets and possibly for inter-process security.                                  |
+| `CACHE_INVALIDATE_ALL` | `00 XX 1111` | `000 111 01` | Invalidates ALL caches. Useful for CPU resets and possibly for inter-process security.                                  |
 | `CACHE_FLUSH_ALL`      | `1000 1111`  | `000 000 01` | Flushes ALL dirty caches. Possibly useful for inter-process security.                                                   |
 | `DATA_PREFETCH`        | `1001 1111`  | `AAA 000 00` | Prefetches the memory at the address in the register specified by A into the data cache.                                |
 | `INSTRUCTION_PREFETCH` | `1001 1111`  | `AAA 000 01` | Prefetches the memory at the address in the register specified by A into the instruction cache.                         |
