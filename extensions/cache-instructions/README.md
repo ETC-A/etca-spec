@@ -35,11 +35,11 @@ Note that the last 5 instructions overlap with the never jump instruction. This 
 
 # Added Control Registers
 
-| CRN      | Name               |
-|----------|---------------------|
-| `0 1110` | `CACHE_LINE_SIZE` |
-| `0 1111` | `NO_CACHE_START`  |
-| `1 0000` | `NO_CACHE_END`    |
+| CRN    | Name               |
+|--------|---------------------|
+| `1100` | `CACHE_LINE_SIZE` |
+| `1101` | `NO_CACHE_START`  |
+| `1110` | `NO_CACHE_END`    |
 
 `CACHE_LINE_SIZE` is a read-only control register which specifies the number of bytes in a cache line for the data cache. It _must_ be a power of 2 unless no data cache is present
 in which case it _must_ be 0.
