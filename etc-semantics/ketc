@@ -32,23 +32,28 @@ run_kompile() {
     kompile "${kompile_opts[@]}" "$@"
 }
 
+parse_binary_file() {
+    hexdump -ve '"\\\x" 1/1 "%.2x"' "$1"
+}
+
 run_krun() {
-    local cpgm ccpuid parser
+    local cpgm ccpuid1 ccpuid2 cfeat parser
 
     check_k_install
 
-    cpgm=$cPGM_kore
-    ccpuid=$cCPUID_kore
+    cpgm="\dv{SortBytes{}}(\"$(parse_binary_file ${run_file})\")"
+    ccpuid1="\dv{SortInt{}}(\"${cpuid1}\")"
+    ccpuid2="\dv{SortInt{}}(\"${cpuid2}\")"
+    cfeat="\dv{SortInt{}}(\"${feat}\")"
+
     parser='cat'
 
-    krun --directory "$backend_dir"         \
-        -cPGM="$cpgm"     -pPGM="$parser"   \
-        -cCPUID="$ccpuid" -pCPUID="$parser" \
+    krun --directory "$backend_dir"            \
+        -cPGM="$cpgm"       -pPGM="$parser"    \
+        -cCPUID1="$ccpuid1" -pCPUID1="$parser" \
+        -cCPUID2="$ccpuid2" -pCPUID2="$parser" \
+        -cFEAT="$cfeat"     -pFEAT="$parser"   \
         "$@"
-}
-
-parse_binary_file() {
-    hexdump -ve '1/1 "\\x%.2x"' "$1"
 }
 
 # Main
@@ -67,12 +72,12 @@ if [[ "$run_command" == 'help' ]] || [[ "$run_command" == '--help' ]] ; then
 
                ${KETC} [help|--help|version|--version]
           
-          ${KETC} run     : Run a single ETC.A program.
+          ${KETC} run     : Run a single ETCa program.
           ${KETC} kompile : Run Kompile with the appropriate setup for ketc.
           ${KETC} help    : Display this help message.
           ${KETC} version : Display the versions of ketc and K in use.
           
-          Note: <pgm> is a path to a file containing a raw binary ETC.A program.
+          Note: <pgm> is a path to a file containing a raw binary ETCa program.
                 <${KETC} arg> is one of [--mode (NORMAL|STRICT|EVIL)]
                                      [--backend (llvm|haskell)]
                                      [--cpuid <number>]
@@ -92,13 +97,17 @@ fi
 
 backend="llvm"
 mode=NORMAL
-cpuid=0
+cpuid1=0
+cpuid2=0
+feat=0
 
 args=()
 while [[ $# -gt 0 ]] ; do
     case "$1" in
         --mode)          mode="$2"                   ; shift 2 ;;
-        --cpuid)         cpuid="$2"                  ; shift 2 ;;
+        --cpuid1)        cpuid1="$2"                 ; shift 2 ;;
+        --cpuid2)        cpuid2="$2"                 ; shift 2 ;;
+        --feat)          feat="$2"                   ; shift 2 ;;
         --backend)       backend="$2"                ; shift 2 ;;
         --directory)     backend_dir="$2"            ; shift 2 ;;
         --debug)         debug=true   ; args+=("$1") ; shift   ;;
@@ -121,12 +130,9 @@ if [[ "${run_file}" == '-' ]] ; then
     tmp_input="$(mktemp)"
     trap "rm -rf ${tmp_input}" INT TERM EXIT
     cat - > "${tmp_input}"
-    run_file="{tmp_input}"
+    run_file="${tmp_input}"
 fi
 [[ -f "${run_file}" ]] || fatal "File does not exist: ${run_file}"
-
-cPGM_kore="\dv{SortBytes{}}(\"$(parse_binary_file ${run_file})\")"
-cCPUID_kore="\dv{SortInt{}}(\"${cpuid}\")"
 
 ! ${debug} || set -x
 

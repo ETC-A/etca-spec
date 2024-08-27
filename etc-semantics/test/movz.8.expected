@@ -1,11 +1,11 @@
 <etc>
   <k>
-    #EUnknownInstr ~> #fetch ~> .
+    #halt "Halted successfully!" ~> .
   </k>
-  <pc> 32770 </pc>
+  <pc> 32774 </pc>
   <registers>
-    0 |-> -1
-    1 |-> 0
+    0 |-> maxUInt8
+    1 |-> maxUInt16
     2 |-> 0
     3 |-> 0
     4 |-> 0
@@ -23,7 +23,7 @@
     <overflow> false </overflow>
   </flags>
   <machine-details>
-    <cpuid1> 0 </cpuid1>
+    <cpuid1> 8 </cpuid1>
     <cpuid2> 0 </cpuid2>
     <feat>   0 </feat>
     <reg-width> word </reg-width>

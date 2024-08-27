@@ -1,5 +1,5 @@
 ;-mstrict
-;0,16,64,128
+;0,8,16384,32768
     movx %rx0, -1
 end:
     jmp end
