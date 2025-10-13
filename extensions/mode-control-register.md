@@ -75,8 +75,8 @@ the same size called "frames." Any page may be translated into any frame; there 
 pages to map to contiguous frames, to frames in ascending order, or any other such restriction.
 
 <p align="middle">
-  <img src="resources/vm-diagrams/mmu-translation-success.svg" width=140>
-  <img src="resources/vm-diagrams/mmu-translation-fail.svg"    width=140>
+  <img src="resources/vm-diagrams/mmu-translation-success.svg" width=350>
+  <img src="resources/vm-diagrams/mmu-translation-fail.svg"    width=350>
 </p>
 
 Virtual address modes also make it possible to configure access protections for pages.
