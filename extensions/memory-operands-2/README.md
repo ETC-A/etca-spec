@@ -89,4 +89,4 @@ MO2 also support MO1.
 # AOE Table
 
 The added instructions can be seen in the complete Advanced Operand Extensions table, which encompasses the FI, MO1, and MO2 extensions. They are under `Mode=01`, `ABM != 01x`.
-![AOE Table](../etca_aoe_table.png)
+![AOE Table](../resources/etca_aoe_table.png)
