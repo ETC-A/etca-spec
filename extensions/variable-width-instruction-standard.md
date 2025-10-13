@@ -8,11 +8,11 @@ Variable Width Instructions (VWI) are a sequence of one or more bytes which coun
 
 Note that this does not preclude pipelining, so long as any references to the instruction pointer in the specification of an instruction correctly refer to the base address of that instruction being executed.
 
-If the first byte of an instruction is `11xx xxxx`, it is a VWI
+If the first byte of an instruction is `11xx xxxx`, it is a VWI.
 
 ## Single Byte NOP
 
-All CPUs which support at least 1 VWI extension must also accept `1010 1110` as a single byte NOP instruction
+All CPUs which support at least 1 VWI extension must also accept `1010 1110` as a single byte NOP instruction.
 
 ## Instruction Prefixes
 
