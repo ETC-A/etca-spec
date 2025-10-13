@@ -25,24 +25,11 @@ The register contains a bit field with various bits controlling the behavior of 
 |-----|------|---------------|---------|
 | 0   | `VM` | `0` | When this bit is set, virtual memory is in use. Which extension specifically governs the addressing mode of the CPU depends on the other bits. |
 | 1-2 | `PTRSZ` | `00` | These bits describe the width of logical addresses. `00` indicates 16 bits, `01` indicates 32, and `10` indicates 64. |
-| 12  | `WP` | `1` | Short for "Write Protect," this bit controls the behavior of memory regions marked read-only. See below. |
+| 12  | `WP` | `1` | Short for "Write Protect," this bit controls the behavior of memory regions marked read-only. See [WP](#write-protect) below. |
 | 13  | `CID` | `?` | When set, context identifiers other than 0 are allowed; see [TLB Shootdown, Optional Feature](#optional-feature-cid) below. |
 
 All other bits are reserved for extensions, including bits above the 15th. Attempts to write these bits must raise `#GP`
 unless the relevant extension is available.
-
-When the `WP` bit is 0 and the [`PM`](../privileged-mode/) extension is available, in system mode any write access controls are ignored.
-This allows system-privileged code to modify memory marked read-only for the user. When `WP` is 1, write access
-controls are enforced even for privileged code.
-When `PRIV` is not available, the `WP` bit controls the behavior of all code as if it were privileged.
-Allowing privileged code to modify memory marked read-only is critical for implementing memory management software with
-[16-bit Paging](16-bit-paging/README.md) or [32-bit Paging](32-bit-paging/README.md) enabled.
-
-Note that `WP` only affects write protections described by "protected mode" extensions. Memory that is read-only for
-some other reason, such as being mapped to a read-only device, remains read-only. However, enabling the `WP` protect
-bit may cause an attempt to write such an address to trigger an exception rather than being silently ignored
-(or worse, causing damage) which is helpful for finding kernel bugs. It is expected that software usually leave the bit
-set, disabling it only for short periods of time when required.
 
 ### Related Control Registers
 
@@ -63,7 +50,7 @@ The mode described by [the base isa](../../base-isa.md) is known as the
 Base mode. It is also known as Real 16-bit Address Mode.
 
 In this mode, pointers are 16 bits and there is no virtual memory, paging, or memory protection.
-Base mode is indicated by a value of 0 in `cr17`.
+Base mode is indicated by `MODE[PTRSZ]=0` and `MODE[VM]=0`.
 
 # Real n-bit Address Mode
 
@@ -88,6 +75,12 @@ the same size called "frames." Any page may be translated into any frame; there 
 pages to map to contiguous frames, to frames in ascending order, to distinct frames, or any other such
 restriction.
 
+> [!CAUTION]
+> When setting `MODE[VM]`, care must be taken to ensure that the instruction pointer
+> will map to either the same physical address as currently executing, or to
+> a physical address with a copy of the code. Otherwise, setting `MODE[VM]`
+> can effectuate a hard-to-predict control transfer.
+
 <p align="middle">
   <img src="resources/vm-diagrams/mmu-translation-success.svg" width=350>
   <img src="resources/vm-diagrams/mmu-translation-fail.svg"    width=350>
@@ -95,7 +88,7 @@ restriction.
 
 Virtual address modes also make it possible to configure access protections for pages.
 The MMU is also responsible for ensuring that the address is accessible. In the event of a disallowed access,
-the MMU triggers `#PF` -- a "Page Fault exception." It is the job of software (usually a kernel, if PRIV is
+the MMU triggers `#PF` -- a "Page Fault exception." It is the job of software (usually a kernel, if `PM` is
 available on the system) to handle this exception.
 Using this feature, it is possible to reduce actual physical memory usage without reducing virtual address
 space size, by marking pages inaccessible and not allocating a physical frame for those pages.
@@ -109,6 +102,20 @@ In some paging modes, the system supports physical addresses wider than the virt
 Unless the system also supports a wider Real address mode, those physical addresses are inaccessible while
 paging is disabled, because there is no way to refer to them.
 Implementations may offer some other mechanism to refer to such addresses.
+
+### Write Protect
+
+When `MODE[WP]=0`, the [`PM`](../privileged-mode/) extension is available,
+and execution is in system mode, write access controls on pages are ignored.
+This allows system-privileged code to modify memory marked read-only for the user.
+When `WP` is 1, write access controls are enforced even for privileged code.
+When `PM` is not available, the `WP` bit controls the behavior of all code as if it were privileged.
+Allowing privileged code to modify memory marked read-only is critical for
+implementing memory management software with [16-bit Paging](16-bit-paging/README.md)
+or [32-bit Paging](32-bit-paging/README.md) enabled.
+
+It is recommended that software usually leave the bit set,
+disabling it only for short periods of time when required.
 
 ## Address Translation
 
@@ -134,7 +141,7 @@ zero bits with the offset bits from the virtual address, you get the final physi
 
 For the 16-bit paging extension, the translation process is shown in the following diagram:
 
-![16-bit paging example](resources/vm-diagrams/16-bit-paging/transl.svg)
+![16-bit paging example](resources/vm-diagrams/16-bit-paging-transl.svg)
 
 Note that the page table itself lives in physical memory. Part of the address of the currently active
 page table is stored in CR 18 (`VM_ROOT`). That said, it is generally not required for the active
@@ -304,7 +311,7 @@ any implementation supporting a hard paging extension must support the
 `INVLPG` instruction. Implementations supporting soft paging extensions _may_
 support the instruction.
 
-| Name   | Mnemonic | First Byte    | Second Byte  | Description |                                                                                                                                                                                                |
+| Name   | Mnemonic | First Byte    | Second Byte  | Description |
 |:-------|:--------------|:-------------|:-----------------------|
 | `INVALIDATE_PAGE` | `INVLPG` | `1001 1111`  | `AAA 001 00` | Invalidate all TLB entries for the page addressed by `A`. |
 
@@ -362,7 +369,7 @@ should mean or how many bytes an immediate should be.
 
 ## `PM`
 
-If the system supports [privilege levels](../privileged-mode/), then CR 17 (`MODE`) is only writable when in system privilege mode.
+If the system supports [privilege levels](../privileged-mode/), then CRs 17-22 are only writable when in system privilege mode.
 
 ## `CI`
 
