@@ -1,4 +1,5 @@
 * Fixed some missing punctuation in VWI that was annoying me. It's not related to the PR.
+* Minor updates were made to DWAS, QWAS, MO1, MO2, and FI adjusting wording or reference paths.
 * Changes were required to the meaning of MODE which are backwards-compatible.
 * Changes were made to the meaning of CPUID1 which are **not** backwards-compatible.
   It seems we had planned for 16-bit paging to require DW, but this proposal is
@@ -19,6 +20,7 @@
 * Corresponding to above, 16-bit paging extension explicitly ignores the presence
   of Global Pages Enabled because it would allow a 16-bit soft TLB to invalidate
   entries that the software needs.
-* 32-bit paging with global pages but without CIDs is almost identical to x86 paging without PAE.
+* 32-bit hard paging with global pages but without CIDs is almost identical to x86 paging without PAE.
+* 32-bit soft paging has a few unused bits in TLBLO
 * No encoding has been chosen yet for `TLBI`. We discussed a minor EXOP rework which
   `TLBI` would take advantage of, so I held off.
