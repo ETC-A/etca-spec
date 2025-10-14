@@ -92,6 +92,20 @@ The entry won't be used for translations until `MODE[CID]` is set.
 While `MODE[CID]=1`, the "current CID" is controlled by the
 `VM_ROOT[CID]` bits (even though soft paging ignores the rest of `VM_ROOT`).
 
+> [!TIP]
+> For software developers: while the TLB entries do not contain accessed/dirty
+> bits, it is possible to emulate them. Periodically clear the `P` and `W` bits
+> of your TLB entries, recording elsewhere (e.g., your custom paging structure),
+> which entries are valid and which are writable. Optionally record the values
+> of the bits before clearing them, to keep a history.
+> When handling `#PF(P)` and `#PF(W)`, first check in your records if the
+> necessary TLB entry is already allocated with storage attributes cleared.
+> If so, simply set the appropriate attribute bits and return from handler.
+> Now the `P` and `W` bits of your entries also function as `A` and `D` bits.
+>
+> Be careful to never clear the `P` bit on the entry mapping the
+> exception handler!
+
 # Additional Behavioral Changes
 
 In Virtual 16-bit Address Mode, support for [global pages](../mode-control-register.md#optional-feature-global-pages)
