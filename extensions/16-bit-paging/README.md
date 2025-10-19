@@ -95,9 +95,9 @@ While `MODE[CID]=1`, the "current CID" is controlled by the
 > [!TIP]
 > For software developers: while the TLB entries do not contain accessed/dirty
 > bits, it is possible to emulate them. Periodically clear the `P` and `W` bits
-> of your TLB entries, recording elsewhere (e.g., your custom paging structure),
+> of your TLB entries, recording elsewhere (e.g., your custom paging structure)
 > which entries are valid and which are writable. Optionally record the values
-> of the bits before clearing them, to keep a history.
+> of the bits before clearing them to keep a history.
 > When handling `#PF(P)` and `#PF(W)`, first check in your records if the
 > necessary TLB entry is already allocated with storage attributes cleared.
 > If so, simply set the appropriate attribute bits and return from handler.
