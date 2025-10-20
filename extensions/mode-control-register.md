@@ -47,7 +47,7 @@ unless the relevant extension is available.
 
 ### Related Control Registers
 
-When `MODE[VM]=1`, the system additionally uses the R/W control registers CR 18 (`VM_ROOT`), CR 19 (`INT_PFLA`),
+When `MODE[VM]=1`, the system additionally uses the R/W control registers CR 18 (`VM_ROOT`), CR 19 (`INT_ECODE`),
 and possibly CRs 20-22 (`TLBX`, `TLBLO`, and `TLBHI`). The purpose of each of these registers is discussed [below](#soft-virtual-modes).
 When `MODE[VM]=0`, reading or writing these registers has no immediate effect. All of these registers are
 privileged, if `PM` is available.
@@ -339,8 +339,8 @@ def paging_properties(ptrsz):
 The exact format of TLB entries, in particular how they map onto `TLBLO`
 and `TLBHI`, must be specified by each paging extension.
 Any other responsibilities of the software must also be specified.
-A compliant implementation, of course, can completely ignore that specification
-if it implements hard paging.
+A compliant hard paging implementation, of course, can completely ignore
+that specification (as software can't interact with a hard paging TLB).
 
 > [!NOTE]
 > Soft paging hardware never reads `VM_ROOT` or inspects page tables
@@ -387,12 +387,14 @@ When [Global Pages](#optional-feature-global-pages) are supported,
 `INVLPG` additionally invalidates global entries for the addressed page
 regardless of CID.
 
-Implementations are recommended to _only_ invalidate the entries described
+Hard paging implementations are recommended to _only_ invalidate the entries described
 above, but are permitted to invalidate more, including possibly every entry.
 This does not need to be consistent; a compliant implementation may
 invalidate only the necessary implementations on one use but invalidate
 the whole TLB on the next, or invalidate the whole TLB only when the
-instructions executes on a Tuesday, etc.
+instruction executes on a Tuesday, etc.
+
+Soft paging implementation must only invalidate the entries described above.
 
 When `MODE[VM]=0`, the instruction must still invalidate TLB entries;
 this can be used by software to determine if a soft paging implementation
@@ -468,14 +470,15 @@ but the non-global ones are not used in address translation until CIDs are re-en
 > it is possible for the MMU to find global TLB entries for pages that are
 > not mapped in the current `VM_ROOT` until those entries are invalidated
 > either manually or by the processor (which can be very difficult to predict).
-> Such entries must be explicitly invalidated
-> when this is not acceptable behavior.
+> Such entries must be explicitly invalidated when this is not acceptable behavior.
+> It is advisable to only mark a page global if it is in **every** address
+> space that the software is maintaining.
 
 When `MODE[CID]=1`, writes to `VM_ROOT` are not required to invalidate any TLB
 entries. This condition may be strengthened by an extension, requiring some
 entries to be invalidated in some circumstances.
 
-Instead, targetted and mass invalidations can be performed by the `TLBI`
+Instead, targeted and mass invalidations can be performed by the `TLBI`
 or "TLB Invalidate" instruction. Support for the instruction is
 required in implementations supporting context identifiers.
 Software can determine if the instruction is supported in an implementation
@@ -489,7 +492,8 @@ When the `TLBI` instruction is used, _at least_ the TLB entries specified
 below are invalidated. It is permitted to invalidate more entries than
 specified, however soft paging implementations _must not_ invalidate entries
 for global pages.
-(When invalidating entries for specific global page, use `INVLPG`.)
+(If soft paging software wants to invalidate entries for specific global page,
+use `INVLPG` or invalidate them manually.)
 While a soft paging mode is active, the `TLBI ALL` instruction (if implemented)
 must raise `#GP`. If a soft paging mode is supported, but not currently active,
 `TLBI ALL` invalidates all TLB entries.
@@ -517,8 +521,8 @@ On systems supporting any of `PG16`, `PG32`, `PG48`, or `PG57`, a new exception 
 | Page Fault               | Synchronous  | 6                | Raised by the MMU when address translation fails.    |
 
 When a page fault is raised and control is transferred to the exception handler,
-`INT_DATA` will contain an "exception code" and `INT_PFLA` (CR 19) will contain
-the logical address for which access faulted.
+`INT_DATA` will contain the logical address for which access faulted and
+`INT_ECODE` (CR 19) will contain an "exception code" describing the fault.
 
 The exception code contains several bits explaining why the address translation failed.
 It is possible for multiple of these bits to be set simultaneously.
