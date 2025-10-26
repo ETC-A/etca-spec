@@ -262,7 +262,7 @@ Virtual modes are further subdivided into _soft virtual modes_ and
 _hard virtual modes_ (aka _soft paging_ and _hard paging_).
 In hard virtual modes, the MMU handles address
 translations and manages its own TLB(s). In soft virtual modes,
-TLB misses raise `#PF` exceptions with the `INT_DATA[TLB]` bit set
+TLB misses raise `#PF` exceptions with the `INT_ECODE[MISS]` bit set
 (see [Page Faults](#page-faults) below).
 An implementation compliant with a paging extension must implement
 **either hard or soft operation** but should not implement both.
@@ -498,7 +498,7 @@ While a soft paging mode is active, the `TLBI ALL` instruction (if implemented)
 must raise `#GP`. If a soft paging mode is supported, but not currently active,
 `TLBI ALL` invalidates all TLB entries.
 
-> [!INFO]
+> [!CAUTION]
 > Soft paging implementations must be constantly concerned that any performance
 > or efficiency feature which accidentally invalidates both the TLB entries
 > containing the current instruction pointer and the page fault handler
