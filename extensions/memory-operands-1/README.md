@@ -46,8 +46,8 @@ A `dP` is the same size as a logical address in the current mode. However, simil
 this extension cannot encode an 8 byte displacement. In `quadword` address mode, a `dP` is 4 bytes.
 
 If the [register expansion](../expanded-registers/README.md) extension is available, then `REX.Q` may be used with instructions in these formats if
-  - The instruction contains a `dP`
-  - The current Addressing Mode is `quadword`
+  - The instruction contains a `dP`, and
+  - The current Addressing Mode is `quadword`.
 
 In this case, the `dP` is an 8-byte value rather than a 4-byte value.
 

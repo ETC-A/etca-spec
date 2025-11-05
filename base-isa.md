@@ -13,10 +13,10 @@ This is a group of 16 bit fixed width instructions.
 
 The highest two bits of the first byte are a format marker:
 
-- `00` this is a computation operation between two registers
-- `01` this is a computation operation between a register and an immediate
-- `10` this is a (conditional) jump instruction
-- `11` this is a variable length instruction and reserved for extensions
+- `00` this is a computation operation between two registers.
+- `01` this is a computation operation between a register and an immediate.
+- `10` this is a (conditional) jump instruction.
+- `11` this is a variable length instruction and reserved for extensions.
 
 # Overview
 
@@ -60,7 +60,12 @@ The second byte has the format `AAA BBB MM` where `AAA` and `BBB` are references
 
 ### Immediate Computation
 
-The second byte has the format `AAA IIIII`, where the 5 bit immediate acts as operand `B`. The immediate is sign extended for operations 0-7 and operation 9. The immediate is zero extended for operation 8 and operations 10-15. `AAA` is treated the same as in the 2 Register Computation section above.
+The second byte has the format `AAA IIIII`, where the 5 bit immediate acts as operand `B`. `AAA` is treated the same as in the 2 Register Computation section above.
+
+
+For operations 8 and operation 10-15, immediate arguments are zero extended.
+For **all** other operations, including those from extensions, immediate arguments
+are sign extended.
 
 ### Exceptions
 
@@ -69,7 +74,7 @@ There are several exceptions to how the operands work.
  - `RSUB`
     - The `B` operand is the left source register and the `A` operand is the right source register.
  - `CMP` and `TEST`
-    - These instructions do not have a destination register
+    - These instructions do not have a destination register.
  - `STORE`
     - This instruction uses the `B` operand to specify which memory address is written to.
  - `WRITECR`

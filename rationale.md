@@ -3,7 +3,8 @@
 ETC.A is a community-owned public/open source/what have you Instruction Set Architecture. It is developed by the community of the Turing Complete game. We have a few goals:
 1) [bare-metal] Being designed for the purpose of having a well-standardized architecture for use in community programming challenges.
 2) [approachable] In the most restricted form, be simple enough that newcomers can get involved easily.
-3) [extensible] Flexible enough to be extensible (The name, ETC.A, stands for "extensible turing complete architecture"). Code assembled for a hardware with some set of extensions should run on _any_ hardware with a superset of those extensions.
+3) [extensible] Flexible enough to be extensible (The name, ETCa, stands for "extensible turing complete architecture").
+Code assembled for a hardware with some set of extensions should run on _any_ hardware with a superset of those extensions.
 4) [educational] Be interesting, allowing for features and hardware implementations that have educational value.
 5) [practicality] Be practical; if in 30 years someone wants to build and use a machine for the ISA, that should be not only reasonable but natural.
 6) [common cases] The most common cases of instructions should have a shorter encoding, if possible.
@@ -20,8 +21,7 @@ Less common cases can be emulated with the compact instructions, but will have a
 The most common cases of many types of instructions cannot arise in the base ISA. One of the most common instructions in typical x86 assembly is `call`, which the base ISA
 does not even have. Most (but not all) of the reserved space is reserved for such common instructions which do not make sense in the base ISA. The bits labeled `SS` are reserved
 as _size bits_, allowing an instruction to have an operational width of 1, 2, 4, or 8 bytes. One of the bits near the jump format is reserved for turning jumps into
-calls, while another is for indirect jumps. We are not yet sure what we want to use the two LSBs of the operand byte for, but some ideas include a mode switch similar to
-x86's `MOD R/M` byte.
+calls, while another is for indirect jumps. The two least significant bits of the operand byte are reserved for fancy "memory operands."
 
 The most significant bits of the opcode byte being `11` are reserved for any extensions to use as is relevant to them.
 
@@ -48,8 +48,8 @@ The spec dictates that the value of the C and O flags is implementation-dependen
 keep their old values. The original microprocessors (such as the Intel 8008/8008-1) did actually work this way. It was determined to be confusing. Additionally, it is more
 useful for such operations to provide an easy way to clear the C flag.
 
-There is another very important reason for not keeping the old values. Very advanced processors, called _superscalar processors_, are capable of executing instructions in
-a different order than they appear in the program binary, as long as the behavior of the program is unchanged. If flags could keep their own values even through instructions
+There is another very important reason for not keeping the old values. Very advanced processors are capable of executing instructions in
+a different order than they appear in the program binary, as long as the behavior of the program is unchanged. If flags could keep their old values even through instructions
 that modify the flags, then the dependency chain of instructions referring to the flags (called "data hazards") becomes very complicated and hard to track, preventing
 out-of-order execution on some cases where it should be possible.
 
@@ -68,13 +68,13 @@ Any useful "practical" general-purpose processor must support executing programs
 it as executable, and then execute it.
 
 However, getting this right is difficult for newcomers. The possibility of an instruction reading from its own address means that memory contention is already
-possible in the base ISA. For many people coming from the Turing Complete game, such memory conention is a completely new challenge. As such, the base ISA only specifies
+possible in the base ISA. For many people coming from the Turing Complete game, such memory contention is a completely new challenge. As such, the base ISA only specifies
 undefined behavior in these cases. The intent is that such machines will treat their whole address space as available RAM while reading instructions from separate memory.
 This is also a useful anti-specification for a future in embedded devices. Embedded devices are frequently tiny and can be more easily built if the program is known,
 stored in a ROM, and divided from data memory. By not requiring executable RAM, we ensure that programs can be compatible across a wider range of spec-compliant
 bare metal devices.
 
-Of course, an extension will indicate that the processor supports executable RAM.
+Of course, the [VON Feature](features/von-neumann/) exists to indicate that the processor supports executable RAM.
 
 ### Placement of Extensions
 
