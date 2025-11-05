@@ -95,11 +95,9 @@ When `D` is 1, these are swapped. Usually, the value in the memory location must
 When the `dst` operation is a memory location, the result of the operation must also usually be stored there. However:
 
 - If an operation uses an `ABM` byte to encode two operands, but does not treat the memory one as input,
-    memory must not be (visibly) loaded. Note that this means MMIO address cannot be read from, even
-    if the result of the read is immediately discarded.
-- If the operation is `LEA`, memory must likewise not be (visibly) loaded. `LEA` is interested in the address itself.
-- If the operation does not store its result (e.g. `cmp m,r`), then memory must not be (visibly) written to.
-    This also includes MMIO addresses.
+    memory must not be loaded, even if the result of the read is immediately discarded.
+    This entails that MMIO address cannot be read from.
+- If the operation is `LEA`, memory must likewise not be loaded. `LEA` is interested in the address itself.
 
 The instruction's Operand Size (usually from the instruction `SS` bits, but NOT from the `SIB.S` bits) informs the size of the read or writes. These reads
 and writes must behave, with regards to how memory is read and modified, the same as the `load` and `store` instructions
@@ -116,7 +114,6 @@ and we expect that the space waste is not significant.
 However, this point is why the extension is not listed as Mostly Stable,
 and may change in the future when we are better able to evaluate the waste.
 
-
 # Added Instruction
 
 | Name | Encoding | Operands | Description |
@@ -127,9 +124,6 @@ and may change in the future when we are better able to evaluate the waste.
 _illegal_ instruction. Note that as per the
 [Full Immediates extension](../full-immediates/README.md) in the specific case of `MM=01, ABM.regB=01x`
 (the "full immediate" operand modes) this opcode corresponds to `READCR`, not `LEA`.
-
-Note also that LEA shares an opcode with `READCR` (aka `mfcr`). `LEA` has no immediate mode, and `READCR` has
-no register-to-register mode.
 
 As always for instructions which manipulate pointers, the values of any bits beyond the Address Size attribute are unspecified
 when the address is computed. So `LEAQ %rq0, [%rx0]`, with an address size attribute of `word`, leaves unspecified the top
