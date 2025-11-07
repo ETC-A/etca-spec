@@ -51,6 +51,6 @@ In order to handle an interrupt, the CPU _must_ also do the following beforehand
 1. Set the `INT_RET_PRIV` CR to the current `PRIV` CR.
 2. Set the `PRIV` CR to 1.
 
-When the `IRET` instruction is encountered, the following _must_ also occur
+When the `IRET` instruction is encountered, the following _must_ also occur.
 
 1. Set the `PRIV` CR to the `INT_RET_PRIV` CR.

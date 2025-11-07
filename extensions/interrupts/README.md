@@ -35,7 +35,7 @@ must trigger a #GP fault.
 
 ## Flags CR
 
-The following table specifies which flag is associated with which bit in the `FLAGS` CR. Unused bits are reserved for future extensions
+The following table specifies which flag is associated with which bit in the `FLAGS` CR. Unused bits are reserved for future extensions.
 
 | Bit | Flag     |
 |-----|----------|

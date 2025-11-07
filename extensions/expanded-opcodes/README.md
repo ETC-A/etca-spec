@@ -64,10 +64,6 @@ of `B` are used to determine shift amounts,
 different if a count of 8 were allowed! To achieve the result that a count
 of 8 _would_ obtain, instead perform `rcrh _,1`.
 
-### Implementor's Notice:
-
-There is a tentative plan to move the `rcl` and `rcr` instructions to the BM1 extension, when it receives its initial specification. This is due to their increased implementation complexity. For now, a compliant implementation of this extension _must_ provide them.
-
 ## Jump and Call
 
 | First byte    | 2nd-9th Byte | Comment                                                             |

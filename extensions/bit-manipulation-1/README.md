@@ -39,7 +39,7 @@ These instructions are in the expanded calculation opcode section of instruction
    will be clear because a `0` was shifted out of `0x02`.
    The operation is analogous for other operation sizes.
 5) Counts the number of set bits in `B` as if it were zero extended based on the `SS` bits.
-6) Performs the generalized swap operation on `A` based on the value in `B`. It acts as follows
+6) Performs the generalized swap operation on `A` based on the value in `B`. It acts as follows.
 ```
 int64_t grev(int64_t a, int b, int ss)
 {

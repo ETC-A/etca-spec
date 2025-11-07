@@ -54,5 +54,5 @@ This control register is set to `-CACHE_LINE_SIZE` on CPU initialization.
 
 - The purpose of the initial values for these control registers is to intially disable caching since the location of MMIO is unknown.
 - When writing to these control registers, the value will be sign extended from the write width to the maxiumum supported physical address width.
-- Writing a non-cache-aligned value is _unspecified_ behavior
+- Writing a non-cache-aligned value is _unspecified_ behavior.
 - If `NO_CACHE_START` is larger than `NO_CACHE_END`, the non-cacheable address range wraps past the end of the address space back to the beginning.
