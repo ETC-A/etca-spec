@@ -12,22 +12,10 @@ This section is very WIP.
 
 | Name   | First Byte  | Second Byte | Description  |
 |--------|-------------|-------------|--------------|
-| `INVLPG` | `TODO` | `TODO` | See [TLB Invalidation](#tlb-invalidation) below. |
-
-The following instruction is required when the `CIDE` feature bit is present,
-but _may_ be implemented even if the feature bit is not present.
-
-| Name   | First Byte  | Second Byte | Description  |
-|--------|-------------|-------------|--------------|
-| `TLBI` | `TODO` | `TODO` | See [Context Identifiers](#optional-feature-cid) below. |
+| `TLBI` | `TODO` | `TODO` | See [The TLBI Instruction](#the-tlbi-instruction) below. |
 
 TODO: `TLBI` should be exop-format, but we've discussed modifying exop format encoding,
 so I'm holding off on defining this for the moment.
-
-> [!NOTE]
-> The `CIDE` feature bit depends on the `EXOP` extension, but most mode-related extensions
-> do not. The same purpose can be accomplished (much) less efficiently using the
-> `INVLPG` instruction.
 
 # Modes and Definitions
 
