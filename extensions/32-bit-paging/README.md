@@ -13,7 +13,7 @@ In particular, this extension focuses on the _Virtual 32-bit address mode_.
 
 The new mode is indicated by `MODE[PTRSZ]=1`, `MODE[VM]=1.`
 
-Refer to the [Mode Control Register](../mode-control-register.md#virtual-address-modes)
+Refer to the [Mode Control Register](../addressing-modes.md#virtual-address-modes)
 for a detailed generic description of virtual address modes.
 
 # Mode Characteristics
@@ -41,9 +41,8 @@ The two-level paging address translation looks as follows.
 
 ![32-bit paging transl](../resources/vm-diagrams/32-bit-paging-transl.svg)
 
-When [CIDE](../../features/context-identifiers/) are supported,
+When [CIDs](../addressing-modes.md#optional-feature-cid) are supported,
 the mode supports the use of up to 4096 context identifiers.
-(Also see the [paging documentation](../mode-control-register.md#optional-feature-cid).)
 
 ### Page Directory (PDL1) Entries
 
@@ -81,7 +80,7 @@ Each page table entry has the following format.
 | `A`           | 4    | Set **by hardware** when this entry is used in a translation. |
 | `D`           | 5    | Set **by hardware** when this entry is used to translate a write access. |
 | reserved      | 6    | This bit must be zero. | 
-| `G`           | 7    | 1 if the page is global. This bit is reserved unless the implementation has [Global Pages Enabled](../../features/page-global-enabled/). |
+| `G`           | 7    | 1 if the page is global. This bit is reserved unless the implementation has [global pages enabled](../../features/page-global-enabled/). |
 | reserved      | 8    | This bit is reserved for a future extension allowing pages to be marked write-through for caching purposes. |
 | `CD`          | 9    | 1 if accesses to this page must not be cached. This bit is reserved unless [Cache Instructions](../cache-instructions/) is present. |
 | ign(ored)     | 10-11 | These bits are free for software use. |
@@ -92,7 +91,7 @@ Each page table entry has the following format.
 ![32-bit VM_ROOT](../resources/vm-diagrams/32-bit-vmroot.svg)
 
 The twelve least significant bits of `VM_ROOT` must be zero unless
-[context identifiers](../../features/context-identifiers/) are
+[context identifiers](../addressing-modes.md#optional-feature-cid) are
 both supported and enabled (`MODE[CID]=1`).
 If context identifiers are enabled, the twelve least significant bits
 store the 12-bit current CID.
@@ -119,10 +118,9 @@ in `TLBHI` to the frame with frame number in `TLBLO`.
 As with page table entries, the `U` bit is reserved unless `PM` is available
 and the `G` bit is reserved unless global pages are supported.
 As with `VM_ROOT`, the `CID` field is reserved unless
-context identifiers are supported. Unlike `VM_ROOT`,
-writing a non-zero `CID` to a TLB entry is **permitted**
-whenever context identifiers are supported, even while `MODE[CID]=0`.
-The entry won't be used for translations until `MODE[CID]` is set.
+context identifiers are supported. Like `VM_ROOT`,
+writing a non-zero `CID` to a TLB entry is not allowed
+while `MODE[CID]=0`.
 While `MODE[CID]=1`, the "current CID" is controlled by the
 `VM_ROOT[CID]` bits (even though soft paging ignores the rest of `VM_ROOT`).
 
@@ -147,7 +145,8 @@ For hard paging, if the software cares about accurate `A` bit accounting,
 it must invalidate a page in the mapped region of the relevant entry.
 This will also invalidate any cached copies of the page directory.
 Failure to invalidate such a page may result in hardware not setting
-the `A` bit on the next access, the next several accesses, or ever again.
+the `A` bit on the next several accesses, possibly until such a page
+is invalidated.
 For soft paging, clearing the `A` bit in the TLB entry is sufficient.
 
 The `D` bit behaves like the `A` bit, except that hardware only

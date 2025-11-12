@@ -33,7 +33,7 @@ The single-level paging address translation looks as follows.
 
 When [CIDE](../../features/context-identifiers/) are supported,
 the mode supports the use of up to 4 context identifiers.
-(Also see the [paging documentation](../mode-control-register.md#optional-feature-cid).)
+(Also see the [paging documentation](../addressing-modes.md#optional-feature-cid).)
 
 ### Page Table Entries
 
@@ -92,35 +92,22 @@ The entry won't be used for translations until `MODE[CID]` is set.
 While `MODE[CID]=1`, the "current CID" is controlled by the
 `VM_ROOT[CID]` bits (even though soft paging ignores the rest of `VM_ROOT`).
 
+# Accessed and Dirty Bits
+
+This extension does not provide an accessed or dirty bit mechanism.
+
 > [!TIP]
-> For software developers: while the TLB entries do not contain accessed/dirty
+> For software developers: while the TLB/PT entries do not contain accessed/dirty
 > bits, it is possible to emulate them. Periodically clear the `P` and `W` bits
-> of your TLB entries, recording elsewhere (e.g., your custom paging structure)
-> which entries are valid and which are writable. Optionally record the values
-> of the bits before clearing them to keep a history.
-> When handling `#PF(P)` and `#PF(W)`, first check in your records if the
+> of your entries, recording elsewhere which entries are valid and which are
+> writable. Optionally record the values of the bits before clearing them to
+> keep a history. When handling page faults, first check in your records if the
 > necessary TLB entry is already allocated with storage attributes cleared.
 > If so, simply set the appropriate attribute bits and return from handler.
 > Now the `P` and `W` bits of your entries also function as `A` and `D` bits.
 >
 > Be careful to never clear the `P` bit on the entry mapping the
 > exception handler!
-
-# Additional Behavioral Changes
-
-In Virtual 16-bit Address Mode, support for [global pages](../mode-control-register.md#optional-feature-global-pages)
-must be **ignored**. This mode has no way to configure global
-pages, but conditions relaxed by the global pages feature
-would allow a soft TLB to invalidate TLB entries whose presence
-is required to avoid a double fault.
-Therefore, in this mode, those conditions are not relaxed.
-Processors wishing to offer a more efficient invalidation strategy
-should support [context identifiers](../mode-control-register.md#optional-feature-cid) instead.
-
-An implementation supporting Virtual 16-bit Address Mode _and_
-another virtual addressing extension is still permitted to
-support global pages and the associated relaxed invalidation
-rules in the other virtual addressing mode(s).
 
 # Interaction with Other Extensions
 
