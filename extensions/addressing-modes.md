@@ -725,6 +725,12 @@ error code bits set. A `#PF` stops the translation process immediately.
 
 A future extension or feature is very likely to add more `#PF` code bits.
 
+If an instruction would access memory multiple times, it must determine if
+_any_ of those accesses would cause a page faults and raise an appropriate
+exception before performing any memory accesses. This prevents an
+unretryable memory access (such as an MMIO read or any write) from being
+performed by the instruction before it faults.
+
 ### Checking Storage Attributes
 
 A write to a page is disallowed if
