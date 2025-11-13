@@ -5,6 +5,7 @@
 
 * All caches are coherent. This means that any data written to the data cache automatically is propagated to the instruction cache. If multiple cores are present, their caches must also be coherent with each
 other. Multi-level caches must also be coherent between levels.
+* TLBs and associated table caches are exempt.
 
 ### Concept / Intentionally vague
 

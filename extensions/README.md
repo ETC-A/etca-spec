@@ -10,16 +10,16 @@
 |     5      | [Expanded Registers](./expanded-registers)                | REX  |      VWI      | Under Development |
 |     6      | [Cache Instructions](./cache-instructions)                |  CI  |     None      | Under Development |
 |     7      | [Arbitrary Stack Pointer](./arbitrary-stack-pointer)      | ASP  |     CP1.1     | Under Development |
-|     13     | [Memory Operands 2](./memory-operands-2)                  | MO2  |      VWI      | Under Development |
+|     12     | [Memory Operands 2](./memory-operands-2)                  | MO2  |      VWI      | Under Development |
+|     13     | [Virtual 16 Bit Address Space](./16-bit-paging)           | PG16 |    CP1.2      | Under Development |
 |     14     | [32 Bit Operations + Registers](./double-word-operations) |  DW  |     None      | Mostly Stable     |
 |     15     | [64 Bit Operations + Registers](./quad-word-operations)   |  QW  |     None      | Mostly Stable     |
 |     16     | [32 Bit Address Space](./32-bit-address-space)            | DWAS |    CP1.14     | Under Development |
-|     17     | Virtual Memory + 16 Bit Paging                            | PG16 | CP1.16, CP2.2 | Planned           |
-|     18     | Virtual Memory + 32 Bit Paging                            | PG32 | CP1.16, CP2.2 | Planned           |
+|     17     | [Virtual 32 Bit Address Space](./32-bit-paging)           | PG32 | CP1.16, CP1.2 | Under Development |
 |     32     | [64 Bit Address Space](./64-bit-address-space)            | QWAS |    CP1.15     | Under Development |
-|     33     | Virtual Memory + 64 Bit Paging (48 bit VA)                | PG48 | CP1.32, CP2.2 | Planned           |
-|     34     | Virtual Memory + 64 Bit Paging (57 bit VA)                | PG57 | CP1.32, CP2.2 | Planned           |
-|     35     | Virtual Memory + 64 Bit Paging (64 bit VA)                | PG64 | CP1.32, CP2.2 | Planned           |
+|     33     | Virtual Memory + 64 Bit Paging (48 bit VA)                | PG48 | CP1.32, CP1.2 | Planned           |
+|     34     | Virtual Memory + 64 Bit Paging (57 bit VA)                | PG57 | CP1.32, CP1.2 | Planned           |
+|     35     | Virtual Memory + 64 Bit Paging (64 bit VA)                | PG64 | CP1.32, CP1.2 | Planned           |
 
 
 | CPUID2 bit | Extension                                  | Abbr | Dependencies  | State             |

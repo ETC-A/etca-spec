@@ -51,4 +51,4 @@ Then the immediate is an 8-byte literal value instead of a 4-byte literal value.
 Sign extension of the immediate follows the same rules as used for 5 bit immediates in register-immediate mode.
 
 The added instructions can be seen in the complete Advanced Operand Extensions table, which encompasses the FI, MO1, and MO2 extensions. They are under `Mode=01`, `ABM.regB = 01x`.
-![AOE Table](../etca_aoe_table.png)
+![AOE Table](../resources/etca_aoe_table.png)

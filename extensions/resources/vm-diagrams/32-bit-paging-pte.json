@@ -1,0 +1,18 @@
+// This file can be used to generate 32-bit-paging-pte.svg at https://wavedrom.com/editor.html
+// but be aware that the white rectangle needs to be added. I've been doing it
+// manually by adding the following item after the leading <svg /> item:
+// <rect x="0" y="0" width="100%" height="100%" fill="white"/>
+{"reg": [
+  {"bits": 1, "name": "P"},
+  {"bits": 1, "name": "W"},
+  {"bits": 1, "name": "U"},
+  {"bits": 1, "name": "X"},
+  {"bits": 1, "name": "A"},
+  {"bits": 1, "name": "D"},
+  {"bits": 1},
+  {"bits": 1, "attr": "G"},
+  {"bits": 1, "attr": "WT"},
+  {"bits": 1, "attr": "CD"},
+  {"bits": 2, "name": "ignored"},
+  {"bits": 20, "name": "Physical Frame Number"}
+]}
