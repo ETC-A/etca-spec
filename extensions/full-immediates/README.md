@@ -44,8 +44,8 @@ the following table:
 
 If the [register expansion](../expanded-registers/README.md) extension is available, then `REX.Q` can be used with instructions from this
 extension. It has an effect only if both of the following conditions are met:
-  - The instruction has an `iS` operand
-  - The instruction's operand size attribute is `quad`
+  - The instruction has an `iS` operand, and
+  - The instruction's operand size attribute is `quad`.
 Then the immediate is an 8-byte literal value instead of a 4-byte literal value.
 
 Sign extension of the immediate follows the same rules as used for 5 bit immediates in register-immediate mode.

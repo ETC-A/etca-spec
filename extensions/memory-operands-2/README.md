@@ -51,11 +51,11 @@ and may change in the future when we are better able to evaluate the waste.
 ## `REX.Q`
 
 A `REX.Q` prefix can be used with instructions in this format if:
+  - The [register expansion](../expanded-registers/README.md) extension is available.
   - The instruction has _exactly one_ of a displacement or immediate. It cannot have both.
   - either:
-    - The instruction is an `iS` mode with Operand Size attribute `quad`
-    - The instruction is a `dP` mode and the current Addressing Mode is `quad`
-  - The [register expansion](../expanded-registers/README.md) extension is available
+    - The instruction is an `iS` mode with Operand Size attribute `quad`, or
+    - The instruction is a `dP` mode and the current Addressing Mode is `quad`.
 
 Then the `iS` or `dP` will be an 8-byte value rather than a 4-byte value.
 
