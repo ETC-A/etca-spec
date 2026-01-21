@@ -23,7 +23,7 @@
     <overflow> false </overflow>
   </flags>
   <machine-details>
-    <cpuid1> 0 </cpuid1>
+    <cpuid1> 8 </cpuid1>
     <cpuid2> 0 </cpuid2>
     <feat>   0 </feat>
     <reg-width> word </reg-width>

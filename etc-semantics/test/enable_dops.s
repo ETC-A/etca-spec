@@ -1,10 +1,5 @@
 ;-mstrict
-;64,192
-    movx %rx0,%exten
-    movx %rx1,2
-    slox %rx1,0       ; 64
-    orx  %rx0,%rx1    ; set d-ops bit
-    movx %exten,%rx0  ; enable d-ops
+;16384,49152
 .extension dword_operations
 ; now we want to test that d-ops work. Simple test is to set any bits
 ; that don't fit in a word and look at the result. To do that here,

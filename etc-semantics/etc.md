@@ -21,7 +21,8 @@ An ETC.A machine always boots with the `<reg-mode>` set to `word`.
     configuration
       <etc>
         <k parser="PGM, BYTES-SYNTAX">
-             #enableDefaultExtensions
+             #checkExtCoherence
+          ~> #initializeExtensions
           ~> load $PGM:Bytes
           ~> #fetch
         </k>
@@ -37,12 +38,18 @@ An ETC.A machine always boots with the `<reg-mode>` set to `word`.
           <overflow format="%1 %2 %3"> false:Bool </overflow>
         </flags>
         <machine-details>
-          <cpuid parser="CPUID, INT-SYNTAX"
+          <cpuid1 parser="CPUID1, INT-SYNTAX"
                  format="%1 %2 %3">
-            $CPUID:Int
-          </cpuid>
-          <exten format="%1 %2 %3"> 0:Int </exten>
-          <reg-mode format="%1  %2 %3"> word:ByteSize </reg-mode>
+            $CPUID1:Int
+          </cpuid1>
+          <cpuid2 parser="CPUID2, INT-SYNTAX"
+                 format="%1 %2 %3">
+            $CPUID2:Int
+          </cpuid2>
+          <feat parser="FEAT, INT-SYNTAX"
+                format="%1   %2 %3">
+            $FEAT:Int
+          </feat>
           <reg-width format="%1 %2 %3"> word:ByteSize </reg-width>
           <reg-count format="%1 %2 %3"> 8:Int </reg-count>
           <evil-mode format="%1 %2 %3"> false:Bool </evil-mode>
@@ -67,9 +74,8 @@ The "program" for a simulation loads a program, and starts the simulation.
     rule <k> load P => . ... </k>
          <pc> PC </pc>
          <reg-width> RSIZE </reg-width>
-         <reg-mode>  RMODE </reg-mode>
          <memory>
-           MEM => MEM[ zextFrom(RSIZE, sextFrom(RMODE, PC)) := P ]
+           MEM => MEM[ zextFrom(word, sextFrom(word, PC)) := P ]
          </memory>
   //----------------------------------------------------------------------
 ```
@@ -156,12 +162,11 @@ always PC-relative.
 
 ```k
     rule <k> #fetch => #decode [ 
-                #range(MEM, zextFrom(RSIZE, sextFrom(RMODE, PC)), word)
+                #range(MEM, zextFrom(word, sextFrom(word, PC)), word)
              ] ...</k>
          <pc> PC </pc>
          <memory> MEM </memory>
          <reg-width> RSIZE </reg-width>
-         <reg-mode>  RMODE </reg-mode>
 ```
 
 ### Decode
@@ -266,15 +271,14 @@ semantic syntax for these things.
 
     rule [[ Mem [ ADDR : WIDTH ]
          => Bytes2Int
-              ( #range(MEM, zextFrom(RSIZE, sextFrom(RMODE, ADDR)), WIDTH)
+              ( #range(MEM, zextFrom(word, sextFrom(word, ADDR)), WIDTH)
               , LE
               , Unsigned
               ) 
          ]]
          <memory> MEM      </memory>
-         <reg-mode>  RMODE </reg-mode>
          <reg-width> RSIZE </reg-width>
-      requires #rangeByteSize(RMODE, ADDR)
+      requires #rangeByteSize(word, ADDR)
   //-------------------------------------------------------------
     
     rule [[ Reg [ RID ] => Reg [ RID : SIZE ] ]]
@@ -285,15 +289,20 @@ semantic syntax for these things.
          <reg-count> RCOUNT </reg-count>
       requires #range(0 <= RID < RCOUNT)
 
-    rule [[ Reg [ CRcpuid : SIZE ] => chopTo(SIZE, CPUID) ]]
-         <cpuid> CPUID </cpuid>
-    rule [[ Reg [ CRexten : SIZE ] => chopTo(SIZE, EXTEN) ]]
-         <exten> EXTEN </exten>
-
-    syntax RegisterID ::= "CRcpuid" | "CRexten"
+    syntax RegisterID ::= "CRcpuid1" | "CRcpuid2" | "CRfeat"
                         | controlRegFromNum ( Int ) [function]
-    rule controlRegFromNum(0) => CRcpuid
-    rule controlRegFromNum(1) => CRexten
+
+    rule [[ Reg [ CRcpuid1 : SIZE ] => chopTo(SIZE, CPUID) ]]
+         <cpuid1> CPUID </cpuid1>
+    rule [[ Reg [ CRcpuid2 : SIZE ] => chopTo(SIZE, CPUID) ]]
+         <cpuid2> CPUID </cpuid2>
+
+    rule [[ Reg [ CRfeat : SIZE ] => chopTo(SIZE, FEAT) ]]
+         <feat> FEAT </feat>
+
+    rule controlRegFromNum(0) => CRcpuid1
+    rule controlRegFromNum(1) => CRcpuid2
+    rule controlRegFromNum(2) => CRfeat
 ```
 
 That lets us read memory and registers with a K function. We should also be able to
@@ -309,13 +318,12 @@ _write_ the memory and registers with the same syntax. These cannot be functions
     rule <k> Mem[ADDR : WIDTH] = R => . ...</k>
          <memory> 
                MEM 
-            => MEM [ zextFrom(RSIZE, sextFrom(RMODE, ADDR))
+            => MEM [ zextFrom(word, sextFrom(word, ADDR))
                    := Int2Bytes(ByteSize2NumBytes(WIDTH), R, LE)
                    ] 
          </memory>
          <reg-width> RSIZE </reg-width>
-         <reg-mode>  RMODE </reg-mode>
-      requires #rangeByteSize(RMODE, ADDR)
+      requires #rangeByteSize(word, ADDR)
 
     rule <k> Reg [ RID ] = R => Reg [ RID : SIZE ] = R ...</k>
          <reg-width> SIZE </reg-width>
@@ -326,11 +334,10 @@ _write_ the memory and registers with the same syntax. These cannot be functions
          // <reg-width> RWIDTH </reg-width>
       requires #range(0 <= RID < RCOUNT)
 
-    // CPUID is immutable
-    rule <k> Reg [ CRcpuid : _SIZE ] = _R => . ...</k>
-    // Writes to EXTEN call out to the `EXTENSION` module, which uses
-    // all of the extension hooks to get this right.
-    rule <k> Reg [ CRexten : _SIZE ] = R => #writeExten(R) ...</k>
+    // CPUID and FEAT are immutable
+    rule <k> Reg [ CRcpuid1 : _SIZE ] = _R => . ...</k>
+    rule <k> Reg [ CRcpuid2 : _SIZE ] = _R => . ...</k>
+    rule <k> Reg [ CRfeat   : _SIZE ] = _R => . ...</k>
 ```
 
 ## Operands
